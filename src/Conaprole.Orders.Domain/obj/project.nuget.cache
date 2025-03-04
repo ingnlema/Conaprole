@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "bTOjq6R33YQ=",
+  "success": true,
+  "projectFilePath": "/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Domain/Conaprole.Orders.Domain.csproj",
+  "expectedPackageFiles": [
+    "/Users/nicolaslemaacosta/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

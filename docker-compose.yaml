@@ -1,0 +1,24 @@
+﻿services:
+  conaprole.orders.api:
+    image: conaprole.orders.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    build:
+      context: .
+      dockerfile: src/Conaprole.Orders.Api/Dockerfile
+    depends_on:
+      - conaprole.orders-db
+    ports:
+      - "8080:8080"
+  conaprole.orders-db:
+    image: postgres:latest
+    container_name: Conaprome.Orders.Db
+    environment: 
+      - POSTGRES_DB=conaprole.orders
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./containers/database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+        

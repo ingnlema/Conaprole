@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/Conaprole.Orders.Api.props" />
+</Project>
