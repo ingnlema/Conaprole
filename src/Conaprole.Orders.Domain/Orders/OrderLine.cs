@@ -21,6 +21,10 @@ public class OrderLine : Entity
         CreatedOnUtc = createdOnUtc;
     }
     
+    private OrderLine()
+    {
+        
+    }
     public Quantity Quantity { get; private set; }
     public Money SubTotal { get; private set; }
     public OrderId OrderId { get; private set; }

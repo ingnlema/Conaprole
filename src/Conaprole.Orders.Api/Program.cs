@@ -1,3 +1,4 @@
+using Conaprole.Orders.Api.Extensions;
 using Conaprole.Orders.Application;
 using Conaprole.Orders.Infrastructure;
 
@@ -17,6 +18,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
+    app.ApplyMigrations();
+    
+    // REMARK: Uncomment if you want to seed initial data.
+    //app.SeedData();
 }
 
 app.UseHttpsRedirection();

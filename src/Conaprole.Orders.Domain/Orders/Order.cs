@@ -31,7 +31,11 @@ public class Order : Entity
         DeliveredOnUtc = deliveredOnUtc;
         Price = price;
     }
-    
+
+    private Order()
+    {
+        
+    }
     public PointOfSale PointOfSale { get; private set; }
     public Distributor Distributor { get; private set; }
     public Status Status { get; private set; }

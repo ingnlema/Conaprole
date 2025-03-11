@@ -17,6 +17,11 @@ public class Product : Entity
         LastUpdated = lastUpdated;
     }
     
+    private Product()
+    {
+        
+    }
+    
     public ExternalProductId ExternalProductId { get; set; }
     public Name Name { get; private set; }
     public Money UnitPrice { get; private set; }

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Conaprole.Orders.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f2666b2786b6ca267b17bdb0a820ada9934cc8e2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+04e7c6464fd440092e55defaee004f81e3e69649")]
 [assembly: System.Reflection.AssemblyProductAttribute("Conaprole.Orders.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Conaprole.Orders.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
