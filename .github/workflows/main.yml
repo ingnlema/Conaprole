@@ -43,7 +43,7 @@ jobs:
           context: .
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
-          file: Conaprole.Orders/Dockerfile
+          file: src/Conaprole.Orders.Api/Dockerfile
         
       # Azure Login
       - name: Azure Login
