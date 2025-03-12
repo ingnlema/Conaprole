@@ -22,11 +22,11 @@ jobs:
 
       # Restaura dependencias del proyecto web (api.csproj) en lugar de la solución completa
       - name: Restore
-        run: dotnet restore ./conaprole/api/api.csproj
+        run: dotnet restore ./src/Conaprole.Orders.Api/Conaprole.Orders.Api.csproj
 
       # Compila el proyecto con configuración Release
       - name: Build
-        run: dotnet build ./conaprole/api/api.csproj --configuration Release --no-restore
+        run: dotnet build ./src/Conaprole.Orders.Api/Conaprole.Orders.Api.csproj --configuration Release --no-restore
 
       # Log in to Azure Container Registry
       - name: Log in to ACR
@@ -43,7 +43,7 @@ jobs:
           context: .
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
-          file: conaprole/api/Dockerfile
+          file: Conaprole.Orders/Dockerfile
         
       # Azure Login
       - name: Azure Login
