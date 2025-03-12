@@ -26,7 +26,7 @@ public class Product : Entity
     public Name Name { get; private set; }
     public Money UnitPrice { get; private set; }
     public Description Description { get; private set; }
-    public List<Category> Categories { get; private set; } = new();
+    public List<Category> Categories { get; set; } = new();
     public DateTime LastUpdated { get; private set; }
 
 }

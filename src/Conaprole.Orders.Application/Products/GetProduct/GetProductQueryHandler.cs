@@ -26,7 +26,6 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
                 unit_price_amount AS UnitPriceAmount,
                 unit_price_currency AS UnitPriceCurrency,
                 description AS Description,
-                categories AS Categories,
                 last_updated AS LastUpdated
             FROM products
             WHERE id = @ProductId";
@@ -42,6 +41,16 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
                 new Error("Product.NotFound", "El producto no fue encontrado.")
             );
         }
+        
+
+        const string sqlCategories = @"
+            SELECT category 
+            FROM product_categories
+            WHERE product_id = @ProductId";
+
+        var categories = await connection.QueryAsync<string>(sqlCategories, new { ProductId = request.ProductId });
+        
+        product.Categories = categories.ToList();
 
         return product;
     }

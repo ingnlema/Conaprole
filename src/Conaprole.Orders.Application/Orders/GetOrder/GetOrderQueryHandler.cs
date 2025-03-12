@@ -26,7 +26,7 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
                 distributor AS Distributor,
                 delivery_address_city AS DeliveryAddressCity,
                 delivery_address_street AS DeliveryAddressStreet,
-                delivery_address_zip_code AS DeliveryAddressZipCode,
+                delivery_address_zipcode AS DeliveryAddressZipCode, -- Corregido aquí
                 status AS Status,
                 created_on_utc AS CreatedOnUtc,
                 confirmed_on_utc AS ConfirmedOnUtc,
@@ -38,7 +38,7 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
                 price_currency AS PriceCurrency
             FROM orders
             WHERE id = @OrderId";
-
+        
         var order = await connection.QueryFirstOrDefaultAsync<OrderResponse>(
             sql,
             new { OrderId = request.OrderId }

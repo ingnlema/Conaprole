@@ -1,4 +1,6 @@
+using Conaprole.Orders.Api.Middelware;
 using Conaprole.Orders.Infrastructure;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace Conaprole.Orders.Api.Extensions;
 
@@ -13,6 +15,11 @@ public static class ApplicationBuilderExtensions
         using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         dbContext.Database.Migrate();
+    }
+
+    public static void UseCustomExceptionHandler(this IApplicationBuilder app)
+    {
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
     }
 
 
