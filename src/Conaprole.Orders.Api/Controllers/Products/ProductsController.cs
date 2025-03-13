@@ -1,9 +1,11 @@
 using Conaprole.Orders.Application.Products.GetProduct;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conaprole.Orders.Api.Controllers.Products;
 
+[Authorize]
 [ApiController]
 [Route("api/Products")]
 public class ProductsController : ControllerBase

@@ -147,6 +147,50 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                     b.ToTable("products", (string)null);
                 });
 
+            modelBuilder.Entity("Conaprole.Orders.Domain.Users.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("first_name");
+
+                    b.Property<string>("IdentityId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("identity_id");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("last_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_users");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email");
+
+                    b.HasIndex("IdentityId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_identity_id");
+
+                    b.ToTable("users", (string)null);
+                });
+
             modelBuilder.Entity("Conaprole.Orders.Domain.Orders.Order", b =>
                 {
                     b.OwnsOne("Conaprole.Orders.Domain.Orders.Address", "DeliveryAddress", b1 =>

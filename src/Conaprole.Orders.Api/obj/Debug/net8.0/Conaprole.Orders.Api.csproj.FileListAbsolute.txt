@@ -148,3 +148,11 @@
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/obj/Debug/net8.0/Conaprole.Orders.Api.genruntimeconfig.cache
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/obj/Debug/net8.0/ref/Conaprole.Orders.Api.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Bogus.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Logging.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll

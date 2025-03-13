@@ -1,10 +1,12 @@
 using Conaprole.Orders.Application.Orders.CreateOrder;
 using Conaprole.Orders.Application.Orders.GetOrder;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
+[Authorize]
 [ApiController]
 [Route("api/Orders")]
 public class OrdersController : ControllerBase

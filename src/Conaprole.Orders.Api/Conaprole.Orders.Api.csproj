@@ -28,10 +28,6 @@
     <ProjectReference Include="..\Conaprole.Orders.Infrastructure\Conaprole.Orders.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
   <!-- Aseguramos que se copien los archivos de configuración -->
   <ItemGroup>
     <None Update="appsettings.json">

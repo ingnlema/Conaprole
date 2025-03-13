@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+3Ru0XwVlrQ=",
+  "dgSpecHash": "xYvtkpC5pP8=",
   "success": true,
   "projectFilePath": "/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Infrastructure/Conaprole.Orders.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,7 @@
     "/Users/nicolaslemaacosta/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.11.0/fluentvalidation.dependencyinjectionextensions.11.11.0.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/mediatr/12.4.1/mediatr.12.4.1.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/8.0.14/microsoft.aspnetcore.authentication.jwtbearer.8.0.14.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/microsoft.entityframeworkcore/9.0.1/microsoft.entityframeworkcore.9.0.1.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/microsoft.entityframeworkcore.abstractions/9.0.1/microsoft.entityframeworkcore.abstractions.9.0.1.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/microsoft.entityframeworkcore.analyzers/9.0.1/microsoft.entityframeworkcore.analyzers.9.0.1.nupkg.sha512",
@@ -24,9 +25,16 @@
     "/Users/nicolaslemaacosta/.nuget/packages/microsoft.extensions.logging.abstractions/9.0.2/microsoft.extensions.logging.abstractions.9.0.2.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/microsoft.extensions.options/9.0.1/microsoft.extensions.options.9.0.1.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/microsoft.extensions.primitives/9.0.2/microsoft.extensions.primitives.9.0.2.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.identitymodel.abstractions/7.1.2/microsoft.identitymodel.abstractions.7.1.2.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.identitymodel.jsonwebtokens/7.1.2/microsoft.identitymodel.jsonwebtokens.7.1.2.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.identitymodel.logging/7.1.2/microsoft.identitymodel.logging.7.1.2.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.identitymodel.protocols/7.1.2/microsoft.identitymodel.protocols.7.1.2.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/7.1.2/microsoft.identitymodel.protocols.openidconnect.7.1.2.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/microsoft.identitymodel.tokens/7.1.2/microsoft.identitymodel.tokens.7.1.2.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/npgsql/9.0.2/npgsql.9.0.2.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/npgsql.entityframeworkcore.postgresql/9.0.3/npgsql.entityframeworkcore.postgresql.9.0.3.nupkg.sha512",
-    "/Users/nicolaslemaacosta/.nuget/packages/system.diagnostics.diagnosticsource/9.0.2/system.diagnostics.diagnosticsource.9.0.2.nupkg.sha512"
+    "/Users/nicolaslemaacosta/.nuget/packages/system.diagnostics.diagnosticsource/9.0.2/system.diagnostics.diagnosticsource.9.0.2.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/system.identitymodel.tokens.jwt/7.1.2/system.identitymodel.tokens.jwt.7.1.2.nupkg.sha512"
   ],
   "logs": []
 }
