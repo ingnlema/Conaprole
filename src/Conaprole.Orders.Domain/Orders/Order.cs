@@ -6,7 +6,8 @@ namespace Conaprole.Orders.Domain.Orders;
 public class Order : Entity
 {
     public Order(
-        Guid id, 
+        Guid id,
+        Guid userId,
         PointOfSale pointOfSale, 
         Distributor distributor,
         Address deliveryAddress, 
@@ -19,6 +20,7 @@ public class Order : Entity
         DateTime? deliveredOnUtc, 
         Money price) : base(id)
     {
+        UserId = userId;
         PointOfSale = pointOfSale;
         Distributor = distributor;
         DeliveryAddress = deliveryAddress;
@@ -36,6 +38,7 @@ public class Order : Entity
     {
         
     }
+    public Guid UserId { get; private set; }
     public PointOfSale PointOfSale { get; private set; }
     public Distributor Distributor { get; private set; }
     public Status Status { get; private set; }

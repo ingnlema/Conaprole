@@ -3,6 +3,7 @@ namespace Conaprole.Orders.Application.Orders.GetOrder;
 public sealed class OrderResponse
 {
     public Guid Id { get; init; }
+    public Guid UserId { get; init; }
     
     public Guid PointOfSaleId { get; init; }
     

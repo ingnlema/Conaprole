@@ -1,3 +1,6 @@
+using Conaprole.Orders.Application.Abstractions.Authentication;
+using Conaprole.Orders.Domain.Orders;
+
 namespace Conaprole.Orders.Application.Orders.GetOrder;
 
 using Abstractions.Data;
@@ -9,10 +12,12 @@ using Dapper;
 internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderResponse>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
+    private readonly IUserContext _userContext;
 
-    public GetOrderQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+    public GetOrderQueryHandler(ISqlConnectionFactory sqlConnectionFactory, IUserContext userContext)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
+        _userContext = userContext;
     }
 
     public async Task<Result<OrderResponse>> Handle(GetOrderQuery request, CancellationToken cancellationToken)
@@ -22,11 +27,12 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
         const string sql = @"
             SELECT 
                 id AS Id,
+                user_id AS UserId,
                 point_of_sale_id AS PointOfSaleId,
                 distributor AS Distributor,
                 delivery_address_city AS DeliveryAddressCity,
                 delivery_address_street AS DeliveryAddressStreet,
-                delivery_address_zipcode AS DeliveryAddressZipCode, -- Corregido aquí
+                delivery_address_zipcode AS DeliveryAddressZipCode, 
                 status AS Status,
                 created_on_utc AS CreatedOnUtc,
                 confirmed_on_utc AS ConfirmedOnUtc,
@@ -44,12 +50,13 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
             new { OrderId = request.OrderId }
         );
 
-        if (order is null)
+
+        if (order is null || order.UserId != _userContext.UserId)
         {
-            return Result.Failure<OrderResponse>(
-                new Error("Order.NotFound", "El pedido no fue encontrado.")
-            );
+            return Result.Failure<OrderResponse>(OrderErrors.NotFound);
         }
+
+        
         return order;
     }
 }

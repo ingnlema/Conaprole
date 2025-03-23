@@ -33,6 +33,7 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> CreateOrder(CreateOrderRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateOrderCommand(
+            request.UserId,
             request.PointOfSaleId,
             request.Distributor,
             request.City,

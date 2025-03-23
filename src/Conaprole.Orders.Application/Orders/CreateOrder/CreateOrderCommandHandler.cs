@@ -3,21 +3,25 @@ using Conaprole.Orders.Application.Abstractions.Clock;
 using Conaprole.Orders.Domain.Orders;
 using Conaprole.Orders.Domain.Abstractions;
 using Conaprole.Orders.Domain.Shared;
+using Conaprole.Orders.Domain.Users;
 using MediatR;
 
 namespace Conaprole.Orders.Application.Orders.CreateOrder;
 
 internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Guid>
 {
+    private readonly IUserRepository _userRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDateTimeProvider _dateTimeProvider;
 
     public CreateOrderCommandHandler(
+        IUserRepository userRepository,
         IOrderRepository orderRepository,
         IUnitOfWork unitOfWork,
         IDateTimeProvider dateTimeProvider)
     {
+        _userRepository = userRepository;
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
         _dateTimeProvider = dateTimeProvider;
@@ -25,6 +29,13 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+
+        if (user is null)
+        {
+            return Result.Failure<Guid>(UserErrors.NotFound);
+        }
+        
         var pointOfSale = new PointOfSale(request.PointOfSaleId);
         var distributor = new Distributor(request.Distributor);
         var address = new Address(request.City, request.Street, request.ZipCode);
@@ -36,6 +47,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
         var order = new Order(
             Guid.NewGuid(),
+            user.Id,
             pointOfSale,
             distributor,
             address,

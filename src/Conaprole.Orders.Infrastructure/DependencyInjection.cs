@@ -6,12 +6,18 @@ using Conaprole.Orders.Domain.Orders;
 using Conaprole.Orders.Domain.Products;
 using Conaprole.Orders.Domain.Users;
 using Conaprole.Orders.Infrastructure.Authentication;
+using Conaprole.Orders.Infrastructure.Authorization;
 using Conaprole.Orders.Infrastructure.Clock;
 using Conaprole.Orders.Infrastructure.Data;
 using Conaprole.Orders.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using AuthenticationOptions = Conaprole.Orders.Infrastructure.Authentication.AuthenticationOptions;
+using AuthenticationService = Conaprole.Orders.Infrastructure.Authentication.AuthenticationService;
+using IAuthenticationService = Conaprole.Orders.Application.Abstractions.Authentication.IAuthenticationService;
 
 namespace Conaprole.Orders.Infrastructure;
 
@@ -32,6 +38,9 @@ public static class DependencyInjection
         AddPersistence(services, configuration);
         
         AddAuthentication(services, configuration);
+        
+        AddAuthorization(services);
+        
         return services;
     }
 
@@ -86,5 +95,20 @@ public static class DependencyInjection
 
             httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
         });
+
+        services.AddHttpContextAccessor();
+
+        services.AddScoped<IUserContext, UserContext>();
+    }
+    
+    private static void AddAuthorization(IServiceCollection services)
+    {
+        services.AddScoped<AuthorizationService>();
+
+        services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+
+        services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+        services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
     }
 }

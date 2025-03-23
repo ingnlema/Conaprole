@@ -1,5 +1,6 @@
 using Conaprole.Orders.Domain.Orders;
 using Conaprole.Orders.Domain.Shared;
+using Conaprole.Orders.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -85,5 +86,10 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
                    .WithOne() 
                    .HasForeignKey("order_id") 
                    .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(booking => booking.UserId);
         }
+    
 }

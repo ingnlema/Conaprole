@@ -6,6 +6,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
     {
+        RuleFor(c => c.UserId).NotEmpty();
         RuleFor(c => c.PointOfSaleId).NotEmpty();
         RuleFor(c => c.Distributor).NotEmpty();
         RuleFor(c => c.City).NotEmpty();

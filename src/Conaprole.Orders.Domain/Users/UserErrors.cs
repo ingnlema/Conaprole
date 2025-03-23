@@ -11,4 +11,8 @@ public static class UserErrors
     public static Error InvalidCredentials = new(
         "User.InvalidCredentials",
         "The provided credentials were invalid");
+    
+    public static Error IdentityMissing = new(
+        "User.IdentityMissing",
+        "No identity identifier was found in the current user context");
 }

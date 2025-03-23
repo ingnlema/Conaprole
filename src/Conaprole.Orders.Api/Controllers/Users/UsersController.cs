@@ -1,5 +1,7 @@
+using Conaprole.Orders.Application.Users.GetLoggedInUser;
 using Conaprole.Orders.Application.Users.LoginUser;
 using Conaprole.Orders.Application.Users.RegisterUser;
+using Conaprole.Orders.Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,17 @@ public class UsersController : ControllerBase
     public UsersController(ISender sender)
     {
         _sender = sender;
+    }
+    
+    [HttpGet("me")]
+    [HasPermission(Permissions.UsersRead)]
+    public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationToken)
+    {
+        var query = new GetLoggedInUserQuery();
+
+        var result = await _sender.Send(query, cancellationToken);
+
+        return Ok(result.Value);
     }
 
     [AllowAnonymous]
@@ -38,6 +51,7 @@ public class UsersController : ControllerBase
 
         return Ok(result.Value);
     }
+
     
     [AllowAnonymous]
     [HttpPost("login")]
