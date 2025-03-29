@@ -27,8 +27,17 @@ internal sealed class CreateProductCommandHandler
         CreateProductCommand request,
         CancellationToken cancellationToken)
     {
-
+        
         var externalProductId = new ExternalProductId(request.ExternalProductId);
+        
+        var existingProduct = await _productRepository
+            .GetByExternalIdAsync(externalProductId, cancellationToken);
+
+        if (existingProduct is not null)
+        {
+            return Result.Failure<Guid>(ProductErrors.DuplicatedExternalId);
+        }
+        
         var name = new Name(request.Name);
         var currency = Currency.FromCode(request.CurrencyCode);
         var unitPrice = new Money(request.UnitPrice, currency);

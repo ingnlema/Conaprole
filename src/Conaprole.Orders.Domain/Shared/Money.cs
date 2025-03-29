@@ -11,6 +11,18 @@ public record  Money(decimal Amount, Currency Currency)
 
         return new Money(first.Amount + second.Amount, first.Currency);
     }
+    
+    public static Money operator *(Money money, Quantity quantity)
+    {
+        return new Money(money.Amount * quantity.Value, money.Currency);
+    }
+    
+    public static Money operator *(Quantity quantity, Money money)
+    {
+        return money * quantity;
+    }
+
+
 
     public static Money Zero() => new(0, Currency.None);
 

@@ -3,7 +3,6 @@ namespace Conaprole.Orders.Application.Orders.GetOrder;
 public sealed class OrderResponse
 {
     public Guid Id { get; init; }
-    public Guid UserId { get; init; }
     
     public Guid PointOfSaleId { get; init; }
     
@@ -32,4 +31,6 @@ public sealed class OrderResponse
     public decimal PriceAmount { get; init; }
     
     public required string PriceCurrency { get; init; }
+    
+    public List<OrderLineResponse> OrderLines { get; set; } = new();
 }

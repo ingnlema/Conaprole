@@ -1,5 +1,6 @@
 using Conaprole.Orders.Application.Exceptions;
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Products;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -10,6 +11,8 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 {
     
     private readonly IPublisher _publisher;
+    public DbSet<Product> Products { get; set; } = null!;
+
 
     public ApplicationDbContext(DbContextOptions options, IPublisher publisher)
         : base(options)

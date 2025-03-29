@@ -1,4 +1,5 @@
 using Conaprole.Orders.Domain.Products;
+using Microsoft.EntityFrameworkCore;
 
 namespace Conaprole.Orders.Infrastructure.Repositories;
 
@@ -7,5 +8,13 @@ internal sealed class ProductRepository : Repository<Product>, IProductRepositor
     public ProductRepository(ApplicationDbContext dbContext)
         : base(dbContext)
     {
+    }
+    
+    public async Task<Product?> GetByExternalIdAsync(ExternalProductId externalId, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Products
+            .Include(p => p.Categories)
+            .FirstOrDefaultAsync(p => p.ExternalProductId == externalId, cancellationToken);
+
     }
 }

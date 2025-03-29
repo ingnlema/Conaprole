@@ -87,9 +87,6 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
                    .HasForeignKey("order_id") 
                    .OnDelete(DeleteBehavior.Cascade);
             
-            builder.HasOne<User>()
-                .WithMany()
-                .HasForeignKey(booking => booking.UserId);
         }
     
 }

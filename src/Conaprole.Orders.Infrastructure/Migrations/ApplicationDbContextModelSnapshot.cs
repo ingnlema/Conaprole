@@ -66,15 +66,8 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
                     b.HasKey("Id")
                         .HasName("pk_orders");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_orders_user_id");
 
                     b.ToTable("orders", (string)null);
                 });
@@ -299,13 +292,6 @@ namespace Conaprole.Orders.Infrastructure.Migrations
 
             modelBuilder.Entity("Conaprole.Orders.Domain.Orders.Order", b =>
                 {
-                    b.HasOne("Conaprole.Orders.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_orders_user_user_id");
-
                     b.OwnsOne("Conaprole.Orders.Domain.Orders.Address", "DeliveryAddress", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -380,7 +366,7 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         .HasForeignKey("product_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_order_lines_product_product_id");
+                        .HasConstraintName("fk_order_lines_products_product_id");
 
                     b.OwnsOne("Conaprole.Orders.Domain.Shared.Money", "SubTotal", b1 =>
                         {
