@@ -59,6 +59,8 @@ jobs:
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           containerAppName: ${{ env.CONTAINER_APP_NAME }}
           environmentVariables: |
-            ASPNETCORE_ENVIRONMENT=Development
+            ASPNETCORE_ENVIRONMENT=Staging
+            APPLY_MIGRATIONS=true
+            ConnectionStrings__Database=${{ secrets.CONNECTION_STRING }}
 
 
