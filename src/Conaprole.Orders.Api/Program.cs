@@ -27,6 +27,7 @@ builder.Services.AddSwaggerGen(c =>
 
 
 builder.Services.AddApplication();
+Console.WriteLine("DB: " + builder.Configuration.GetConnectionString("Database"));
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
