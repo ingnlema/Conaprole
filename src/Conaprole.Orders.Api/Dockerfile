@@ -1,7 +1,6 @@
 ﻿# Etapa base: imagen runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 # Usamos un usuario fijo; asegúrate de que "app" exista o ajusta según corresponda
-USER app
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
