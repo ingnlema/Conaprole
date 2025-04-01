@@ -38,7 +38,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conaprole Orders API v1");
 });
 
-var applyMigrations = builder.Configuration.GetValue<bool>("ApplyMigrations");
+var applyMigrations = builder.Configuration.GetValue<bool>("APPLY_MIGRATIONS");
 if (applyMigrations)
 {
     app.ApplyMigrations();

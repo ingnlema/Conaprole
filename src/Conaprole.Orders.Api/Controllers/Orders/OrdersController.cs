@@ -9,7 +9,6 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
-[Authorize]
 [ApiController]
 [Route("api/Orders")]
 public class OrdersController : ControllerBase

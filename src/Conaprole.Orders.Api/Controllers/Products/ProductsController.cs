@@ -10,7 +10,7 @@ using ProductResponse = Conaprole.Orders.Application.Products.GetProduct.Product
 
 namespace Conaprole.Orders.Api.Controllers.Products;
 
-[Authorize]
+
 [ApiController]
 [Route("api/Products")]
 public class ProductsController : ControllerBase
