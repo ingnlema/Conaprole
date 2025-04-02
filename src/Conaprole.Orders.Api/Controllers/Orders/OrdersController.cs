@@ -58,7 +58,6 @@ public class OrdersController : ControllerBase
     }
     
     [HttpGet]
-    [HttpGet]
     [SwaggerOperation(Summary = "Gets orders with optional filters", Description = "Filter by date, status, distributor or point of sale.")]
     public async Task<IActionResult> GetOrders([FromQuery] GetOrdersRequest request, CancellationToken cancellationToken)
 

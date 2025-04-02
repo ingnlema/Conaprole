@@ -57,7 +57,8 @@ internal sealed class GetProductsQueryHandler : IQueryHandler<GetProductsQuery, 
                 }
 
                 return product;
-            }
+            },
+            splitOn: "Category" 
         );
 
         return productMap.Values.ToList();
