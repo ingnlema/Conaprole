@@ -1,5 +1,5 @@
 namespace Conaprole.Orders.Application.Orders.CreateOrder;
 
 public record CreateOrderLineCommand(
-    Guid ProductId,
+    string ExternalProductId,
     int Quantity);

@@ -6,5 +6,5 @@ public class GetOrdersRequest
     public DateTime? To { get; set; }
     public int? Status { get; set; }
     public string? Distributor { get; set; }
-    public Guid? PointOfSaleId { get; set; }
+    public string? PointOfSalePhoneNumber { get; set; }
 }

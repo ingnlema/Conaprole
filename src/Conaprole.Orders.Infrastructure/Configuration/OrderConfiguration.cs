@@ -16,10 +16,11 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             
             builder.Property(o => o.PointOfSale)
                 .HasConversion(
-                    ps => ps.Id,
-                    id => new PointOfSale(id))
+                    ps => ps.PhoneNumber,
+                    phone => new PointOfSale(phone))
                 .HasColumnName("point_of_sale_id")
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(20);
             
             builder.Property(o => o.Distributor)
                 .HasConversion(

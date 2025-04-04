@@ -30,7 +30,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var pointOfSale = new PointOfSale(request.PointOfSaleId);
+        var pointOfSale = new PointOfSale(request.PointOfSalePhoneNumber);
         var distributor = new Distributor(request.Distributor);
         var address = new Address(request.City, request.Street, request.ZipCode);
         var createdOnUtc = _dateTimeProvider.UtcNow;
@@ -52,7 +52,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
         foreach (var line in request.OrderLines)
         {
-            var product = await _productRepository.GetByIdAsync(line.ProductId, cancellationToken);
+            var product = await _productRepository.GetByExternalIdAsync(new ExternalProductId(line.ExternalProductId), cancellationToken);
             if (product is null)
                 return Result.Failure<Guid>(ProductErrors.NotFound);
 

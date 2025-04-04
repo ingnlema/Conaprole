@@ -56,11 +56,12 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
             parameters.Add("Distributor", $"%{request.Distributor}%");
         }
 
-        if (request.PointOfSaleId.HasValue)
+        if (!string.IsNullOrWhiteSpace(request.PointOfSalePhoneNumber))
         {
-            sql += " AND point_of_sale_id = @PointOfSaleId";
-            parameters.Add("PointOfSaleId", request.PointOfSaleId.Value);
+            sql += " AND point_of_sale_id = @PointOfSalePhoneNumber";
+            parameters.Add("PointOfSalePhoneNumber", request.PointOfSalePhoneNumber);
         }
+
 
         sql += " ORDER BY created_on_utc DESC";
 

@@ -26,7 +26,7 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
         const string sql = @"
             SELECT 
                 id AS Id,
-                point_of_sale_id AS PointOfSaleId,
+                point_of_sale_id AS PointOfSalePhoneNumber,
                 distributor AS Distributor,
                 delivery_address_city AS DeliveryAddressCity,
                 delivery_address_street AS DeliveryAddressStreet,
@@ -107,7 +107,7 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
         var fullOrder = new OrderResponse
         {
             Id = order.Id,
-            PointOfSaleId = order.PointOfSaleId,
+            PointOfSalePhoneNumber = order.PointOfSalePhoneNumber,
             Distributor = order.Distributor,
             DeliveryAddressCity = order.DeliveryAddressCity,
             DeliveryAddressStreet = order.DeliveryAddressStreet,

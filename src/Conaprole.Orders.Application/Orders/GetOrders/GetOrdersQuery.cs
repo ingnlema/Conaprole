@@ -7,5 +7,5 @@ public sealed record GetOrdersQuery(
     DateTime? To,
     int? Status,
     string? Distributor,
-    Guid? PointOfSaleId
+    string? PointOfSalePhoneNumber
 ) : IQuery<List<OrderSummaryResponse>>;

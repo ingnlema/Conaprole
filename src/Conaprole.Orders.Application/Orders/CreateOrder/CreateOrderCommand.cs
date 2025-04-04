@@ -3,7 +3,7 @@ using Conaprole.Orders.Application.Abstractions.Messaging;
 namespace Conaprole.Orders.Application.Orders.CreateOrder;
 
 public record CreateOrderCommand(
-    Guid PointOfSaleId,
+    string PointOfSalePhoneNumber,
     string Distributor,
     string City,
     string Street,

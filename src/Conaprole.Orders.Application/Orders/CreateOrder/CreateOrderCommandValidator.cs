@@ -7,7 +7,9 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
     {
-        RuleFor(c => c.PointOfSaleId).NotEmpty();
+        RuleFor(c => c.PointOfSalePhoneNumber)
+            .NotEmpty().WithMessage("Phone number is required.")
+            .MaximumLength(20);
         RuleFor(c => c.Distributor).NotEmpty();
         RuleFor(c => c.City).NotEmpty();
         RuleFor(c => c.Street).NotEmpty();
@@ -25,7 +27,7 @@ public class CreateOrderLineCommandValidator : AbstractValidator<CreateOrderLine
 {
     public CreateOrderLineCommandValidator()
     {
-        RuleFor(ol => ol.ProductId).NotEmpty();
+        RuleFor(ol => ol.ExternalProductId).NotEmpty();
         RuleFor(ol => ol.Quantity).GreaterThan(0);
     }
 }

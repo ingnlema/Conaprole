@@ -1,7 +1,7 @@
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
 public record CreateOrderRequest(
-    Guid PointOfSaleId,
+    string PointOfSalePhoneNumber,
     string Distributor,
     string City,
     string Street,

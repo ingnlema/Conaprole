@@ -1,3 +1,3 @@
 namespace Conaprole.Orders.Domain.Orders;
 
-public record PointOfSale(Guid Id);
+public record PointOfSale(string PhoneNumber);

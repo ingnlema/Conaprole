@@ -4,7 +4,7 @@ public sealed class OrderResponse
 {
     public Guid Id { get; init; }
     
-    public Guid PointOfSaleId { get; init; }
+    public string PointOfSalePhoneNumber { get; init; }
     
     public required string Distributor { get; init; }
     

@@ -54,8 +54,10 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("distributor");
 
-                    b.Property<Guid>("PointOfSale")
-                        .HasColumnType("uuid")
+                    b.Property<string>("PointOfSale")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("point_of_sale_id");
 
                     b.Property<DateTime?>("RejectedOnUtc")

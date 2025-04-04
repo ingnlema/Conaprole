@@ -39,14 +39,14 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> CreateOrder(CreateOrderRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateOrderCommand(
-            request.PointOfSaleId,
+            request.PointOfSalePhoneNumber,
             request.Distributor,
             request.City,
             request.Street,
             request.ZipCode,
             request.CurrencyCode,
             request.OrderLines
-                .Select(ol => new CreateOrderLineCommand(ol.ProductId, ol.Quantity))
+                .Select(ol => new CreateOrderLineCommand(ol.ExternalProductId, ol.Quantity))
                 .ToList());
 
         var result = await _sender.Send(command, cancellationToken);
@@ -67,7 +67,7 @@ public class OrdersController : ControllerBase
             request.To,
             request.Status,
             request.Distributor,
-            request.PointOfSaleId);
+            request.PointOfSalePhoneNumber);
 
         var result = await _sender.Send(query, cancellationToken);
 
