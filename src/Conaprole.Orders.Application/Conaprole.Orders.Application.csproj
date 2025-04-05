@@ -17,4 +17,8 @@
       <ProjectReference Include="..\Conaprole.Orders.Domain\Conaprole.Orders.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="Conaprole.Orders.Application.UnitTests" />
+    </ItemGroup>
+
 </Project>
