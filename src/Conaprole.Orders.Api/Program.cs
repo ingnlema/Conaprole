@@ -30,6 +30,18 @@ builder.Services.AddApplication();
 Console.WriteLine("DB: " + builder.Configuration.GetConnectionString("Database"));
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -50,6 +62,8 @@ if (app.Environment.IsDevelopment())
     // REMARK: Uncomment if you want to seed initial data.
     //app.SeedData();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 

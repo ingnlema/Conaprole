@@ -3,7 +3,6 @@
     image: conaprole.orders.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - APPLY_MIGRATIONS=true
     build:
       context: .
       dockerfile: src/Conaprole.Orders.Api/Dockerfile
