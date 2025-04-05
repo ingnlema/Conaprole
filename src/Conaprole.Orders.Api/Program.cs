@@ -60,6 +60,7 @@ if (applyMigrations)
 if (app.Environment.IsDevelopment())
 {
     // REMARK: Uncomment if you want to seed initial data.
+    app.ApplyMigrations();
     //app.SeedData();
 }
 
@@ -75,3 +76,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program;
+
