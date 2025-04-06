@@ -33,14 +33,14 @@ internal sealed class AddOrderLineToOrderCommandHandler : ICommandHandler<AddOrd
         var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
         if (order is null)
         {
-            return Result.Failure<Guid>(new Error("Order.NotFound", "El pedido no fue encontrado."));
+            return Result.Failure<Guid>(new Error("Order.NotFound", "Order not found."));
         }
         
 
         var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
         if (product is null)
         {
-            return Result.Failure<Guid>(new Error("Produc.tNotFound", "El producto no fue encontrado"));
+            return Result.Failure<Guid>(new Error("Product.NotFound", "Product not found."));
         }
         
         var quantity = new Quantity(request.Quantity);

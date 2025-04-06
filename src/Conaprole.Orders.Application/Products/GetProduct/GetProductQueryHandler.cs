@@ -38,7 +38,7 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
         if (product is null)
         {
             return Result.Failure<ProductResponse>(
-                new Error("Product.NotFound", "El producto no fue encontrado.")
+                new Error("Product.NotFound", "Product not found.")
             );
         }
         

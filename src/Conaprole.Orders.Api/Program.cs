@@ -1,12 +1,15 @@
+using Conaprole.Orders.Api.Controllers.Orders.Examples;
 using Conaprole.Orders.Api.Extensions;
 using Conaprole.Orders.Application;
 using Conaprole.Orders.Infrastructure;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateOrderStatusRequestExample>();
 builder.Services.AddSwaggerGen(c =>
 {
     try
@@ -18,6 +21,7 @@ builder.Services.AddSwaggerGen(c =>
         });
 
         c.EnableAnnotations();
+        c.ExampleFilters();
     }
     catch (Exception ex)
     {

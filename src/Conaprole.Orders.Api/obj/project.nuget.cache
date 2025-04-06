@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "wMbuxuD7+tw=",
+  "dgSpecHash": "mPanF2UqTCQ=",
   "success": true,
   "projectFilePath": "/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/Conaprole.Orders.Api.csproj",
   "expectedPackageFiles": [
@@ -51,8 +51,11 @@
     "/Users/nicolaslemaacosta/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/npgsql/9.0.2/npgsql.9.0.2.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/npgsql.entityframeworkcore.postgresql/9.0.3/npgsql.entityframeworkcore.postgresql.9.0.3.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/scrutor/3.3.0/scrutor.3.3.0.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/swashbuckle.aspnetcore/8.0.0/swashbuckle.aspnetcore.8.0.0.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/swashbuckle.aspnetcore.annotations/8.0.0/swashbuckle.aspnetcore.annotations.8.0.0.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/swashbuckle.aspnetcore.filters/8.0.0/swashbuckle.aspnetcore.filters.8.0.0.nupkg.sha512",
+    "/Users/nicolaslemaacosta/.nuget/packages/swashbuckle.aspnetcore.filters.abstractions/8.0.0/swashbuckle.aspnetcore.filters.abstractions.8.0.0.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/swashbuckle.aspnetcore.swagger/8.0.0/swashbuckle.aspnetcore.swagger.8.0.0.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/swashbuckle.aspnetcore.swaggergen/8.0.0/swashbuckle.aspnetcore.swaggergen.8.0.0.nupkg.sha512",
     "/Users/nicolaslemaacosta/.nuget/packages/swashbuckle.aspnetcore.swaggerui/8.0.0/swashbuckle.aspnetcore.swaggerui.8.0.0.nupkg.sha512",

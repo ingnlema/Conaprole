@@ -55,4 +55,25 @@ public class Order : Entity
         Price += orderLine.SubTotal;
     }
     
+    public void UpdateStatus(Status newStatus, DateTime updateTime)
+    {
+        Status = newStatus;
+        switch (newStatus)
+        {
+            case Status.Confirmed:
+                ConfirmedOnUtc = updateTime;
+                break;
+            case Status.Delivered:
+                DeliveredOnUtc = updateTime;
+                break;
+            case Status.Canceled:
+                CanceledOnUtc = updateTime;
+                break;
+            case Status.Rejected:
+                RejectedOnUtc = updateTime;
+                break;
+        }
+    }
+
+    
 }

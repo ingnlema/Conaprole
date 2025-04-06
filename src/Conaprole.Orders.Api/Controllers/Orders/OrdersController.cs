@@ -1,11 +1,16 @@
+using Conaprole.Orders.Api.Controllers.Orders;
+using Conaprole.Orders.Api.Controllers.Orders.Examples;
 using Conaprole.Orders.Application.Orders.CreateOrder;
 using Conaprole.Orders.Application.Orders.GetOrder;
 using Conaprole.Orders.Application.Orders.GetOrders;
+using Conaprole.Orders.Application.Orders.UpdateOrderStatus;
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Orders;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
@@ -56,6 +61,29 @@ public class OrdersController : ControllerBase
 
         return CreatedAtAction(nameof(GetOrder), new { id = result.Value }, result.Value);
     }
+    
+    [HttpPut("{id}/status")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [SwaggerRequestExample(typeof(UpdateOrderStatusRequest), typeof(UpdateOrderStatusRequestExample))]
+    public async Task<IActionResult> UpdateOrderStatus(Guid id, [FromBody] UpdateOrderStatusRequest request, CancellationToken cancellationToken)
+    {
+        if (!request.NewStatus.HasValue)
+            return BadRequest(new Error("InvalidInput", "El campo NewStatus es obligatorio."));
+        
+        if (!Enum.IsDefined(typeof(Status), request.NewStatus.Value))
+            return BadRequest(new Error("InvalidStatus", "El valor de NewStatus no es válido."));
+
+        var newStatus = (Status)request.NewStatus.Value;
+        var command = new UpdateOrderStatusCommand(id, newStatus);
+        var result = await _sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+
+        return NoContent();
+    }
+
     
     [HttpGet]
     [SwaggerOperation(Summary = "Gets orders with optional filters", Description = "Filter by date, status, distributor or point of sale.")]
