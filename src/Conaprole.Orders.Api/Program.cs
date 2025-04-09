@@ -31,7 +31,6 @@ builder.Services.AddSwaggerGen(c =>
 
 
 builder.Services.AddApplication();
-Console.WriteLine("DB: " + builder.Configuration.GetConnectionString("Database"));
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCors(options =>
@@ -51,7 +50,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conaprole Orders API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conaprole Orders API v1.1");
 });
 
 var applyMigrations = builder.Configuration.GetValue<bool>("APPLY_MIGRATIONS");
