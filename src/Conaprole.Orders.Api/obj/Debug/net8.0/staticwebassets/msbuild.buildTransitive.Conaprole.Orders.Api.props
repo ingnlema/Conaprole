@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../buildMultiTargeting/Conaprole.Orders.Api.props" />
-</Project>
