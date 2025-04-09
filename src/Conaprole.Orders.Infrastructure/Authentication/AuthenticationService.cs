@@ -32,13 +32,21 @@ internal sealed class AuthenticationService : IAuthenticationService
                 Type = PasswordCredentialType
             }
         };
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                "users",
+                userRepresentationModel,
+                cancellationToken);
 
-        var response = await _httpClient.PostAsJsonAsync(
-            "users",
-            userRepresentationModel,
-            cancellationToken);
+            return ExtractIdentityIdFromLocationHeader(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
 
-        return ExtractIdentityIdFromLocationHeader(response);
     }
 
     private static string ExtractIdentityIdFromLocationHeader(

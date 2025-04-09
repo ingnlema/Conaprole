@@ -48,7 +48,10 @@
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Mono.TextTemplating.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Npgsql.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Scrutor.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Swashbuckle.AspNetCore.Annotations.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Swashbuckle.AspNetCore.Filters.dll
+/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Swashbuckle.AspNetCore.Filters.Abstractions.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Swashbuckle.AspNetCore.Swagger.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Api/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll

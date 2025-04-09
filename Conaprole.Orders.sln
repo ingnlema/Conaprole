@@ -21,7 +21,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conaprole.Orders.Domain.Uni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conaprole.Orders.Application.UnitTests", "test\Conaprole.Orders.Application.UnitTests\Conaprole.Orders.Application.UnitTests.csproj", "{9BCC00E7-1733-4975-8417-8354943E0F1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conaprole.Ordes.Application.IntegrationTests", "test\Conaprole.Ordes.Application.IntegrationTests\Conaprole.Ordes.Application.IntegrationTests.csproj", "{E542F868-A8A9-4B08-95C2-F081EF7D0872}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conaprole.Orders.Application.IntegrationTests", "test\Conaprole.Orders.Application.IntegrationTests\Conaprole.Orders.Application.IntegrationTests.csproj", "{E542F868-A8A9-4B08-95C2-F081EF7D0872}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conaprole.Orders.Api.FunctionalTests", "test\Conaprole.Orders.Api.FunctionalTests\Conaprole.Orders.Api.FunctionalTests.csproj", "{F9942DFF-8584-4685-B4C1-60D55C2D5696}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{E542F868-A8A9-4B08-95C2-F081EF7D0872}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E542F868-A8A9-4B08-95C2-F081EF7D0872}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E542F868-A8A9-4B08-95C2-F081EF7D0872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9942DFF-8584-4685-B4C1-60D55C2D5696}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9942DFF-8584-4685-B4C1-60D55C2D5696}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9942DFF-8584-4685-B4C1-60D55C2D5696}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9942DFF-8584-4685-B4C1-60D55C2D5696}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{635BC69C-C648-4ACD-B807-BD9310A59EE8} = {8EDC0130-273A-42D1-BE90-91152A4A6BD9}
@@ -66,5 +72,6 @@ Global
 		{24BBEC65-10A5-4C35-BE6B-FA345D610FBC} = {2F00C85F-0BB7-4767-9770-834ABED89912}
 		{9BCC00E7-1733-4975-8417-8354943E0F1A} = {2F00C85F-0BB7-4767-9770-834ABED89912}
 		{E542F868-A8A9-4B08-95C2-F081EF7D0872} = {2F00C85F-0BB7-4767-9770-834ABED89912}
+		{F9942DFF-8584-4685-B4C1-60D55C2D5696} = {2F00C85F-0BB7-4767-9770-834ABED89912}
 	EndGlobalSection
 EndGlobal

@@ -13,11 +13,12 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Conaprole.Orders.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+778fc9cd7c531f41f0bd28c89b563c0f1346ccbd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bfa560a5cbf5b87d18fe69751bc222e585efe471")]
 [assembly: System.Reflection.AssemblyProductAttribute("Conaprole.Orders.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Conaprole.Orders.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Conaprole.Ordes.Application.IntegrationTests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Conaprole.Orders.Application.IntegrationTests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Conaprole.Orders.Api.FunctionalTests")]
 
 // Generado por la clase WriteCodeFragment de MSBuild.
 

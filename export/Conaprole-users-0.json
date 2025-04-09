@@ -1,0 +1,168 @@
+{
+  "realm" : "Conaprole",
+  "users" : [ {
+    "id" : "e2779dc0-10aa-478f-be1d-5825ab089948",
+    "username" : "dummy.user@example.com",
+    "firstName" : "Dummy",
+    "lastName" : "User",
+    "email" : "dummy.user@example.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1742749496,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "5f38b97d-0b23-4bd6-9376-bcf694597016",
+      "type" : "password",
+      "createdDate" : 1742749497838,
+      "secretData" : "{\"value\":\"34ugBbiiz2ukFK7xsfdVX6NQcfKdJbTfBermr4WBtlw=\",\"salt\":\"VXwDwXMSiUvMfN5lzaNYwQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "1249e261-3ae4-49a8-98ac-38273b7f6c09",
+    "username" : "gabriel.lema@correo.ucu.edu.uy",
+    "firstName" : "Gabriel",
+    "lastName" : "Lema",
+    "email" : "gabriel.lema@correo.ucu.edu.uy",
+    "emailVerified" : true,
+    "createdTimestamp" : 1741800670782,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "f3e6a472-3e2a-4e8a-934a-1fcda0ec42e7",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1741800725159,
+      "secretData" : "{\"value\":\"QMfTdf6U6BUdTI+2W7V7t6obt3X4TDI5rE5xiXYnPEg=\",\"salt\":\"IbFa/Rw208Tp/FD7xyXM8w==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "7ae339c4-fa37-46a8-a130-4d22299a9120",
+    "username" : "login@test.com",
+    "firstName" : "test",
+    "lastName" : "test",
+    "email" : "login@test.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1744075110,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "8ba83f5b-a8fe-416b-a26b-6dbda1fae145",
+      "type" : "password",
+      "createdDate" : 1744075111860,
+      "secretData" : "{\"value\":\"VTtsT9PssMQHQlN7AlWKJCmv36oYNkjBDvEVlkF/1s4=\",\"salt\":\"Cn+8W8WkUNEu6QPb+ASDpQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "01485691-4d8e-4a80-85e5-fd62ed5e7f9b",
+    "username" : "matias.mastragelo@correo.ucu.edu.uy",
+    "firstName" : "Matias",
+    "lastName" : "Mastrangelo",
+    "email" : "matias.mastragelo@correo.ucu.edu.uy",
+    "emailVerified" : true,
+    "createdTimestamp" : 1741825393,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "4f6f87f5-2d18-4c6c-9310-a4f2fad3d36d",
+      "type" : "password",
+      "createdDate" : 1741825394456,
+      "secretData" : "{\"value\":\"l3WqEk3GwKtmSiHMcYXJCVcG6ijZG18tGA4rAnRa0ms=\",\"salt\":\"NvZ8N89ikqxv7OPqcVAEog==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "71947c92-20a2-4742-add6-36e2ebae2904",
+    "username" : "nico.test@correo.ucu.edu.uy",
+    "firstName" : "Nico",
+    "lastName" : "Test",
+    "email" : "nico.test@correo.ucu.edu.uy",
+    "emailVerified" : true,
+    "createdTimestamp" : 1744072616,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "c6212555-d75f-4be8-8f9a-adac9a3af0b4",
+      "type" : "password",
+      "createdDate" : 1744072616834,
+      "secretData" : "{\"value\":\"mNt/io2jonki/O0lh6MiGUhRTI8enjWv9PF6XEKRBKo=\",\"salt\":\"o4o15n/JRue8QmBTBr0VAg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "cc8bbb84-4627-45d6-8a60-0f04aeef6865",
+    "username" : "service-account-conaprole-admin-client",
+    "emailVerified" : false,
+    "createdTimestamp" : 1741821525920,
+    "enabled" : true,
+    "totp" : false,
+    "serviceAccountClientId" : "conaprole-admin-client",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "clientRoles" : {
+      "realm-management" : [ "manage-users", "realm-admin", "view-users" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "9c595e29-9cb8-4bdf-a4cb-d92145efe4f6",
+    "username" : "service-account-confidential-client",
+    "emailVerified" : false,
+    "createdTimestamp" : 1741800011932,
+    "enabled" : true,
+    "totp" : false,
+    "serviceAccountClientId" : "confidential-client",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "99429ac5-9470-441b-9b94-9b3f581dce87",
+    "username" : "test.user@example.com",
+    "firstName" : "Dummy",
+    "lastName" : "User",
+    "email" : "test.user@example.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1744158107,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "fc57236b-fa48-4922-82a7-4ca873a0cda4",
+      "type" : "password",
+      "createdDate" : 1744158115121,
+      "secretData" : "{\"value\":\"IBXhwjBpnPXoRwAE27tgYevu2OkZp0hkDdk9qvkawR0=\",\"salt\":\"hgY4UVZdT/mRH6B93H1UyQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":5,\"algorithm\":\"argon2\",\"additionalParameters\":{\"hashLength\":[\"32\"],\"memory\":[\"7168\"],\"type\":[\"id\"],\"version\":[\"1.3\"],\"parallelism\":[\"1\"]}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-conaprole" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

@@ -18,7 +18,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Conaprole.Ordes.Application.IntegrationTests" />
+        <InternalsVisibleTo Include="Conaprole.Orders.Application.IntegrationTests" />
+        <InternalsVisibleTo Include="Conaprole.Orders.Api.FunctionalTests" />
     </ItemGroup>
 
 </Project>

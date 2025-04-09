@@ -1,15 +1,3 @@
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/bin/Debug/net8.0/Conaprole.Orders.Domain.deps.json
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/bin/Debug/net8.0/Conaprole.Orders.Domain.dll
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/bin/Debug/net8.0/Conaprole.Orders.Domain.pdb
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/Conaprole.Orders.Domain.csproj.AssemblyReference.cache
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/Conaprole.Orders.Domain.GeneratedMSBuildEditorConfig.editorconfig
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/Conaprole.Orders.Domain.AssemblyInfoInputs.cache
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/Conaprole.Orders.Domain.AssemblyInfo.cs
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/Conaprole.Orders.Domain.csproj.CoreCompileInputs.cache
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/Conaprole.Orders.Domain.dll
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/refint/Conaprole.Orders.Domain.dll
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/Conaprole.Orders.Domain.pdb
-/Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/Conaprole.Orders.Domain/obj/Debug/net8.0/ref/Conaprole.Orders.Domain.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Domain/bin/Debug/net8.0/Conaprole.Orders.Domain.deps.json
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Domain/bin/Debug/net8.0/Conaprole.Orders.Domain.dll
 /Users/nicolaslemaacosta/RiderProjects/Conaprole.Orders/src/Conaprole.Orders.Domain/bin/Debug/net8.0/Conaprole.Orders.Domain.pdb
