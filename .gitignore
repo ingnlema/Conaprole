@@ -1,0 +1,41 @@
+# Directorios de compilación (bin y obj)
+**/bin/
+**/obj/
+
+# Archivos de configuración local y de usuario
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Configuraciones de IDEs
+.vs/
+.idea/
+*.sln.iml
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de log y temporales
+*.log
+*.tmp
+
+# Docker y datos generados por contenedores
+.containers/
+
+# NuGet y dependencias restauradas
+*.nupkg
+**/packages/
+
+# Cachés y configuraciones de herramientas de análisis
+_ReSharper.Caches/
+
+# Directorio de publicación
+**/publish/
+**/Publish/
+
+
+*.DotSettings.user
+exports/
+containers/
