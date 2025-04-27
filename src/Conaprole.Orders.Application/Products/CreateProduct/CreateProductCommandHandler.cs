@@ -64,6 +64,6 @@ internal sealed class CreateProductCommandHandler
         _productRepository.Add(product);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return product.Id;
+        return Result.Success(product.Id);
     }
 }

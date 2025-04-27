@@ -1,4 +1,5 @@
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Exceptions;
 using Conaprole.Orders.Domain.Shared;
 using Conaprole.Orders.Domain.Products;
 
@@ -21,6 +22,15 @@ public class OrderLine : Entity
         CreatedOnUtc = createdOnUtc;
     }
     
+    internal OrderLine(Guid id, Product product, Quantity quantity, OrderId orderId, DateTime createdOnUtc) : base(id)
+    {
+        Product = product ?? throw new DomainException("Product must be provided.");
+        Quantity = quantity;
+        SubTotal = product.UnitPrice * quantity;
+        OrderId = orderId;
+        CreatedOnUtc = createdOnUtc;
+    }
+    
     private OrderLine()
     {
         
@@ -30,5 +40,12 @@ public class OrderLine : Entity
     public OrderId OrderId { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
     public Product Product { get; private set; }
+    
+    internal void UpdateQuantity(Quantity newQuantity)
+    {
+        if (newQuantity is null) throw new DomainException("Quantity must be provided.");
+        Quantity = newQuantity;
+        SubTotal = Product.UnitPrice * newQuantity;
+    }
 
 }

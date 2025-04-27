@@ -1,10 +1,15 @@
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Exceptions;
+using Conaprole.Orders.Domain.Orders.Events;
 using Conaprole.Orders.Domain.Shared;
 
 namespace Conaprole.Orders.Domain.Orders;
 
-public class Order : Entity
+public class Order : Entity,IAggregateRoot
 {
+    
+    private readonly List<OrderLine> _orderLines = new();
+    
     public Order(
         Guid id,
         PointOfSale pointOfSale, 
@@ -47,12 +52,42 @@ public class Order : Entity
     public DateTime? DeliveredOnUtc { get; private set; }
     public Address DeliveryAddress { get; private set; }
     
-    public List<OrderLine> OrderLines { get; private set; } = new();
+    public IReadOnlyCollection<OrderLine> OrderLines => _orderLines.AsReadOnly();
     public Money Price { get; private set; }
     
-    public void AddOrderLine(OrderLine orderLine) {
-         OrderLines.Add(orderLine);
+    public void AddOrderLine(OrderLine orderLine)
+    {
+        if (orderLine == null)
+            throw new DomainException("OrderLine must be provided.");
+
+        var productId = orderLine.Product.Id;
+        if (_orderLines.Any(l => l.Product.Id == productId))
+            throw new DomainException("Product already added to order.");
+
+        _orderLines.Add(orderLine);
         Price += orderLine.SubTotal;
+        RaiseDomainEvent(new OrderLineAddedEvent(Id, orderLine.Id, productId, orderLine.Quantity.Value));
+    }
+    
+    public void RemoveOrderLine(Guid productId)
+    {
+        var line = _orderLines.SingleOrDefault(l => l.Product.Id == productId)
+                   ?? throw new DomainException("Order line not found.");
+
+        _orderLines.Remove(line);
+        Price -= line.SubTotal;
+        RaiseDomainEvent(new OrderLineRemovedEvent(Id, line.Id, productId));
+    }
+    
+    public void UpdateOrderLineQuantity(Guid productId, Quantity newQuantity)
+    {
+        var line = _orderLines.SingleOrDefault(l => l.Product.Id == productId)
+                   ?? throw new DomainException("Order line not found.");
+
+        var oldSubtotal = line.SubTotal;
+        line.UpdateQuantity(newQuantity);
+        Price = Price - oldSubtotal + line.SubTotal;
+        RaiseDomainEvent(new OrderLineQuantityUpdatedEvent(Id, line.Id, newQuantity.Value));
     }
     
     public void UpdateStatus(Status newStatus, DateTime updateTime)
@@ -74,6 +109,8 @@ public class Order : Entity
                 break;
         }
     }
+    
+    
 
     
 }

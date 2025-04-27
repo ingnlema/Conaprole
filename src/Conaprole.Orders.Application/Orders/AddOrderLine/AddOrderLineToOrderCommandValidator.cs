@@ -6,10 +6,20 @@ public class AddOrderLineToOrderCommandValidator : AbstractValidator<AddOrderLin
 {
     public AddOrderLineToOrderCommandValidator()
     {
-        RuleFor(c => c.OrderId).NotEmpty();
-        RuleFor(c => c.ProductId).NotEmpty();
-        RuleFor(c => c.Quantity).GreaterThan(0);
-        RuleFor(c => c.UnitPrice).GreaterThan(0);
-        RuleFor(c => c.CurrencyCode).NotEmpty();
+        RuleFor(x => x.OrderId)
+            .NotEmpty().WithMessage("OrderId is required.");
+            
+        RuleFor(x => x.ProductId)
+            .NotEmpty().WithMessage("ProductId is required.");
+            
+        RuleFor(x => x.Quantity)
+            .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+            
+        RuleFor(x => x.UnitPrice)
+            .GreaterThan(0m).WithMessage("UnitPrice must be greater than zero.");
+            
+        RuleFor(x => x.CurrencyCode)
+            .NotEmpty().WithMessage("CurrencyCode is required.");
     }
 }
+

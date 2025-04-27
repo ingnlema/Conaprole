@@ -61,7 +61,7 @@ internal sealed class GetProductsQueryHandler : IQueryHandler<GetProductsQuery, 
             splitOn: "Category" 
         );
 
-        return productMap.Values.ToList();
+        return Result.Success(productMap.Values.ToList());
     }
 
     private sealed class ProductFlat

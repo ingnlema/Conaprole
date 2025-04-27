@@ -1,6 +1,6 @@
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
-public class GetOrdersRequest
+public record GetOrdersRequest
 {
     public DateTime? From { get; set; }
     public DateTime? To { get; set; }

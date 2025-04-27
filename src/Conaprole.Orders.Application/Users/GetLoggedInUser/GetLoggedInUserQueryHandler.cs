@@ -55,6 +55,6 @@ internal sealed class GetLoggedInUserQueryHandler
             return Result.Failure<UserResponse>(UserErrors.NotFound);
         }
 
-        return user;
+        return Result.Success(user);
     }
 }

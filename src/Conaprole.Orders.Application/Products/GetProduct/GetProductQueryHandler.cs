@@ -52,6 +52,6 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
         
         product.Categories = categories.ToList();
 
-        return product;
+        return Result.Success(product);
     }
 }

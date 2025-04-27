@@ -28,6 +28,6 @@ internal sealed class LogInUserCommandHandler : ICommandHandler<LogInUserCommand
             return Result.Failure<AccessTokenResponse>(UserErrors.InvalidCredentials);
         }
 
-        return new AccessTokenResponse(result.Value);
+        return Result.Success( new AccessTokenResponse(result.Value));
     }
 }

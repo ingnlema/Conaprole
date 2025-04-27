@@ -1,8 +1,11 @@
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.Controllers.Orders.Examples;
+using Conaprole.Orders.Application.Orders.AddOrderLine;
 using Conaprole.Orders.Application.Orders.CreateOrder;
 using Conaprole.Orders.Application.Orders.GetOrder;
 using Conaprole.Orders.Application.Orders.GetOrders;
+using Conaprole.Orders.Application.Orders.RemoveOrderLine;
+using Conaprole.Orders.Application.Orders.UpdateOrderLineQuantity;
 using Conaprole.Orders.Application.Orders.UpdateOrderStatus;
 using Conaprole.Orders.Domain.Abstractions;
 using Conaprole.Orders.Domain.Orders;
@@ -100,6 +103,33 @@ public class OrdersController : ControllerBase
         var result = await _sender.Send(query, cancellationToken);
 
         return Ok(result.Value);
+    }
+    
+    [HttpPost("{id}/lines")]
+    public async Task<IActionResult> AddLine(Guid id, [FromBody] AddOrderLineRequest request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var result = await _sender.Send(new AddOrderLineToOrderCommand(id, request.ProductId, request.Quantity,request.UnitPrice, request.CurrencyCode));
+        if (result.IsFailure) return NotFound(result.Error);
+        return NoContent();
+    }
+    
+    [HttpDelete("{id}/lines/{productId}")]
+    public async Task<IActionResult> RemoveLine(Guid id, Guid productId)
+    {
+        var result = await _sender.Send(new RemoveOrderLineCommand(id, productId));
+        if (result.IsFailure) return NotFound(result.Error);
+        return NoContent();
+    }
+
+    [HttpPut("{id}/lines/{productId}")]
+    public async Task<IActionResult> UpdateLineQuantity(Guid id, Guid productId, [FromBody] UpdateOrderLineQuantityRequest request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var command = new UpdateOrderLineQuantityCommand(id, productId, request.NewQuantity);
+        var result = await _sender.Send(command);
+        if (result.IsFailure) return NotFound(result.Error);
+        return NoContent();
     }
 
 

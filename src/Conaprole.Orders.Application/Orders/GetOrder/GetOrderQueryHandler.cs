@@ -124,7 +124,7 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
             OrderLines = orderLines
         };
         
-        return fullOrder;
+        return Result.Success( fullOrder);
     }
 
 

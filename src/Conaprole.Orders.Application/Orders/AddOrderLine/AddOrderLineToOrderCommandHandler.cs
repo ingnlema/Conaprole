@@ -61,6 +61,6 @@ internal sealed class AddOrderLineToOrderCommandHandler : ICommandHandler<AddOrd
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         
-        return orderLine.Id;
+        return Result.Success(orderLine.Id);
     }
 }
