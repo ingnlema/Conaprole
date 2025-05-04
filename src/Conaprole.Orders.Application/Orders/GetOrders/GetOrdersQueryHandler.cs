@@ -22,7 +22,13 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
             SELECT
                 id                        AS Id,
                 status                    AS Status,
-                status::text              AS StatusName,             
+                CASE status
+                      WHEN 0 THEN 'Created'
+                      WHEN 1 THEN 'Confirmed'
+                      WHEN 2 THEN 'Delivered'
+                      WHEN -1 THEN 'Rejected'
+                      WHEN -2 THEN 'Canceled'
+                    END               AS StatusName,             
                 created_on_utc            AS CreatedOnUtc,
                 distributor               AS Distributor,
                 point_of_sale_id AS PointOfSalePhoneNumber, 

@@ -7,7 +7,7 @@ using Conaprole.Orders.Domain.Users;
 using FluentAssertions;
 
 namespace Conaprole.Orders.Api.FunctionalTests.Users;
-
+[Collection("ApiCollection")]
 public class RegisterUserTest : BaseFunctionalTest
 {
     public RegisterUserTest(FunctionalTestWebAppFactory factory)

@@ -25,15 +25,17 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
     
     public FunctionalTestWebAppFactory()
     {
+        Environment.SetEnvironmentVariable("DOCKER_DEFAULT_PLATFORM", "linux/arm64");
+        
         _dbContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:latest")
+            .WithImage("postgres:15-alpine") 
             .WithDatabase("conaprole.orders")
             .WithUsername("postgres")
             .WithPassword("postgres")
             .Build();
         
         _keycloakContainer = new KeycloakBuilder()
-            .WithImage("quay.io/keycloak/keycloak:latest") 
+            .WithImage("quay.io/keycloak/keycloak:21.1.1") 
             .WithResourceMapping(
                 new FileInfo(".files/conaprole-realm-export.json"),
                 new FileInfo("/opt/keycloak/data/import/realm.json"))
