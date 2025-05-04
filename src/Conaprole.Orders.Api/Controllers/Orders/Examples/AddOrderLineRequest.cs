@@ -1,19 +1,12 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace Conaprole.Orders.Api.Controllers.Orders.Examples;
-
-public record AddOrderLineRequest
+// File: Conaprole.Orders.Api/Controllers/Orders/AddOrderLineRequest.cs
+namespace Conaprole.Orders.Api.Controllers.Orders
 {
-    [Required]
-    public Guid ProductId { get; init; }
-
-    [Required]
-    [Range(1, int.MaxValue)]
-    public int Quantity { get; init; }
-
-    [Required]
-    public string CurrencyCode { get; init; }
-
-    [Required]
-    public decimal UnitPrice { get; init; }
+    /// <summary>
+    /// Request para agregar una línea a la orden:
+    /// sólo ExternalProductId (SKU) y Quantity.
+    /// </summary>
+    public record AddOrderLineRequest(
+        string ExternalProductId,
+        int Quantity
+    );
 }

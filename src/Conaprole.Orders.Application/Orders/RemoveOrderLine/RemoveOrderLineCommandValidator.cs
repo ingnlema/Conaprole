@@ -1,16 +1,18 @@
+// File: Conaprole.Orders.Application/Orders/RemoveOrderLine/RemoveOrderLineFromOrderCommandValidator.cs
 using FluentValidation;
 
-namespace Conaprole.Orders.Application.Orders.RemoveOrderLine;
-
-public class RemoveOrderLineCommandValidator 
-    : AbstractValidator<RemoveOrderLineCommand>
+namespace Conaprole.Orders.Application.Orders.RemoveOrderLine
 {
-    public RemoveOrderLineCommandValidator()
+    public class RemoveOrderLineFromOrderCommandValidator
+        : AbstractValidator<RemoveOrderLineFromOrderCommand>
     {
-        RuleFor(x => x.OrderId)
-            .NotEmpty().WithMessage("OrderId is required.");
-            
-        RuleFor(x => x.ProductId)
-            .NotEmpty().WithMessage("ProductId is required.");
+        public RemoveOrderLineFromOrderCommandValidator()
+        {
+            RuleFor(x => x.OrderId)
+                .NotEmpty().WithMessage("OrderId is required.");
+
+            RuleFor(x => x.OrderLineId)
+                .NotEmpty().WithMessage("OrderLineId is required.");
+        }
     }
 }

@@ -9,6 +9,7 @@ using Conaprole.Orders.Application.Orders.UpdateOrderLineQuantity;
 using Conaprole.Orders.Application.Orders.UpdateOrderStatus;
 using Conaprole.Orders.Domain.Abstractions;
 using Conaprole.Orders.Domain.Orders;
+using Conaprole.Orders.Domain.Products;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -104,31 +105,82 @@ public class OrdersController : ControllerBase
 
         return Ok(result.Value);
     }
-    
-    [HttpPost("{id}/lines")]
-    public async Task<IActionResult> AddLine(Guid id, [FromBody] AddOrderLineRequest request)
+
+    /// <summary>
+    /// POST /api/Orders/{orderId}/lines
+    /// Ahora sólo necesita { ExternalProductId, Quantity }.
+    /// </summary>
+    [HttpPost("{orderId:guid}/lines")]
+    public async Task<IActionResult> AddLine(
+        Guid orderId,
+        [FromBody] AddOrderLineRequest request)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        var result = await _sender.Send(new AddOrderLineToOrderCommand(id, request.ProductId, request.Quantity,request.UnitPrice, request.CurrencyCode));
-        if (result.IsFailure) return NotFound(result.Error);
-        return NoContent();
-    }
-    
-    [HttpDelete("{id}/lines/{productId}")]
-    public async Task<IActionResult> RemoveLine(Guid id, Guid productId)
-    {
-        var result = await _sender.Send(new RemoveOrderLineCommand(id, productId));
-        if (result.IsFailure) return NotFound(result.Error);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        var command = new AddOrderLineToOrderCommand(
+            orderId,
+            new ExternalProductId(request.ExternalProductId),
+            request.Quantity
+        );
+
+        var result = await _sender.Send(command);
+        if (result.IsFailure)
+            return NotFound(result.Error);
+
         return NoContent();
     }
 
-    [HttpPut("{id}/lines/{productId}")]
-    public async Task<IActionResult> UpdateLineQuantity(Guid id, Guid productId, [FromBody] UpdateOrderLineQuantityRequest request)
+    /// <summary>
+    /// DELETE /api/Orders/{orderId}/lines/{orderLineId}
+    /// Permite eliminar una línea existente por su Id.
+    /// </summary>
+    [HttpDelete("{orderId:guid}/lines/{orderLineId:guid}")]
+    public async Task<IActionResult> DeleteLine(
+        Guid orderId,
+        Guid orderLineId)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        var command = new UpdateOrderLineQuantityCommand(id, productId, request.NewQuantity);
-        var result = await _sender.Send(command);
-        if (result.IsFailure) return NotFound(result.Error);
+        var result = await _sender.Send(new RemoveOrderLineFromOrderCommand(
+            orderId,
+            orderLineId
+        ));
+
+        if (result.IsFailure)
+        {
+            return result.Error.Code switch
+            {
+                "OrderLine.LastLine" => BadRequest(result.Error),
+                "OrderLine.NotFound" => NotFound(result.Error),
+                _                    => BadRequest(result.Error)
+            };
+        }
+
+        return NoContent();
+    }
+
+
+    /// <summary>
+    /// PUT /api/Orders/{orderId}/lines/{orderLineId}
+    /// Sólo necesita la nueva cantidad en el body.
+    /// </summary>
+    [HttpPut("{orderId:guid}/lines/{orderLineId:guid}")]
+    public async Task<IActionResult> UpdateLineQuantity(
+        Guid orderId,
+        Guid orderLineId,
+        [FromBody] UpdateOrderLineQuantityRequest request)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _sender.Send(new UpdateOrderLineQuantityCommand(
+            orderId,
+            orderLineId,
+            request.NewQuantity
+        ));
+
+        if (result.IsFailure)
+            return NotFound(result.Error);
+
         return NoContent();
     }
 

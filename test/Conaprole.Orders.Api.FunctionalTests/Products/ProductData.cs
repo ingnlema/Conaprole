@@ -1,13 +1,13 @@
-
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.Controllers.Products;
 
 namespace Conaprole.Orders.Api.FunctionalTests.Products
 {
-    /// <summary>
-    /// Helper para test de productos: datos + creación vía API.
-    /// </summary>
     public static class ProductData
     {
         public const string ExternalProductId = "GLOBAL_SKU";
@@ -17,11 +17,8 @@ namespace Conaprole.Orders.Api.FunctionalTests.Products
         public const string Description       = "Producto para todos los tests funcionales";
         public static readonly List<string> Categories = new() { "Global" };
 
-        /// <summary>
-        /// Request preconfigurada para crear el producto global.
-        /// </summary>
         public static CreateProductRequest CreateRequest =>
-            new CreateProductRequest(
+            new(
                 ExternalProductId,
                 Name,
                 UnitPrice,
@@ -30,20 +27,28 @@ namespace Conaprole.Orders.Api.FunctionalTests.Products
                 new List<string>(Categories)
             );
 
-        /// <summary>
-        /// Public helper que crea el producto a través de la API y devuelve su Id.
-        /// </summary>
-        public static async Task<Guid> CreateAsync(HttpClient client)
+        public static async Task<Guid> CreateAsync(HttpClient client) =>
+            await CreateAsync(client, ExternalProductId);
+
+        public static async Task<Guid> CreateAsync(HttpClient client, string externalProductId)
         {
-            var resp = await client.PostAsJsonAsync("api/Products", CreateRequest);
-            resp.EnsureSuccessStatusCode();
-            return await resp.Content.ReadFromJsonAsync<Guid>();
+            var req = new CreateProductRequest(
+                externalProductId,
+                Name,
+                UnitPrice,
+                CurrencyCode,
+                Description,
+                new List<string>(Categories)
+            );
+            var response = await client.PostAsJsonAsync("api/Products", req);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<Guid>();
         }
 
-        /// <summary>
-        /// Convenience: genera una línea de pedido apuntando a este producto.
-        /// </summary>
         public static OrderLineRequest OrderLine(int quantity = 1) =>
-            new OrderLineRequest(ExternalProductId, quantity);
+            new(ExternalProductId, quantity);
+
+        public static OrderLineRequest OrderLine(string externalProductId, int quantity) =>
+            new(externalProductId, quantity);
     }
 }

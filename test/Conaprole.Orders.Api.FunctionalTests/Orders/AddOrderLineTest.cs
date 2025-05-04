@@ -1,12 +1,16 @@
-
+// File: Conaprole.Orders.Api.FunctionalTests/Orders/AddOrderLineTest.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
+using FluentAssertions;
+using Xunit;
+
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Api.FunctionalTests.Products;
 using Conaprole.Orders.Application.Orders.GetOrder;
-using FluentAssertions;
-
 
 namespace Conaprole.Orders.Api.FunctionalTests.Orders
 {
@@ -14,45 +18,52 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
     public class AddOrderLineTest : BaseFunctionalTest
     {
         public AddOrderLineTest(FunctionalTestWebAppFactory factory)
-            : base(factory)
-        {
-        }
+            : base(factory) { }
 
         [Fact]
-        public async Task CreateOrder_And_GetById_ShouldReturnCreatedThenOk()
+        public async Task CreateOrder_AddLine_ShouldReturnNoContent_And_OrderContainsBothLines()
         {
-            // 1) Crear el producto global via API y obtener su GUID interno
-            var productId = await ProductData.CreateAsync(HttpClient);
+            var sku1 = $"SKU-{Guid.NewGuid():N}";
+            await ProductData.CreateAsync(HttpClient, sku1);
+            var initialLine = new OrderLineRequest(sku1, 2);
 
-            // 2) Armar la línea usando el ExternalProductId de ProductData
-            var line = ProductData.OrderLine(quantity: 2);
+            var sku2 = $"SKU-{Guid.NewGuid():N}";
+            await ProductData.CreateAsync(HttpClient, sku2);
+            var newLine = new OrderLineRequest(sku2, 3);
 
-            // 3) Crear la orden con esa línea
-            var request = new CreateOrderRequest(
+            var createRequest = new CreateOrderRequest(
                 "+59891234567",
                 "TestDistributor",
                 "Montevideo",
                 "Test Street",
                 "11200",
                 "UYU",
-                new List<OrderLineRequest> { line }
+                new List<OrderLineRequest> { initialLine }
             );
-
-            // Act – Create
-            var createResponse = await HttpClient.PostAsJsonAsync("api/Orders", request);
-
-            // Assert – Created
+            var createResponse = await HttpClient.PostAsJsonAsync("api/Orders", createRequest);
             createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             var orderId = await createResponse.Content.ReadFromJsonAsync<Guid>();
 
-            // Act – Get by ID
-            var getResponse = await HttpClient.GetAsync($"api/Orders/{orderId}");
+            var addLineResponse = await HttpClient.PostAsJsonAsync(
+                $"api/Orders/{orderId}/lines",
+                new AddOrderLineRequest(newLine.ExternalProductId, newLine.Quantity)
+            );
+            addLineResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-            // Assert – OK y contenido correcto
+            var getResponse = await HttpClient.GetAsync($"api/Orders/{orderId}");
             getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             var order = await getResponse.Content.ReadFromJsonAsync<OrderResponse>();
-            order!.Id.Should().Be(orderId);
-            order.Distributor.Should().Be("TestDistributor");
+
+            order!.OrderLines.Should().HaveCount(2);
+            order.OrderLines.Any(l =>
+                l.Product.ExternalProductId == sku1 &&
+                l.Quantity == 2
+            ).Should().BeTrue();
+            order.OrderLines.Any(l =>
+                l.Product.ExternalProductId == sku2 &&
+                l.Quantity == 3
+            ).Should().BeTrue();
         }
     }
 }
+

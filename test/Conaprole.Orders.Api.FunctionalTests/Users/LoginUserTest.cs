@@ -33,17 +33,16 @@ public class LoginUserTest : BaseFunctionalTest
     {
         var registerRequest = new RegisterUserRequest(Email, "first", "last", Password);
     
-        // Realizamos el registro y almacenamos la respuesta para inspeccionarla.
+
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
     
-        // Puedes usar Assert para asegurarte de que el registro se realizó correctamente (o al menos obtener el contenido)
-        // Por ejemplo, si esperas un 200 OK, podrías usar:
+
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     
-        // También podrías leer el contenido para depuración
+
         var registerContent = await registerResponse.Content.ReadAsStringAsync();
         Debug.WriteLine("Register Response Content: " + registerContent);
-        // O utilizar algún Assert adicional que te ayude a inspeccionar lo recibido:
+
         registerContent.Should().NotBeNullOrEmpty("porque se espera que el registro devuelva información del usuario creado");
     
         var loginRequest = new LogInUserRequest(Email, Password);

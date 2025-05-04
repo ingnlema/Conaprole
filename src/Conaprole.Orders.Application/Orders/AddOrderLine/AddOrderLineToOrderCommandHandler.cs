@@ -1,66 +1,58 @@
+
 using Conaprole.Orders.Application.Abstractions.Messaging;
 using Conaprole.Orders.Application.Abstractions.Clock;
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Exceptions;
 using Conaprole.Orders.Domain.Orders;
-using Conaprole.Orders.Domain.Shared; 
-using Conaprole.Orders.Domain.Products;
-using MediatR;
 
-namespace Conaprole.Orders.Application.Orders.AddOrderLine;
 
-internal sealed class AddOrderLineToOrderCommandHandler : ICommandHandler<AddOrderLineToOrderCommand, Guid>
+namespace Conaprole.Orders.Application.Orders.AddOrderLine
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IProductRepository _productRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IDateTimeProvider _dateTimeProvider;
-    
-    public AddOrderLineToOrderCommandHandler(
-        IOrderRepository orderRepository,
-        IProductRepository productRepository,
-        IUnitOfWork unitOfWork,
-        IDateTimeProvider dateTimeProvider)
+    internal sealed class AddOrderLineToOrderCommandHandler
+        : ICommandHandler<AddOrderLineToOrderCommand, Guid>
     {
-        _orderRepository = orderRepository;
-        _productRepository = productRepository;
-        _unitOfWork = unitOfWork;
-        _dateTimeProvider = dateTimeProvider;
-    }
-    
-    public async Task<Result<Guid>> Handle(AddOrderLineToOrderCommand request, CancellationToken cancellationToken)
-    {
+        private readonly IOrderRepository  _orderRepository;
+        private readonly IUnitOfWork       _unitOfWork;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
-        if (order is null)
+        public AddOrderLineToOrderCommandHandler(
+            IOrderRepository orderRepository,
+            IUnitOfWork unitOfWork,
+            IDateTimeProvider dateTimeProvider)
         {
-            return Result.Failure<Guid>(new Error("Order.NotFound", "Order not found."));
+            _orderRepository  = orderRepository;
+            _unitOfWork       = unitOfWork;
+            _dateTimeProvider = dateTimeProvider;
         }
-        
 
-        var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken);
-        if (product is null)
+        public async Task<Result<Guid>> Handle(
+            AddOrderLineToOrderCommand request,
+            CancellationToken cancellationToken)
         {
-            return Result.Failure<Guid>(new Error("Product.NotFound", "Product not found."));
-        }
-        
-        var quantity = new Quantity(request.Quantity);
-        var currency = Currency.FromCode(request.CurrencyCode);
+            try
+            {
+                var newLineId = await _orderRepository.AddOrderLineAsync(
+                    request.OrderId,
+                    request.ExternalProductId,
+                    request.Quantity,
+                    _dateTimeProvider.UtcNow,
+                    cancellationToken
+                );
 
-        var subTotal = new Money(request.UnitPrice * request.Quantity, currency);
-        
-        var orderLine = new OrderLine(
-            Guid.NewGuid(),
-            quantity,
-            subTotal,
-            product,
-            new OrderId(order.Id), 
-            _dateTimeProvider.UtcNow
-        );
-        
-        order.AddOrderLine(orderLine);
-        
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-        
-        return Result.Success(orderLine.Id);
+                if (newLineId is null)
+                    return Result.Failure<Guid>(new Error(
+                        "Order.NotFound",
+                        "Order or Product not found."));
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result.Success(newLineId.Value);
+            }
+            catch (DomainException ex) when (ex.Message.Contains("already added"))
+            {
+                return Result.Failure<Guid>(new Error(
+                    "OrderLine.Duplicate",
+                    ex.Message));
+            }
+        }
     }
 }
