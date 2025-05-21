@@ -30,13 +30,19 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var sku2 = $"SKU-{Guid.NewGuid():N}";
             await ProductData.CreateAsync(HttpClient, sku2);
 
+            var distributorPhone = "+59897777777";
+            var pointOfSalePhone = "+59898888888";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             var line1 = new OrderLineRequest(sku1, 1);
             var line2 = new OrderLineRequest(sku2, 2);
             var createResp = await HttpClient.PostAsJsonAsync(
                 "api/Orders",
                 new CreateOrderRequest(
-                    "+59897777777",
-                    "LineDist",
+                    pointOfSalePhone,
+                    distributorPhone,
                     "City",
                     "Street",
                     "77777",
@@ -74,12 +80,18 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var sku = $"SKU-{Guid.NewGuid():N}";
             await ProductData.CreateAsync(HttpClient, sku);
 
+            var distributorPhone = "+59897777777";
+            var pointOfSalePhone = "+59898888888";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             var line = new OrderLineRequest(sku, 1);
             var createResp = await HttpClient.PostAsJsonAsync(
                 "api/Orders",
                 new CreateOrderRequest(
-                    "+59897777777",
-                    "LineDist",
+                    pointOfSalePhone,
+                    distributorPhone,
                     "City",
                     "Street",
                     "77777",

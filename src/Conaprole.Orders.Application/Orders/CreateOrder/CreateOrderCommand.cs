@@ -4,7 +4,7 @@ namespace Conaprole.Orders.Application.Orders.CreateOrder;
 
 public record CreateOrderCommand(
     string PointOfSalePhoneNumber,
-    string Distributor,
+    string DistributorPhoneNumber,
     string City,
     string Street,
     string ZipCode,

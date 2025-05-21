@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
@@ -20,14 +19,20 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task GetOrders_FilterByStatus_ShouldReturnOnlyConfirmed()
         {
+            var distributorPhone = "+59892222222";
+            var pointOfSalePhone = "+59895555555";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             // 1) Crear el producto global y generar la línea de pedido
             await ProductData.CreateAsync(HttpClient);
             var line = ProductData.OrderLine(1);
 
             // 2) Crear la orden usando ese producto
             var createReq = new CreateOrderRequest(
-                "+59892222222",
-                "DistB",
+                pointOfSalePhone,
+                distributorPhone,
                 "City",
                 "Street",
                 "22222",

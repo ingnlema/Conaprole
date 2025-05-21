@@ -20,25 +20,27 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
 
         var sql = """
             SELECT
-                id                        AS Id,
-                status                    AS Status,
-                CASE status
-                      WHEN 0 THEN 'Created'
-                      WHEN 1 THEN 'Confirmed'
-                      WHEN 2 THEN 'Delivered'
-                      WHEN -1 THEN 'Rejected'
-                      WHEN -2 THEN 'Canceled'
-                    END               AS StatusName,             
-                created_on_utc            AS CreatedOnUtc,
-                distributor               AS Distributor,
-                point_of_sale_id AS PointOfSalePhoneNumber, 
-                delivery_address_city                      AS City,                   
-                delivery_address_street                    AS Street,               
-                delivery_address_zipcode                  AS ZipCode,                
-                price_amount              AS PriceAmount,
-                price_currency            AS PriceCurrency
-            FROM orders
-            WHERE 1=1
+            o.id AS Id,
+            o.status AS Status,
+            CASE o.status
+                  WHEN 0 THEN 'Created'
+                  WHEN 1 THEN 'Confirmed'
+                  WHEN 2 THEN 'Delivered'
+                  WHEN -1 THEN 'Rejected'
+                  WHEN -2 THEN 'Canceled'
+            END AS StatusName,             
+            o.created_on_utc AS CreatedOnUtc,
+            d.phone_number AS Distributor,
+            pos.phone_number AS PointOfSalePhoneNumber,
+            o.delivery_address_city AS City,
+            o.delivery_address_street AS Street,
+            o.delivery_address_zipcode AS ZipCode,
+            o.price_amount AS PriceAmount,
+            o.price_currency AS PriceCurrency
+        FROM orders o
+        JOIN distributor d ON d.id = o.distributor_id
+        JOIN point_of_sale pos ON pos.id = o.point_of_sale_id
+        WHERE 1=1
         """;
 
         var parameters = new DynamicParameters();
@@ -60,18 +62,19 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
         }
         if (!string.IsNullOrWhiteSpace(request.Distributor))
         {
-            sql += " AND distributor ILIKE @Distributor";
+            sql += " AND d.phone_number ILIKE @Distributor";
             parameters.Add("Distributor", $"%{request.Distributor}%");
         }
+
         if (!string.IsNullOrWhiteSpace(request.PointOfSalePhoneNumber))
         {
-            sql += " AND point_of_sale_id = @PointOfSalePhoneNumber";  
+            sql += " AND pos.phone_number = @PointOfSalePhoneNumber";
             parameters.Add("PointOfSalePhoneNumber", request.PointOfSalePhoneNumber);
         }
 
         sql += " ORDER BY created_on_utc DESC";
 
         var orders = await connection.QueryAsync<OrderSummaryResponse>(sql, parameters);
-        return Result.Success(orders.ToList());
+        return Result.Success(orders?.ToList() ?? new List<OrderSummaryResponse>());
     }
 }

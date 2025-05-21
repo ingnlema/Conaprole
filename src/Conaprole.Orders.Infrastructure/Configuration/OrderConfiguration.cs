@@ -13,22 +13,24 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 
             builder.ToTable("orders");
             builder.HasKey(o => o.Id);
-            
-            builder.Property(o => o.PointOfSale)
-                .HasConversion(
-                    ps => ps.PhoneNumber,
-                    phone => new PointOfSale(phone))
-                .HasColumnName("point_of_sale_id")
-                .IsRequired()
-                .HasMaxLength(20);
-            
-            builder.Property(o => o.Distributor)
-                .HasConversion(
-                    d => d.Value,
-                    value => new Distributor(value))
-                .HasColumnName("distributor")
+
+            builder.HasOne(o => o.Distributor)
+                .WithMany()
+                .HasForeignKey(o => o.DistributorId)
+                .HasConstraintName("FK_Orders_Distributor")
                 .IsRequired();
-            
+
+            builder.Property(o => o.DistributorId)
+                .HasColumnName("distributor_id");
+
+            builder.HasOne(o => o.PointOfSale)
+                .WithMany()
+                .HasForeignKey(o => o.PointOfSaleId)
+                .HasConstraintName("FK_Orders_PointOfSale")
+                .IsRequired();
+
+            builder.Property(o => o.PointOfSaleId)
+                .HasColumnName("point_of_sale_id");
             builder.Property(o => o.Status)
                 .HasColumnName("status")
                 .IsRequired();

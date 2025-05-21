@@ -31,6 +31,12 @@ namespace Conaprole.Orders.Application.Orders.AddOrderLine
         {
             try
             {
+                var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
+                if (order is null)
+                {
+                    return Result.Failure<Guid>(OrderErrors.NotFound);
+                }
+                
                 var newLineId = await _orderRepository.AddOrderLineAsync(
                     request.OrderId,
                     request.ExternalProductId,
@@ -40,18 +46,14 @@ namespace Conaprole.Orders.Application.Orders.AddOrderLine
                 );
 
                 if (newLineId is null)
-                    return Result.Failure<Guid>(new Error(
-                        "Order.NotFound",
-                        "Order or Product not found."));
+                    return Result.Failure<Guid>(OrderErrors.ProductNotFound);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return Result.Success(newLineId.Value);
             }
             catch (DomainException ex) when (ex.Message.Contains("already added"))
             {
-                return Result.Failure<Guid>(new Error(
-                    "OrderLine.Duplicate",
-                    ex.Message));
+                return Result.Failure<Guid>(OrderErrors.DuplicateProductInOrder);
             }
         }
     }

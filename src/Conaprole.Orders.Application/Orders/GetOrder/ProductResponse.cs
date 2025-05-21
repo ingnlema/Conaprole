@@ -7,6 +7,6 @@ public class ProductResponse
     public string Name { get; init; }
     public decimal UnitPrice { get; init; }
     public string Description { get; init; }
-    public List<string> Categories { get; init; } = new();
+    public string? Category { get; init; }
     public DateTime LastUpdated { get; init; }
 }

@@ -1,6 +1,7 @@
 using Conaprole.Orders.Application.Abstractions.Data;
 using Conaprole.Orders.Application.Abstractions.Messaging;
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Products;
 using Dapper;
 
 namespace Conaprole.Orders.Application.Products.GetProduct;
@@ -26,9 +27,10 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
                 unit_price_amount AS UnitPriceAmount,
                 unit_price_currency AS UnitPriceCurrency,
                 description AS Description,
-                last_updated AS LastUpdated
+                last_updated AS LastUpdated,
+                category AS Category
             FROM products
-            WHERE id = @ProductId";
+            WHERE id = @ProductId;";
 
         var product = await connection.QueryFirstOrDefaultAsync<ProductResponse>(
             sql,
@@ -37,20 +39,9 @@ internal sealed class GetProductQueryHandler : IQueryHandler<GetProductQuery, Pr
 
         if (product is null)
         {
-            return Result.Failure<ProductResponse>(
-                new Error("Product.NotFound", "Product not found.")
-            );
+            return Result.Failure<ProductResponse>(ProductErrors.NotFound);
         }
         
-
-        const string sqlCategories = @"
-            SELECT category 
-            FROM product_categories
-            WHERE product_id = @ProductId";
-
-        var categories = await connection.QueryAsync<string>(sqlCategories, new { ProductId = request.ProductId });
-        
-        product.Categories = categories.ToList();
 
         return Result.Success(product);
     }

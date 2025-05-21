@@ -22,11 +22,17 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task CreateOrder_And_GetById_ShouldReturnCreatedThenOk()
         {
+            var distributorPhone = "+59899887766";
+            var pointOfSalePhone = "+59891234567";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             var productId = await ProductData.CreateAsync(HttpClient);
             var line = ProductData.OrderLine(quantity: 2);
             var request = new CreateOrderRequest(
-                "+59891234567",
-                "TestDistributor",
+                pointOfSalePhone,
+                distributorPhone,
                 "Montevideo",
                 "Test Street",
                 "11200",
@@ -40,7 +46,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             var order = await getResponse.Content.ReadFromJsonAsync<OrderResponse>();
             order!.Id.Should().Be(id);
-            order.Distributor.Should().Be("TestDistributor");
+            order.DistributorPhoneNumber.Should().Be(distributorPhone);
         }
     }
 }

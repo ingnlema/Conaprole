@@ -1,4 +1,5 @@
 using Conaprole.Orders.Application.Abstractions.Messaging;
+using Conaprole.Orders.Domain.Shared;
 
 namespace Conaprole.Orders.Application.Products.CreateProduct;
 
@@ -8,5 +9,5 @@ public record CreateProductCommand(
     decimal UnitPrice,
     string CurrencyCode,
     string Description,
-    List<string>? Categories
+    Category Category
 ) : ICommand<Guid>;

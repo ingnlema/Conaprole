@@ -6,7 +6,7 @@ public sealed class OrderSummaryResponse
     public int    Status                  { get; init; }
     public string StatusName              { get; init; } = string.Empty;     
     public DateTime CreatedOnUtc          { get; init; }
-    public string Distributor             { get; init; } = string.Empty;
+    public string DistributorPhoneNumber { get; init; } = string.Empty;
     public string PointOfSalePhoneNumber  { get; init; } = string.Empty;    
     public string City                    { get; init; } = string.Empty;     
     public string Street                  { get; init; } = string.Empty;     

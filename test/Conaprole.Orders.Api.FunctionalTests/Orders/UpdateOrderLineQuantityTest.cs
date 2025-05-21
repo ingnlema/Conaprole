@@ -23,6 +23,12 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task UpdateLineQuantity_ShouldReturnNoContent_And_ReflectChange()
         {
+            var distributorPhone = "+59897776666";
+            var pointOfSalePhone = "+59898887777";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             var sku = $"SKU-{Guid.NewGuid():N}";
             await ProductData.CreateAsync(HttpClient, sku);
 
@@ -30,8 +36,8 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var createResp = await HttpClient.PostAsJsonAsync(
                 "api/Orders",
                 new CreateOrderRequest(
-                    "+59896666666",
-                    "LineDist",
+                    pointOfSalePhone,
+                    distributorPhone,
                     "City",
                     "Street",
                     "66666",

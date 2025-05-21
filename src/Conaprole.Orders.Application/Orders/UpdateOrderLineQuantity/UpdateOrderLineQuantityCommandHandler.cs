@@ -32,9 +32,7 @@ namespace Conaprole.Orders.Application.Orders.UpdateOrderLineQuantity
             );
 
             if (!updated)
-                return Result.Failure<Guid>(new Error(
-                    "OrderLine.NotFound",
-                    "Order or Line not found."));
+                return Result.Failure<Guid>(OrderErrors.LineNotFound);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success(request.OrderLineId);

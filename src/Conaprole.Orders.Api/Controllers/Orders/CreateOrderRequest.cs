@@ -2,7 +2,7 @@ namespace Conaprole.Orders.Api.Controllers.Orders;
 
 public record CreateOrderRequest(
     string PointOfSalePhoneNumber,
-    string Distributor,
+    string DistributorPhoneNumber,
     string City,
     string Street,
     string ZipCode,

@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Net.Http.Json;
 
@@ -20,6 +19,12 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task GetOrders_FilterByDateRange_ShouldFilterByFrom()
         {
+            var distributorPhone = "+59899887777";
+            var pointOfSalePhone = "+59893333333";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             // 1) Seedear el producto global y construir la línea de pedido
             await ProductData.CreateAsync(HttpClient);
             var line = ProductData.OrderLine(1);
@@ -31,8 +36,8 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var createResp = await HttpClient.PostAsJsonAsync(
                 "api/Orders",
                 new CreateOrderRequest(
-                    "+59893333333",
-                    "DistC",
+                    pointOfSalePhone,
+                    distributorPhone,
                     "City",
                     "Street",
                     "33333",

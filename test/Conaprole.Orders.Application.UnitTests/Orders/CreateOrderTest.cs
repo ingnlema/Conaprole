@@ -13,7 +13,7 @@ public class CreateOrderTest{
     private static readonly DateTime UtcNow = DateTime.Now;
     private static readonly CreateOrderCommand Command = new CreateOrderCommand(
         "094000000",        
-        "Distribuidor A",     
+        "+59890000000",     
         "Montevideo",     
         "calle A",       
         "11100",          
@@ -31,6 +31,8 @@ public class CreateOrderTest{
     private readonly IOrderRepository _orderRepositoryMock;
     private readonly IUnitOfWork _unitOfWorkMock;
     private readonly IDateTimeProvider _dateTimeProviderMock;
+    private readonly IPointOfSaleRepository _pointOfSaleRepositoryMock;
+    private readonly IDistributorRepository _distributorRepositoryMock;
 
     public CreateOrderTest()
     {
@@ -38,6 +40,8 @@ public class CreateOrderTest{
         _orderRepositoryMock = Substitute.For<IOrderRepository>();
         _unitOfWorkMock = Substitute.For<IUnitOfWork>();
         _dateTimeProviderMock = Substitute.For<IDateTimeProvider>();
+        _pointOfSaleRepositoryMock = Substitute.For<IPointOfSaleRepository>();
+        _distributorRepositoryMock = Substitute.For<IDistributorRepository>();
         
         _dateTimeProviderMock.UtcNow.Returns(UtcNow);
         
@@ -45,7 +49,9 @@ public class CreateOrderTest{
             _productRepositoryMock,
             _orderRepositoryMock,
             _unitOfWorkMock,
-            _dateTimeProviderMock);
+            _dateTimeProviderMock,
+            _pointOfSaleRepositoryMock,
+            _distributorRepositoryMock);
     }
     
     [Fact]
@@ -59,6 +65,7 @@ public class CreateOrderTest{
                 new ExternalProductId("SKU12345"),
                 new Name("Producto A"),
                 new Money(100, currency),
+                Category.LACTEOS,
                 new Description("Descripcion A"),
                 UtcNow
             );
@@ -68,6 +75,7 @@ public class CreateOrderTest{
                 new ExternalProductId("SKU67890"),
                 new Name("Producto B"),
                 new Money(50, currency),
+                Category.LACTEOS,
                 new Description("Descripcion B"),
                 UtcNow
             );
@@ -80,6 +88,17 @@ public class CreateOrderTest{
                 .GetByExternalIdAsync(Arg.Is<ExternalProductId>(id => id.Value == "SKU67890"), Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult<Product?>(product2));
             
+            var pos = new PointOfSale(Guid.NewGuid(), Command.PointOfSalePhoneNumber, "Direccion");
+            var dist = new Distributor(Guid.NewGuid(), Command.DistributorPhoneNumber, "Nombre", "Direccion");
+
+            _pointOfSaleRepositoryMock
+                .GetByPhoneNumberAsync(Command.PointOfSalePhoneNumber, Arg.Any<CancellationToken>())
+                .Returns(pos);
+
+            _distributorRepositoryMock
+                .GetByPhoneNumberAsync(Command.DistributorPhoneNumber, Arg.Any<CancellationToken>())
+                .Returns(dist);
+
             Order? capturedOrder = null;
             _orderRepositoryMock
                 .When(r => r.Add(Arg.Any<Order>()))
@@ -96,7 +115,7 @@ public class CreateOrderTest{
             
             Assert.NotNull(capturedOrder);
             Assert.Equal(Command.PointOfSalePhoneNumber, capturedOrder.PointOfSale.PhoneNumber);
-            Assert.Equal(Command.Distributor, capturedOrder.Distributor.Value);
+            Assert.Equal(Command.DistributorPhoneNumber, capturedOrder.Distributor.PhoneNumber);
             Assert.Equal(Command.City, capturedOrder.DeliveryAddress.City);
             Assert.Equal(Command.Street, capturedOrder.DeliveryAddress.Street);
             Assert.Equal(Command.ZipCode, capturedOrder.DeliveryAddress.ZipCode);
@@ -122,6 +141,7 @@ public class CreateOrderTest{
                 new ExternalProductId("SKU12345"),
                 new Name("Producto A"),
                 new Money(100, currency),
+                Category.LACTEOS,
                 new Description("Descripcion A"),
                 UtcNow
             );
@@ -134,6 +154,16 @@ public class CreateOrderTest{
                 .GetByExternalIdAsync(Arg.Is<ExternalProductId>(id => id.Value == "SKU67890"), Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult<Product?>(null));
 
+            var pos = new PointOfSale(Guid.NewGuid(), Command.PointOfSalePhoneNumber, "Direccion");
+            var dist = new Distributor(Guid.NewGuid(), Command.DistributorPhoneNumber, "Nombre", "Direccion");
+
+            _pointOfSaleRepositoryMock
+                .GetByPhoneNumberAsync(Command.PointOfSalePhoneNumber, Arg.Any<CancellationToken>())
+                .Returns(pos);
+
+            _distributorRepositoryMock
+                .GetByPhoneNumberAsync(Command.DistributorPhoneNumber, Arg.Any<CancellationToken>())
+                .Returns(dist);
 
             var result = await _handler.Handle(Command, CancellationToken.None);
             
@@ -154,6 +184,7 @@ public class CreateOrderTest{
                 new ExternalProductId("SKU12345"),
                 new Name("Producto A"),
                 new Money(100, currency),
+                Category.LACTEOS,
                 new Description("Descripción A"),
                 UtcNow
             );
@@ -163,6 +194,7 @@ public class CreateOrderTest{
                 new ExternalProductId("SKU67890"),
                 new Name("Producto B"),
                 new Money(50, currency),
+                Category.LACTEOS,
                 new Description("Descripción B"),
                 UtcNow
             );
@@ -175,6 +207,17 @@ public class CreateOrderTest{
                 .GetByExternalIdAsync(Arg.Is<ExternalProductId>(id => id.Value == "SKU67890"), Arg.Any<CancellationToken>())
                 .Returns(Task.FromResult<Product?>(product2));
             
+            var pos = new PointOfSale(Guid.NewGuid(), Command.PointOfSalePhoneNumber, "Direccion");
+            var dist = new Distributor(Guid.NewGuid(), Command.DistributorPhoneNumber, "Nombre", "Direccion");
+
+            _pointOfSaleRepositoryMock
+                .GetByPhoneNumberAsync(Command.PointOfSalePhoneNumber, Arg.Any<CancellationToken>())
+                .Returns(pos);
+
+            _distributorRepositoryMock
+                .GetByPhoneNumberAsync(Command.DistributorPhoneNumber, Arg.Any<CancellationToken>())
+                .Returns(dist);
+
             var result = await _handler.Handle(Command, CancellationToken.None);
             
             _orderRepositoryMock.Received(1).Add(Arg.Any<Order>());

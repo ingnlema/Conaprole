@@ -6,7 +6,7 @@ public sealed class OrderResponse
     
     public string PointOfSalePhoneNumber { get; init; }
     
-    public required string Distributor { get; init; }
+    public required string DistributorPhoneNumber { get; init; }
     
     public required string DeliveryAddressCity { get; init; }
     

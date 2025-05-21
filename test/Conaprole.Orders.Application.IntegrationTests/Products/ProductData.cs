@@ -1,6 +1,6 @@
-
 using Conaprole.Orders.Application.Products.CreateProduct;
 using MediatR;
+using Conaprole.Orders.Domain.Shared;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Products
 
@@ -15,7 +15,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Products
         public const decimal UnitPrice        = 100m;
         public const string CurrencyCode      = "UYU";
         public const string Description       = "Producto para integration tests";
-        public static readonly List<string> Categories = new() { "Global" };
+        public const Category DefaultCategory = Category.LACTEOS;
 
         /// <summary>
         /// Comando preconfigurado para crear el producto.
@@ -27,7 +27,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Products
                 UnitPrice,
                 CurrencyCode,
                 Description,
-                Categories
+                DefaultCategory
             );
 
         /// <summary>

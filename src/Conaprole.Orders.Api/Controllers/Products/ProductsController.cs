@@ -23,7 +23,13 @@ public class ProductsController : ControllerBase
         _sender = sender;
     }
     
+    /// <summary>
+    /// Gets a product by its unique identifier.
+    /// </summary>
     [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get product by ID", Description = "Returns a single product given its ID")]
+    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProduct(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetProductQuery(id);
@@ -32,8 +38,14 @@ public class ProductsController : ControllerBase
         return Ok(result.Value);
     }
     
+    /// <summary>
+    /// Creates a new product.
+    /// </summary>
+    /// <remarks>
+    /// Requires an external product ID, name, unit price, currency, description, and a category enum value.
+    /// </remarks>
     [HttpPost]
-    [SwaggerOperation(Summary = "Creates a new product", Description = "Creates a product with optional categories")]
+    [SwaggerOperation(Summary = "Creates a new product", Description = "Creates a product with a specific category")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateProduct(CreateProductRequest request, CancellationToken cancellationToken)
@@ -44,7 +56,7 @@ public class ProductsController : ControllerBase
             request.UnitPrice,
             request.CurrencyCode,
             request.Description,
-            request.Categories);
+            request.Category);
 
         var result = await _sender.Send(command, cancellationToken);
 
@@ -54,6 +66,9 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetProduct), new { id = result.Value }, result.Value);
     }
     
+    /// <summary>
+    /// Lists all products.
+    /// </summary>
     [HttpGet]
     [SwaggerOperation(Summary = "Get all products", Description = "Returns a list of all registered products")]
     [ProducesResponseType(typeof(List<ProductsResponse>), StatusCodes.Status200OK)]

@@ -34,18 +34,14 @@ namespace Conaprole.Orders.Application.Orders.RemoveOrderLine
                 );
 
                 if (!removed)
-                    return Result.Failure<Guid>(new Error(
-                        "OrderLine.NotFound",
-                        "Order or Line not found."));
+                    return Result.Failure<Guid>(OrderErrors.LineNotFound);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
                 return Result.Success(request.OrderLineId);
             }
             catch (DomainException ex) when (ex.Message.Contains("Cannot remove the last order line"))
             {
-                return Result.Failure<Guid>(new Error(
-                    "OrderLine.LastLine",
-                    "Cannot remove the last order line."));
+                return Result.Failure<Guid>(OrderErrors.LastOrderLineCannotBeRemoved);
             }
         }
     }

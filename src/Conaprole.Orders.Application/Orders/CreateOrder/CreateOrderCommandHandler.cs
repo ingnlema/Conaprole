@@ -15,30 +15,46 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IPointOfSaleRepository _pointOfSaleRepository;
+    private readonly IDistributorRepository _distributorRepository;
+    
 
     public CreateOrderCommandHandler(
         IProductRepository productRepository,
         IOrderRepository orderRepository,
         IUnitOfWork unitOfWork,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider,
+        IPointOfSaleRepository pointOfSaleRepository,
+        IDistributorRepository distributorRepository)
     {
         _productRepository = productRepository;
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
         _dateTimeProvider = dateTimeProvider;
+        _pointOfSaleRepository = pointOfSaleRepository;
+        _distributorRepository = distributorRepository;
+        
     }
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var pointOfSale = new PointOfSale(request.PointOfSalePhoneNumber);
-        var distributor = new Distributor(request.Distributor);
+        var pointOfSale = await _pointOfSaleRepository.GetByPhoneNumberAsync(request.PointOfSalePhoneNumber, cancellationToken);
+        if (pointOfSale is null)
+            return Result.Failure<Guid>(new Error("Order.InvalidPointOfSale", "Point of Sale not found."));
+
+        var distributor = await _distributorRepository.GetByPhoneNumberAsync(request.DistributorPhoneNumber, cancellationToken);
+        if (distributor is null)
+            return Result.Failure<Guid>(new Error("Order.InvalidDistributor", "Distributor not found."));
         var address = new Address(request.City, request.Street, request.ZipCode);
         var createdOnUtc = _dateTimeProvider.UtcNow;
         var status = Status.Created;
         var currency = Currency.FromCode(request.CurrencyCode);
+        
         var order = new Order(
             Guid.NewGuid(),
+            pointOfSale.Id,
             pointOfSale,
+            distributor.Id,
             distributor,
             address,
             status,

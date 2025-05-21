@@ -8,5 +8,5 @@ public sealed class ProductsResponse
     public decimal UnitPrice { get; init; }
     public string Description { get; init; } = string.Empty;
     public DateTime LastUpdated { get; init; }
-    public List<string> Categories { get; set; } = new();
+    public string Category { get; init; }
 }

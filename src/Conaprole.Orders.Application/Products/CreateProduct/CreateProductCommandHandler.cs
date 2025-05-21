@@ -44,22 +44,20 @@ internal sealed class CreateProductCommandHandler
         var description = new Description(request.Description);
         
         var productId = Guid.NewGuid();
+        if (!Enum.TryParse(request.Category.ToString(), out Category category))
+        {
+            return Result.Failure<Guid>(ProductErrors.InvalidCategory);
+        }
+
         var product = new Product(
             productId,
             externalProductId,
             name,
             unitPrice,
+            category,
             description,
             _dateTimeProvider.UtcNow
         );
-        
-        if (request.Categories is not null)
-        {
-            foreach (var cat in request.Categories)
-            {
-                product.Categories.Add(new Category(cat));
-            }
-        }
         
         _productRepository.Add(product);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

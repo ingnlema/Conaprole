@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
@@ -19,6 +18,12 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task UpdateStatus_ShouldReturnNoContent()
         {
+            var distributorPhone = "+59894444444";
+            var pointOfSalePhone = "+59894441111";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             // 1) Crear el producto global y obtener su GUID interno
             var productId = await ProductData.CreateAsync(HttpClient);
 
@@ -26,8 +31,8 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var createResp = await HttpClient.PostAsJsonAsync(
                 "api/Orders",
                 new CreateOrderRequest(
-                    "+59894444444",
-                    "StatusDist",
+                    pointOfSalePhone,
+                    distributorPhone,
                     "City",
                     "Street",
                     "44444",

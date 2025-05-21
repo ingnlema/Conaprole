@@ -1,3 +1,5 @@
+using Conaprole.Orders.Domain.Shared;
+
 namespace Conaprole.Orders.Api.Controllers.Products;
 
 public sealed record CreateProductRequest(
@@ -6,5 +8,5 @@ public sealed record CreateProductRequest(
     decimal UnitPrice,
     string CurrencyCode,
     string Description,
-    List<string>? Categories
+    Category Category
 );

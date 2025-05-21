@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.Controllers.Products;
+using Conaprole.Orders.Domain.Shared;
 
 namespace Conaprole.Orders.Api.FunctionalTests.Products
 {
@@ -15,7 +16,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Products
         public const decimal UnitPrice        = 50m;
         public const string CurrencyCode      = "UYU";
         public const string Description       = "Producto para todos los tests funcionales";
-        public static readonly List<string> Categories = new() { "Global" };
+        public const Category Category = Domain.Shared.Category.LACTEOS;
 
         public static CreateProductRequest CreateRequest =>
             new(
@@ -24,7 +25,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Products
                 UnitPrice,
                 CurrencyCode,
                 Description,
-                new List<string>(Categories)
+                Category
             );
 
         public static async Task<Guid> CreateAsync(HttpClient client) =>
@@ -38,7 +39,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Products
                 UnitPrice,
                 CurrencyCode,
                 Description,
-                new List<string>(Categories)
+                Category
             );
             var response = await client.PostAsJsonAsync("api/Products", req);
             response.EnsureSuccessStatusCode();

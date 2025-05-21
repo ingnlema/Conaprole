@@ -4,7 +4,7 @@ using Npgsql;
 
 namespace Conaprole.Orders.Infrastructure.Data;
 
-internal sealed class SqlConnectionFactory : ISqlConnectionFactory
+public sealed class SqlConnectionFactory : ISqlConnectionFactory
 {
     private readonly string _connectionString;
 

@@ -31,6 +31,10 @@ public class OrdersController : ControllerBase
     }
     
     
+    /// <summary>
+    /// Gets the details of a specific order by its ID.
+    /// </summary>
+    [SwaggerOperation(Summary = "Get order by ID", Description = "Returns a specific order with all details and lines.")]
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(OrderResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -39,9 +43,13 @@ public class OrdersController : ControllerBase
         var query = new GetOrderQuery(id);
         var result = await _sender.Send(query, cancellationToken);
 
-        return result.IsSuccess ? Ok(result.Value) : NotFound();
+        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
     }
     
+    /// <summary>
+    /// Creates a new order.
+    /// </summary>
+    [SwaggerOperation(Summary = "Create order", Description = "Creates a new order with address, distributor, POS and order lines.")]
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
@@ -49,7 +57,7 @@ public class OrdersController : ControllerBase
     {
         var command = new CreateOrderCommand(
             request.PointOfSalePhoneNumber,
-            request.Distributor,
+            request.DistributorPhoneNumber,
             request.City,
             request.Street,
             request.ZipCode,
@@ -66,6 +74,10 @@ public class OrdersController : ControllerBase
         return CreatedAtAction(nameof(GetOrder), new { id = result.Value }, result.Value);
     }
     
+    /// <summary>
+    /// Updates the status of an order.
+    /// </summary>
+    [SwaggerOperation(Summary = "Update order status", Description = "Updates the status of an order (e.g. Confirmed, Delivered).")]
     [HttpPut("{id}/status")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
@@ -89,6 +101,9 @@ public class OrdersController : ControllerBase
     }
 
     
+    /// <summary>
+    /// Lists orders with optional filters.
+    /// </summary>
     [HttpGet]
     [SwaggerOperation(Summary = "Gets orders with optional filters", Description = "Filter by date, status, distributor or point of sale.")]
     public async Task<IActionResult> GetOrders([FromQuery] GetOrdersRequest request, CancellationToken cancellationToken)
@@ -107,9 +122,12 @@ public class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// POST /api/Orders/{orderId}/lines
-    /// Ahora sólo necesita { ExternalProductId, Quantity }.
+    /// Adds a new line to an existing order.
     /// </summary>
+    [SwaggerOperation(Summary = "Add order line", Description = "Adds a product line to an existing order.")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     [HttpPost("{orderId:guid}/lines")]
     public async Task<IActionResult> AddLine(
         Guid orderId,
@@ -132,9 +150,12 @@ public class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// DELETE /api/Orders/{orderId}/lines/{orderLineId}
-    /// Permite eliminar una línea existente por su Id.
+    /// Removes an order line by its ID.
     /// </summary>
+    [SwaggerOperation(Summary = "Delete order line", Description = "Deletes a specific order line by ID.")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     [HttpDelete("{orderId:guid}/lines/{orderLineId:guid}")]
     public async Task<IActionResult> DeleteLine(
         Guid orderId,
@@ -160,9 +181,12 @@ public class OrdersController : ControllerBase
 
 
     /// <summary>
-    /// PUT /api/Orders/{orderId}/lines/{orderLineId}
-    /// Sólo necesita la nueva cantidad en el body.
+    /// Updates the quantity of an existing order line.
     /// </summary>
+    [SwaggerOperation(Summary = "Update order line quantity", Description = "Updates the quantity of a line in an existing order.")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     [HttpPut("{orderId:guid}/lines/{orderLineId:guid}")]
     public async Task<IActionResult> UpdateLineQuantity(
         Guid orderId,

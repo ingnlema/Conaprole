@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
@@ -19,19 +18,25 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task GetOrders_FilterByPointOfSalePhone_ShouldReturnOnlyMatching()
         {
+            var distributorPhone = "+59891112222";
+            var pointOfSalePhone = "+59891111111";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             // 1) Sembrar el producto global y crear la línea
             await ProductData.CreateAsync(HttpClient);
             var line = ProductData.OrderLine(1);
 
             // 2) Preparar datos
-            var phone = "+59891111111";
+            // var phone = "+59891111111";
 
             // 3) Crear la orden usando el producto global
             var createResp = await HttpClient.PostAsJsonAsync(
                 "api/Orders",
                 new CreateOrderRequest(
-                    phone,
-                    "DistA",
+                    pointOfSalePhone,
+                    distributorPhone,
                     "City",
                     "Street",
                     "11111",
@@ -44,7 +49,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // 4) Filtrar por número de punto de venta
             var response = await HttpClient.GetAsync(
-                $"api/Orders?PointOfSalePhoneNumber={Uri.EscapeDataString(phone)}"
+                $"api/Orders?PointOfSalePhoneNumber={Uri.EscapeDataString(pointOfSalePhone)}"
             );
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -52,7 +57,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var list = await response.Content.ReadFromJsonAsync<List<OrderSummaryResponse>>();
             list.Should().NotBeNull();
             list.Should().Contain(o => o.Id == orderId, "la lista debe incluir la orden recién creada");
-            list.Should().OnlyContain(o => o.PointOfSalePhoneNumber == phone);
+            list.Should().OnlyContain(o => o.PointOfSalePhoneNumber == pointOfSalePhone);
         }
     }
 }

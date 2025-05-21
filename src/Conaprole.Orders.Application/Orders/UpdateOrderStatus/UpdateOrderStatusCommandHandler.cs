@@ -1,5 +1,4 @@
-using System.Threading;
-using System.Threading.Tasks;
+
 using Conaprole.Orders.Application.Abstractions.Messaging;
 using Conaprole.Orders.Application.Abstractions.Clock;
 using Conaprole.Orders.Domain.Orders;
@@ -28,7 +27,7 @@ namespace Conaprole.Orders.Application.Orders.UpdateOrderStatus
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId, cancellationToken);
             if (order is null)
-                return Result.Failure<Unit>(new Error("Order.NotFound", "Product not found."));
+                return Result.Failure<Unit>(OrderErrors.NotFound);
 
             order.UpdateStatus(request.NewStatus, _dateTimeProvider.UtcNow);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

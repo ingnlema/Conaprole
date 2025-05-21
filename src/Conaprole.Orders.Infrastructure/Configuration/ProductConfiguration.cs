@@ -54,17 +54,9 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
                 .HasColumnName("last_updated")
                 .IsRequired();
             
-            builder.OwnsMany(p => p.Categories, cb =>
-            {
-                cb.WithOwner().HasForeignKey("ProductId");
-                
-                cb.Property(c => c.Value)
-                  .HasColumnName("category")
-                  .IsRequired();
-                
-                cb.HasKey("ProductId", "Value");
-                
-                cb.ToTable("product_categories");
-            });
+            builder.Property(p => p.Category)
+                .HasConversion<int>() 
+                .HasColumnName("category")
+                .IsRequired();
         }
 }

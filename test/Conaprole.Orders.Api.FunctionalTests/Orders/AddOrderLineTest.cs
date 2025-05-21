@@ -31,9 +31,15 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             await ProductData.CreateAsync(HttpClient, sku2);
             var newLine = new OrderLineRequest(sku2, 3);
 
+            var distributorPhone = "+59899887766";
+            var pointOfSalePhone = "+59891234567";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
             var createRequest = new CreateOrderRequest(
-                "+59891234567",
-                "TestDistributor",
+                pointOfSalePhone,            
+                distributorPhone,          
                 "Montevideo",
                 "Test Street",
                 "11200",
@@ -66,4 +72,3 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         }
     }
 }
-

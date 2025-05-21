@@ -10,7 +10,9 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
         RuleFor(c => c.PointOfSalePhoneNumber)
             .NotEmpty().WithMessage("Phone number is required.")
             .MaximumLength(20);
-        RuleFor(c => c.Distributor).NotEmpty();
+        RuleFor(c => c.DistributorPhoneNumber)
+            .NotEmpty().WithMessage("Distributor phone number is required.")
+            .MaximumLength(20);
         RuleFor(c => c.City).NotEmpty();
         RuleFor(c => c.Street).NotEmpty();
         RuleFor(c => c.ZipCode).NotEmpty();

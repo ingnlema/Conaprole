@@ -20,57 +20,16 @@ internal sealed class GetProductsQueryHandler : IQueryHandler<GetProductsQuery, 
 
         const string sql = @"
             SELECT 
-                p.id AS Id,
-                p.external_product_id AS ExternalProductId,
-                p.name AS Name,
-                p.description AS Description,
-                p.unit_price_amount AS UnitPrice,
-                p.last_updated AS LastUpdated,
-                c.category AS Category
-            FROM products p
-            LEFT JOIN product_categories c ON p.id = c.product_id";
+                id AS Id,
+                external_product_id AS ExternalProductId,
+                name AS Name,
+                description AS Description,
+                unit_price_amount AS UnitPrice,
+                last_updated AS LastUpdated,
+                category AS Category
+            FROM products";
 
-        var productMap = new Dictionary<Guid, ProductsResponse>();
-
-        var result = await connection.QueryAsync<ProductFlat, string?, ProductsResponse>(
-            sql,
-            (flat, category) =>
-            {
-                if (!productMap.TryGetValue(flat.Id, out var product))
-                {
-                    product = new ProductsResponse
-                    {
-                        Id = flat.Id,
-                        ExternalProductId = flat.ExternalProductId,
-                        Name = flat.Name,
-                        Description = flat.Description,
-                        UnitPrice = flat.UnitPrice,
-                        LastUpdated = flat.LastUpdated,
-                        Categories = new List<string>()
-                    };
-                    productMap.Add(flat.Id, product);
-                }
-
-                if (!string.IsNullOrWhiteSpace(category) && !product.Categories.Contains(category))
-                {
-                    product.Categories.Add(category);
-                }
-
-                return product;
-            },
-            splitOn: "Category" 
-        );
-
-        return Result.Success(productMap.Values.ToList());
-    }
-
-    private sealed class ProductFlat
-    {
-        public Guid Id { get; init; }
-        public string ExternalProductId { get; init; } = string.Empty;
-        public string Name { get; init; } = string.Empty;
-        public string Description { get; init; } = string.Empty;
-        public decimal UnitPrice { get; init; }
-        public DateTime LastUpdated { get; init; }
+        var result = await connection.QueryAsync<ProductsResponse>(sql);
+        return Result.Success(result.ToList());
     }
 }

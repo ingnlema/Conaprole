@@ -14,8 +14,11 @@ namespace Conaprole.Orders.Domain.Orders
         private readonly List<OrderLine> _orderLines = new();
         public IReadOnlyCollection<OrderLine> OrderLines => _orderLines.AsReadOnly();
 
-        public PointOfSale PointOfSale { get; private set; }
+        public Guid DistributorId { get; private set; }
         public Distributor Distributor { get; private set; }
+
+        public Guid PointOfSaleId { get; private set; }
+        public PointOfSale PointOfSale { get; private set; }
         public Address DeliveryAddress { get; private set; }
         public Status Status { get; private set; }
         public DateTime CreatedOnUtc { get; private set; }
@@ -28,7 +31,9 @@ namespace Conaprole.Orders.Domain.Orders
 
         public Order(
             Guid id,
+            Guid pointOfSaleId,
             PointOfSale pointOfSale,
+            Guid distributorId,
             Distributor distributor,
             Address deliveryAddress,
             Status status,
@@ -40,7 +45,9 @@ namespace Conaprole.Orders.Domain.Orders
             DateTime? deliveredOnUtc,
             Money price) : base(id)
         {
+            PointOfSaleId = pointOfSaleId;
             PointOfSale = pointOfSale;
+            DistributorId = distributorId;
             Distributor = distributor;
             DeliveryAddress = deliveryAddress;
             Status = status;
