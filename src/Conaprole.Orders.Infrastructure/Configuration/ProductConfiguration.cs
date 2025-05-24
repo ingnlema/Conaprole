@@ -55,7 +55,9 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
                 .IsRequired();
             
             builder.Property(p => p.Category)
-                .HasConversion<int>() 
+                .HasConversion(
+                    c => (int)c,
+                    value => (Category)value)
                 .HasColumnName("category")
                 .IsRequired();
         }

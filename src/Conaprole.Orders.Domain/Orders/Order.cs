@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Distributors;
 using Conaprole.Orders.Domain.Exceptions;
 using Conaprole.Orders.Domain.Orders.Events;
 using Conaprole.Orders.Domain.Products;
 using Conaprole.Orders.Domain.Shared;
+using Conaprole.Orders.Domain.PointsOfSale;
 
 namespace Conaprole.Orders.Domain.Orders
 {

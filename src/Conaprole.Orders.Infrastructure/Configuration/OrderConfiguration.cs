@@ -14,23 +14,7 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             builder.ToTable("orders");
             builder.HasKey(o => o.Id);
 
-            builder.HasOne(o => o.Distributor)
-                .WithMany()
-                .HasForeignKey(o => o.DistributorId)
-                .HasConstraintName("FK_Orders_Distributor")
-                .IsRequired();
-
-            builder.Property(o => o.DistributorId)
-                .HasColumnName("distributor_id");
-
-            builder.HasOne(o => o.PointOfSale)
-                .WithMany()
-                .HasForeignKey(o => o.PointOfSaleId)
-                .HasConstraintName("FK_Orders_PointOfSale")
-                .IsRequired();
-
-            builder.Property(o => o.PointOfSaleId)
-                .HasColumnName("point_of_sale_id");
+            // Distributor and PointOfSale configuration moved to other configuration files.
             builder.Property(o => o.Status)
                 .HasColumnName("status")
                 .IsRequired();

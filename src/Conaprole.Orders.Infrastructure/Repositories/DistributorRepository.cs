@@ -1,4 +1,6 @@
+using Conaprole.Orders.Domain.Distributors;
 using Conaprole.Orders.Domain.Orders;
+using Conaprole.Orders.Domain.PointsOfSale;
 using Microsoft.EntityFrameworkCore;
 
 namespace Conaprole.Orders.Infrastructure.Repositories

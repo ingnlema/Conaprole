@@ -2,6 +2,8 @@ using Conaprole.Orders.Application.Abstractions.Messaging;
 using Conaprole.Orders.Application.Abstractions.Clock;
 using Conaprole.Orders.Domain.Orders;
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Distributors;
+using Conaprole.Orders.Domain.PointsOfSale;
 using Conaprole.Orders.Domain.Products;
 using Conaprole.Orders.Domain.Shared;
 using Conaprole.Orders.Domain.Users;

@@ -38,13 +38,14 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         var id = Guid.NewGuid();
 
         var sql = @"
-        INSERT INTO point_of_sale (id, phone_number, address, is_active, created_at)
-        VALUES (@Id, @PhoneNumber, @Address, true, now());";
+        INSERT INTO point_of_sale (id, phone_number, name, address, is_active, created_at)
+        VALUES (@Id, @PhoneNumber, @Name, @Address, true, now());";
 
         using var connection = SqlConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(sql, new
         {
             Id = id,
+            Name = "POS de Prueba",
             PhoneNumber = phoneNumber,
             Address = "POS Test Address"
         });
@@ -57,8 +58,8 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         var id = Guid.NewGuid();
 
         const string sql = @"
-        INSERT INTO distributor (id, phone_number, name, address, supported_categories)
-        VALUES (@Id, @PhoneNumber, @Name, @Address, @Categories);";
+        INSERT INTO distributor (id, phone_number, name, address, supported_categories, created_at)
+        VALUES (@Id, @PhoneNumber, @Name, @Address, @Categories, now());";
 
         using var connection = SqlConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(sql, new
@@ -67,7 +68,7 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
             PhoneNumber = phoneNumber,
             Name = "Distribuidor Test",
             Address = "Calle Falsa 123",
-            Categories = new[] { (int)Category.LACTEOS }
+            Categories = string.Join(",", new[] { Category.LACTEOS.ToString() })
         });
 
         return id;
@@ -110,7 +111,7 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
             Id = id,
             PointOfSaleId = posId,
             DistributorId = distributorId,
-            Category = (int)category
+            Category = category.ToString()
         });
 
         return id;

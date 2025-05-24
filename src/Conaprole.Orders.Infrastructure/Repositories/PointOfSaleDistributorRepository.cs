@@ -1,5 +1,6 @@
 
 using Conaprole.Orders.Domain.Orders;
+using Conaprole.Orders.Domain.PointsOfSale;
 using Conaprole.Orders.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 

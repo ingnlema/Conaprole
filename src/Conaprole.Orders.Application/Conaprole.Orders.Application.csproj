@@ -21,4 +21,8 @@
         <InternalsVisibleTo Include="Conaprole.Orders.Application.UnitTests" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Orders\GetOrdersByPointOfSale\" />
+    </ItemGroup>
+
 </Project>

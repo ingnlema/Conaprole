@@ -1,34 +1,58 @@
+using System.Text.Json.Serialization;
 using Conaprole.Orders.Api.Controllers.Orders.Examples;
 using Conaprole.Orders.Api.Extensions;
 using Conaprole.Orders.Application;
 using Conaprole.Orders.Infrastructure;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<UpdateOrderStatusRequestExample>();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    try
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
-        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+        Title = "Conaprole Orders API",
+        Version = "v1.1"
+    });
+
+    options.CustomSchemaIds(type => type.FullName); 
+
+    options.EnableAnnotations();
+
+    // Esquema de seguridad JWT
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            Title = "Conaprole Orders API",
-            Version = "v1"
-        });
-
-        c.EnableAnnotations();
-        c.ExampleFilters();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("Swagger config failed: " + ex.Message);
-    }
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
-
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -44,33 +68,27 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 var app = builder.Build();
 
+// Swagger debe ir antes para asegurar accesibilidad
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conaprole Orders API v1.1");
+    c.RoutePrefix = "swagger";
 });
 
+// Aplicar migraciones según config
 var applyMigrations = builder.Configuration.GetValue<bool>("APPLY_MIGRATIONS");
-if (applyMigrations)
+if (applyMigrations || app.Environment.IsDevelopment())
 {
+    //app.UseDeveloperExceptionPage();
     app.ApplyMigrations();
-}
-
-
-if (app.Environment.IsDevelopment())
-{
-    // REMARK: Uncomment if you want to seed initial data.
-    app.ApplyMigrations();
-    //app.SeedData();
+    // app.SeedData(); // habilitá si querés precargar datos
 }
 
 app.UseCors();
-
 app.UseHttpsRedirection();
-
 app.UseCustomExceptionHandler();
 
 app.UseAuthentication();
@@ -81,4 +99,3 @@ app.MapControllers();
 app.Run();
 
 public partial class Program;
-

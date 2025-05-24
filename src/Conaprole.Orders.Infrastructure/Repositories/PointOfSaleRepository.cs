@@ -1,4 +1,6 @@
+using Conaprole.Orders.Domain.Distributors;
 using Conaprole.Orders.Domain.Orders;
+using Conaprole.Orders.Domain.PointsOfSale;
 using Microsoft.EntityFrameworkCore;
 
 namespace Conaprole.Orders.Infrastructure.Repositories
@@ -33,6 +35,12 @@ namespace Conaprole.Orders.Infrastructure.Repositories
         public async Task AddAsync(PointOfSale pos, CancellationToken ct = default)
         {
             await _dbContext.Set<PointOfSale>().AddAsync(pos, ct);
+        }
+
+        public async Task UpdateAsync(PointOfSale pos, CancellationToken ct = default)
+        {
+            _dbContext.Set<PointOfSale>().Update(pos);
+            await Task.CompletedTask;
         }
     }
 }

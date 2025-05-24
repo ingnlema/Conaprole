@@ -22,7 +22,7 @@ namespace Conaprole.Orders.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Conaprole.Orders.Domain.Orders.Distributor", b =>
+            modelBuilder.Entity("Conaprole.Orders.Domain.Distributors.Distributor", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,22 +31,29 @@ namespace Conaprole.Orders.Infrastructure.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
                         .HasColumnName("address");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("phone_number");
 
-                    b.PrimitiveCollection<int[]>("SupportedCategories")
+                    b.Property<string>("SupportedCategories")
                         .IsRequired()
-                        .HasColumnType("integer[]")
+                        .HasColumnType("text")
                         .HasColumnName("supported_categories");
 
                     b.HasKey("Id")
@@ -153,7 +160,7 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Conaprole.Orders.Domain.Orders.PointOfSale", b =>
+            modelBuilder.Entity("Conaprole.Orders.Domain.PointsOfSale.PointOfSale", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -173,6 +180,11 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text")
@@ -184,7 +196,7 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                     b.ToTable("point_of_sale", (string)null);
                 });
 
-            modelBuilder.Entity("Conaprole.Orders.Domain.Orders.PointOfSaleDistributor", b =>
+            modelBuilder.Entity("Conaprole.Orders.Domain.PointsOfSale.PointOfSaleDistributor", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -195,8 +207,9 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("assigned_at");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("integer")
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("category");
 
                     b.Property<Guid>("DistributorId")
@@ -213,8 +226,9 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                     b.HasIndex("DistributorId")
                         .HasDatabaseName("ix_point_of_sale_distributor_distributor_id");
 
-                    b.HasIndex("PointOfSaleId")
-                        .HasDatabaseName("ix_point_of_sale_distributor_point_of_sale_id");
+                    b.HasIndex("PointOfSaleId", "DistributorId", "Category")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Pos_Distributor_Category");
 
                     b.ToTable("point_of_sale_distributor", (string)null);
                 });
@@ -400,21 +414,45 @@ namespace Conaprole.Orders.Infrastructure.Migrations
 
             modelBuilder.Entity("Conaprole.Orders.Domain.Orders.Order", b =>
                 {
-                    b.HasOne("Conaprole.Orders.Domain.Orders.Distributor", "Distributor")
+                    b.HasOne("Conaprole.Orders.Domain.Distributors.Distributor", "Distributor")
                         .WithMany()
                         .HasForeignKey("DistributorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Orders_Distributor");
+                        .HasConstraintName("fk_orders_distributor_distributor_id");
 
-                    b.HasOne("Conaprole.Orders.Domain.Orders.PointOfSale", "PointOfSale")
+                    b.HasOne("Conaprole.Orders.Domain.PointsOfSale.PointOfSale", "PointOfSale")
                         .WithMany()
                         .HasForeignKey("PointOfSaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Orders_PointOfSale");
+                        .HasConstraintName("fk_orders_point_of_sale_point_of_sale_id");
 
-                    b.OwnsOne("Conaprole.Orders.Domain.Orders.Address", "DeliveryAddress", b1 =>
+                    b.OwnsOne("Conaprole.Orders.Domain.Shared.Money", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("price_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("price_currency");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId")
+                                .HasConstraintName("fk_orders_orders_id");
+                        });
+
+                    b.OwnsOne("Conaprole.Orders.Domain.Shared.Address", "DeliveryAddress", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uuid")
@@ -434,30 +472,6 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("delivery_address_zipcode");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId")
-                                .HasConstraintName("fk_orders_orders_id");
-                        });
-
-                    b.OwnsOne("Conaprole.Orders.Domain.Shared.Money", "Price", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("price_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("price_currency");
 
                             b1.HasKey("OrderId");
 
@@ -524,16 +538,16 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Conaprole.Orders.Domain.Orders.PointOfSaleDistributor", b =>
+            modelBuilder.Entity("Conaprole.Orders.Domain.PointsOfSale.PointOfSaleDistributor", b =>
                 {
-                    b.HasOne("Conaprole.Orders.Domain.Orders.Distributor", "Distributor")
+                    b.HasOne("Conaprole.Orders.Domain.Distributors.Distributor", "Distributor")
                         .WithMany("PointSales")
                         .HasForeignKey("DistributorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_point_of_sale_distributor_distributor_distributor_id");
 
-                    b.HasOne("Conaprole.Orders.Domain.Orders.PointOfSale", "PointOfSale")
+                    b.HasOne("Conaprole.Orders.Domain.PointsOfSale.PointOfSale", "PointOfSale")
                         .WithMany("Distributors")
                         .HasForeignKey("PointOfSaleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -609,7 +623,7 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                         .HasConstraintName("fk_role_user_user_users_id");
                 });
 
-            modelBuilder.Entity("Conaprole.Orders.Domain.Orders.Distributor", b =>
+            modelBuilder.Entity("Conaprole.Orders.Domain.Distributors.Distributor", b =>
                 {
                     b.Navigation("PointSales");
                 });
@@ -619,7 +633,7 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                     b.Navigation("OrderLines");
                 });
 
-            modelBuilder.Entity("Conaprole.Orders.Domain.Orders.PointOfSale", b =>
+            modelBuilder.Entity("Conaprole.Orders.Domain.PointsOfSale.PointOfSale", b =>
                 {
                     b.Navigation("Distributors");
                 });
