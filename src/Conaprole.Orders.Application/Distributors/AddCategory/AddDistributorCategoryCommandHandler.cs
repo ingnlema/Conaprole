@@ -9,10 +9,12 @@ internal sealed class AddDistributorCategoryCommandHandler
     : ICommandHandler<AddDistributorCategoryCommand, bool>
 {
     private readonly IDistributorRepository _distributorRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AddDistributorCategoryCommandHandler(IDistributorRepository distributorRepository)
+    public AddDistributorCategoryCommandHandler(IDistributorRepository distributorRepository, IUnitOfWork unitOfWork)
     {
         _distributorRepository = distributorRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<bool>> Handle(AddDistributorCategoryCommand request, CancellationToken cancellationToken)
@@ -25,6 +27,7 @@ internal sealed class AddDistributorCategoryCommandHandler
         if (!added)
             return Result.Failure<bool>(DistributorErrors.CategoryAlreadyAssigned);
 
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success(true);
     }
 }
