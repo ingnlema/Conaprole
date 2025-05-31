@@ -117,5 +117,24 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         return id;
     }
     
+    protected async Task<bool> IsDistributorAssignedAsync(Guid posId, Guid distributorId, Category category)
+    {
+        const string sql = @"
+        SELECT COUNT(1) FROM point_of_sale_distributor 
+        WHERE point_of_sale_id = @PointOfSaleId 
+        AND distributor_id = @DistributorId 
+        AND category = @Category";
+
+        using var connection = SqlConnectionFactory.CreateConnection();
+        var count = await connection.QuerySingleAsync<int>(sql, new
+        {
+            PointOfSaleId = posId,
+            DistributorId = distributorId,
+            Category = category.ToString()
+        });
+
+        return count > 0;
+    }
+    
     
 }
