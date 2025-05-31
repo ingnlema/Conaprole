@@ -32,6 +32,10 @@ internal sealed class AssignDistributorToPointOfSaleCommandHandler : ICommandHan
         if (distributor is null)
             return Result.Failure<bool>(DistributorErrors.NotFound);
 
+        // Validate that the distributor supports the requested category
+        if (!distributor.SupportedCategories.Contains(request.Category))
+            return Result.Failure<bool>(DistributorErrors.CategoryNotSupported);
+
         var success = pointOfSale.AssignDistributor(distributor.Id, request.Category);
         if (!success)
             return Result.Failure<bool>(PointOfSaleErrors.DistributorAlreadyAssigned);
