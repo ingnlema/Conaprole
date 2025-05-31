@@ -25,8 +25,8 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var pointOfSalePhone = "+59891234567";
             var category = Category.LACTEOS;
 
-            await CreateDistributorAsync(distributorPhone);
-            await CreatePointOfSaleAsync(pointOfSalePhone);
+            var distributorId = await CreateDistributorAsync(distributorPhone);
+            var posId = await CreatePointOfSaleAsync(pointOfSalePhone);
 
             var request = new AssignDistributorToPointOfSaleRequest(
                 distributorPhone,
@@ -37,13 +37,25 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var response = await HttpClient.PostAsJsonAsync($"api/pos/{pointOfSalePhone}/distributors", request);
 
             // Assert
-            if (response.StatusCode != HttpStatusCode.NoContent)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Expected NoContent but got {response.StatusCode}. Content: {errorContent}");
-            }
-            
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+            // Verify the assignment was persisted in the database
+            const string sql = @"
+                SELECT COUNT(*) 
+                FROM point_of_sale_distributor 
+                WHERE point_of_sale_id = @PointOfSaleId 
+                AND distributor_id = @DistributorId 
+                AND category = @Category";
+
+            using var connection = SqlConnectionFactory.CreateConnection();
+            var count = await connection.QuerySingleAsync<int>(sql, new
+            {
+                PointOfSaleId = posId,
+                DistributorId = distributorId,
+                Category = category.ToString()
+            });
+
+            count.Should().Be(1);
         }
     }
 }
