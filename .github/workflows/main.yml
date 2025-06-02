@@ -8,6 +8,7 @@ jobs:
   noop:
     runs-on: ubuntu-latest
     steps:
-    - name: Simulación de CI
-      run: echo "✅ CI simulado para permitir merge"
+    steps:
+      - name: Simulación de CI
+        run: echo "✅ CI simulado para permitir merge"
 
