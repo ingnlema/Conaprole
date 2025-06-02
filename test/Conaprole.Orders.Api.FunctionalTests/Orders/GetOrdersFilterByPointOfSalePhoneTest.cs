@@ -33,7 +33,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // 3) Crear la orden usando el producto global
             var createResp = await HttpClient.PostAsJsonAsync(
-                "api/Orders",
+                "api/orders",
                 new CreateOrderRequest(
                     pointOfSalePhone,
                     distributorPhone,
@@ -49,7 +49,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // 4) Filtrar por número de punto de venta
             var response = await HttpClient.GetAsync(
-                $"api/Orders?PointOfSalePhoneNumber={Uri.EscapeDataString(pointOfSalePhone)}"
+                $"api/orders?PointOfSalePhoneNumber={Uri.EscapeDataString(pointOfSalePhone)}"
             );
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 

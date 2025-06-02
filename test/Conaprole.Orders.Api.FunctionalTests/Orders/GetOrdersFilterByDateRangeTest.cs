@@ -34,7 +34,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // 3) Crear la orden con la línea apuntando al producto global
             var createResp = await HttpClient.PostAsJsonAsync(
-                "api/Orders",
+                "api/orders",
                 new CreateOrderRequest(
                     pointOfSalePhone,
                     distributorPhone,
@@ -54,7 +54,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // Act & Assert: filtro desde 'before' debería incluir la orden
             var resp1 = await HttpClient.GetAsync(
-                $"api/Orders?From={Uri.EscapeDataString(before.ToString("o"))}"
+                $"api/orders?From={Uri.EscapeDataString(before.ToString("o"))}"
             );
             resp1.StatusCode.Should().Be(HttpStatusCode.OK);
             var list1 = await resp1.Content.ReadFromJsonAsync<List<OrderSummaryResponse>>();
@@ -62,7 +62,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // Act & Assert: filtro desde 'after' NO debería incluirla
             var resp2 = await HttpClient.GetAsync(
-                $"api/Orders?From={Uri.EscapeDataString(after.ToString("o"))}"
+                $"api/orders?From={Uri.EscapeDataString(after.ToString("o"))}"
             );
             resp2.StatusCode.Should().Be(HttpStatusCode.OK);
             var list2 = await resp2.Content.ReadFromJsonAsync<List<OrderSummaryResponse>>();

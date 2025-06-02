@@ -39,7 +39,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var line1 = new OrderLineRequest(sku1, 1);
             var line2 = new OrderLineRequest(sku2, 2);
             var createResp = await HttpClient.PostAsJsonAsync(
-                "api/Orders",
+                "api/orders",
                 new CreateOrderRequest(
                     pointOfSalePhone,
                     distributorPhone,
@@ -53,7 +53,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             createResp.StatusCode.Should().Be(HttpStatusCode.Created);
             var orderId = await createResp.Content.ReadFromJsonAsync<Guid>();
 
-            var getResp = await HttpClient.GetAsync($"api/Orders/{orderId}");
+            var getResp = await HttpClient.GetAsync($"api/orders/{orderId}");
             getResp.StatusCode.Should().Be(HttpStatusCode.OK);
             var order = await getResp.Content.ReadFromJsonAsync<OrderResponse>();
             order!.OrderLines.Should().HaveCount(2);
@@ -63,11 +63,11 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var keepId = ids.Last();
 
             var remResp = await HttpClient.DeleteAsync(
-                $"api/Orders/{orderId}/lines/{removeId}"
+                $"api/orders/{orderId}/lines/{removeId}"
             );
             remResp.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-            var getAfterResp = await HttpClient.GetAsync($"api/Orders/{orderId}");
+            var getAfterResp = await HttpClient.GetAsync($"api/orders/{orderId}");
             getAfterResp.StatusCode.Should().Be(HttpStatusCode.OK);
             var orderAfter = await getAfterResp.Content.ReadFromJsonAsync<OrderResponse>();
             orderAfter!.OrderLines.Should().HaveCount(1);
@@ -88,7 +88,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             var line = new OrderLineRequest(sku, 1);
             var createResp = await HttpClient.PostAsJsonAsync(
-                "api/Orders",
+                "api/orders",
                 new CreateOrderRequest(
                     pointOfSalePhone,
                     distributorPhone,
@@ -102,18 +102,18 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             createResp.StatusCode.Should().Be(HttpStatusCode.Created);
             var orderId = await createResp.Content.ReadFromJsonAsync<Guid>();
 
-            var getResp = await HttpClient.GetAsync($"api/Orders/{orderId}");
+            var getResp = await HttpClient.GetAsync($"api/orders/{orderId}");
             getResp.StatusCode.Should().Be(HttpStatusCode.OK);
             var order = await getResp.Content.ReadFromJsonAsync<OrderResponse>();
             order!.OrderLines.Should().HaveCount(1);
 
             var lineId = order.OrderLines.Single().Id;
             var remResp = await HttpClient.DeleteAsync(
-                $"api/Orders/{orderId}/lines/{lineId}"
+                $"api/orders/{orderId}/lines/{lineId}"
             );
             remResp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-            var getAfter = await HttpClient.GetAsync($"api/Orders/{orderId}");
+            var getAfter = await HttpClient.GetAsync($"api/orders/{orderId}");
             var orderAfter = await getAfter.Content.ReadFromJsonAsync<OrderResponse>();
             orderAfter!.OrderLines.Should().HaveCount(1);
             orderAfter.OrderLines.Single().Id.Should().Be(lineId);

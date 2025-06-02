@@ -46,17 +46,17 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
                 "UYU",
                 new List<OrderLineRequest> { initialLine }
             );
-            var createResponse = await HttpClient.PostAsJsonAsync("api/Orders", createRequest);
+            var createResponse = await HttpClient.PostAsJsonAsync("api/orders", createRequest);
             createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             var orderId = await createResponse.Content.ReadFromJsonAsync<Guid>();
 
             var addLineResponse = await HttpClient.PostAsJsonAsync(
-                $"api/Orders/{orderId}/lines",
+                $"api/orders/{orderId}/lines",
                 new AddOrderLineRequest(newLine.ExternalProductId, newLine.Quantity)
             );
             addLineResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-            var getResponse = await HttpClient.GetAsync($"api/Orders/{orderId}");
+            var getResponse = await HttpClient.GetAsync($"api/orders/{orderId}");
             getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
             var order = await getResponse.Content.ReadFromJsonAsync<OrderResponse>();
 

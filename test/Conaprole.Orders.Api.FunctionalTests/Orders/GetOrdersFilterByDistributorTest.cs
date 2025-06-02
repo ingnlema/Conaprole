@@ -38,11 +38,11 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
                 "UYU",
                 new List<OrderLineRequest> { line }
             );
-            var createResp = await HttpClient.PostAsJsonAsync("api/Orders", request);
+            var createResp = await HttpClient.PostAsJsonAsync("api/orders", request);
             createResp.StatusCode.Should().Be(HttpStatusCode.Created);
 
             // 3) Filtrar por distributorPhone
-            var response = await HttpClient.GetAsync($"api/Orders?Distributor={distributorPhone}");
+            var response = await HttpClient.GetAsync($"api/orders?Distributor={distributorPhone}");
 
             // 4) Verificar
             response.StatusCode.Should().Be(HttpStatusCode.OK);

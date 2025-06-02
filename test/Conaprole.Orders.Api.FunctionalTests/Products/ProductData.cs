@@ -41,7 +41,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Products
                 Description,
                 Category
             );
-            var response = await client.PostAsJsonAsync("api/Products", req);
+            var response = await client.PostAsJsonAsync("api/products", req);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Guid>();
         }
