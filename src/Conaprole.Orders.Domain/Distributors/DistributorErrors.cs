@@ -27,4 +27,8 @@ public static class DistributorErrors
     public static readonly Error CategoryNotAssigned = new(
         "Distributor.CategoryNotAssigned",
         "The category is not currently assigned to the distributor.");
+
+    public static readonly Error CategoryNotSupported = new(
+        "Distributor.CategoryNotSupported",
+        "The distributor does not support the specified category.");
 }

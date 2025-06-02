@@ -40,7 +40,9 @@ public sealed class DistributorConfiguration : IEntityTypeConfiguration<Distribu
                .HasColumnName("supported_categories")
                .HasConversion(
                    v => string.Join(',', v.Select(c => c.ToString())),
-                   v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                   v => string.IsNullOrEmpty(v) 
+                       ? new List<Category>() 
+                       : v.Split(',', StringSplitOptions.RemoveEmptyEntries)
                          .Select(s => Enum.Parse<Category>(s, true))
                          .ToList()
                )
