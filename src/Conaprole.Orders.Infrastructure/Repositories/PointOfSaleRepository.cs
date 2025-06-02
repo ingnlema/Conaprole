@@ -39,7 +39,9 @@ namespace Conaprole.Orders.Infrastructure.Repositories
 
         public async Task UpdateAsync(PointOfSale pos, CancellationToken ct = default)
         {
-            _dbContext.Set<PointOfSale>().Update(pos);
+            // No-op: Entity is already tracked by EF Core ChangeTracker after retrieval from GetByPhoneNumberAsync
+            // Domain methods modify the entity and EF automatically detects changes
+            // Only SaveChangesAsync() is needed for persistence
             await Task.CompletedTask;
         }
     }
