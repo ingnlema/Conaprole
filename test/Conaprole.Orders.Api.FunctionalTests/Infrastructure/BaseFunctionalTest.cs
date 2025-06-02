@@ -53,6 +53,26 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         return id;
     }
     
+    protected async Task<Guid> CreateInactivePointOfSaleAsync(string phoneNumber = "+59891234568")
+    {
+        var id = Guid.NewGuid();
+
+        var sql = @"
+        INSERT INTO point_of_sale (id, phone_number, name, address, is_active, created_at)
+        VALUES (@Id, @PhoneNumber, @Name, @Address, false, now());";
+
+        using var connection = SqlConnectionFactory.CreateConnection();
+        await connection.ExecuteAsync(sql, new
+        {
+            Id = id,
+            Name = "POS Inactivo de Prueba",
+            PhoneNumber = phoneNumber,
+            Address = "Inactive POS Test Address"
+        });
+
+        return id;
+    }
+    
     protected async Task<Guid> CreateDistributorAsync(string phoneNumber = "+59899887766")
     {
         var id = Guid.NewGuid();
