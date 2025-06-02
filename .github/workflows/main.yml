@@ -10,3 +10,4 @@ jobs:
     steps:
       - name: Simulación de CI
         run: echo "✅ CI simulado para permitir merge"
+
