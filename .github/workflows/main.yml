@@ -1,4 +1,4 @@
-name: Deploy to Azure Container Apps
+name: Dummy CI
 
 on:
   push:
@@ -8,5 +8,6 @@ jobs:
   noop:
     runs-on: ubuntu-latest
     steps:
-      - name: No-op workflow (simula CI)
-        run: echo "Simulación exitosa para permitir merge"
+    - name: Simulación de CI
+      run: echo "✅ CI simulado para permitir merge"
+
