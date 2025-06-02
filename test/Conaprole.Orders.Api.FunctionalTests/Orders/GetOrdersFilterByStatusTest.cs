@@ -39,19 +39,19 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
                 "UYU",
                 new List<OrderLineRequest> { line }
             );
-            var createResp = await HttpClient.PostAsJsonAsync("api/Orders", createReq);
+            var createResp = await HttpClient.PostAsJsonAsync("api/orders", createReq);
             createResp.StatusCode.Should().Be(HttpStatusCode.Created);
             var id = await createResp.Content.ReadFromJsonAsync<Guid>();
 
             // 3) Actualizar estado a Confirmed
             var updateResp = await HttpClient.PutAsJsonAsync(
-                $"api/Orders/{id}/status",
+                $"api/orders/{id}/status",
                 new UpdateOrderStatusRequest((int)Status.Confirmed)
             );
             updateResp.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             // 4) Filtrar por estado Confirmed
-            var response = await HttpClient.GetAsync($"api/Orders?Status={(int)Status.Confirmed}");
+            var response = await HttpClient.GetAsync($"api/orders?Status={(int)Status.Confirmed}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var list = await response.Content.ReadFromJsonAsync<List<OrderSummaryResponse>>();

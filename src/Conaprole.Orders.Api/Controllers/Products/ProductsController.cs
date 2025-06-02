@@ -12,7 +12,7 @@ namespace Conaprole.Orders.Api.Controllers.Products;
 
 
 [ApiController]
-[Route("api/Products")]
+[Route("api/products")]
 public class ProductsController : ControllerBase
 {
 

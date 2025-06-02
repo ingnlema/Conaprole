@@ -5,6 +5,8 @@ using Conaprole.Orders.Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using Conaprole.Orders.Domain.Abstractions;
 
 namespace Conaprole.Orders.Api.Controllers.Users;
 
@@ -19,8 +21,14 @@ public class UsersController : ControllerBase
         _sender = sender;
     }
     
+    /// <summary>
+    /// Gets the currently logged in user information.
+    /// </summary>
     [HttpGet("me")]
     [HasPermission(Permissions.UsersRead)]
+    [SwaggerOperation(Summary = "Get logged in user", Description = "Returns the information of the currently authenticated user.")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationToken)
     {
         var query = new GetLoggedInUserQuery();
@@ -30,8 +38,17 @@ public class UsersController : ControllerBase
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Registers a new user in the system.
+    /// </summary>
+    /// <remarks>
+    /// Creates a new user account with email, name, password and optional distributor association.
+    /// </remarks>
     [AllowAnonymous]
     [HttpPost("register")]
+    [SwaggerOperation(Summary = "Register new user", Description = "Creates a new user account with email, personal information and optional distributor association.")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(
         RegisterUserRequest request,
         CancellationToken cancellationToken)
@@ -53,9 +70,17 @@ public class UsersController : ControllerBase
         return Ok(result.Value);
     }
 
-    
+    /// <summary>
+    /// Authenticates a user and returns access token.
+    /// </summary>
+    /// <remarks>
+    /// Validates user credentials and returns JWT token for API access.
+    /// </remarks>
     [AllowAnonymous]
     [HttpPost("login")]
+    [SwaggerOperation(Summary = "User login", Description = "Authenticates user credentials and returns access token for API access.")]
+    [ProducesResponseType(typeof(AccessTokenResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> LogIn(
         LogInUserRequest request,
         CancellationToken cancellationToken)

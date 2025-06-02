@@ -29,7 +29,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // 2) Crear la orden usando el producto global en la línea inicial
             var createResp = await HttpClient.PostAsJsonAsync(
-                "api/Orders",
+                "api/orders",
                 new CreateOrderRequest(
                     pointOfSalePhone,
                     distributorPhone,
@@ -48,13 +48,13 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             // 3) Actualizar el estado a Confirmed
             var resp = await HttpClient.PutAsJsonAsync(
-                $"api/Orders/{orderId}/status",
+                $"api/orders/{orderId}/status",
                 new UpdateOrderStatusRequest((int)Status.Confirmed)
             );
             resp.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
             // 4) Verificar en el GET que el estado fue actualizado
-            var getResp = await HttpClient.GetAsync($"api/Orders/{orderId}");
+            var getResp = await HttpClient.GetAsync($"api/orders/{orderId}");
             getResp.StatusCode.Should().Be(HttpStatusCode.OK);
             var order = await getResp.Content.ReadFromJsonAsync<OrderResponse>();
             order.Status.Should().Be((int)Status.Confirmed);

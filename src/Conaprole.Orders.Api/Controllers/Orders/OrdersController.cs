@@ -19,7 +19,7 @@ using Swashbuckle.AspNetCore.Filters;
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
 [ApiController]
-[Route("api/Orders")]
+[Route("api/orders")]
 public class OrdersController : ControllerBase
 {
 
@@ -106,6 +106,8 @@ public class OrdersController : ControllerBase
     /// </summary>
     [HttpGet]
     [SwaggerOperation(Summary = "Gets orders with optional filters", Description = "Filter by date, status, distributor or point of sale.")]
+    [ProducesResponseType(typeof(List<OrderSummaryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetOrders([FromQuery] GetOrdersRequest request, CancellationToken cancellationToken)
 
     {
