@@ -35,12 +35,15 @@ internal sealed class GetLoggedInUserQueryHandler
 
         const string sql = """
                            SELECT
-                               id AS Id,
-                               first_name AS FirstName,
-                               last_name AS LastName,
-                               email AS Email
-                           FROM users
-                           WHERE identity_id = @IdentityId
+                               u.id AS Id,
+                               u.first_name AS FirstName,
+                               u.last_name AS LastName,
+                               u.email AS Email,
+                               u.distributor_id AS DistributorId,
+                               d.phone_number AS DistributorPhoneNumber
+                           FROM users u
+                           LEFT JOIN distributor d ON u.distributor_id = d.id
+                           WHERE u.identity_id = @IdentityId
                            """;
 
         var user = await connection.QuerySingleOrDefaultAsync<UserResponse>(
@@ -55,6 +58,34 @@ internal sealed class GetLoggedInUserQueryHandler
             return Result.Failure<UserResponse>(UserErrors.NotFound);
         }
 
-        return Result.Success(user);
+        // Get user roles
+        const string rolesSql = """
+                                SELECT r.name
+                                FROM roles r
+                                INNER JOIN role_user ru ON r.id = ru.roles_id
+                                INNER JOIN users u ON ru.users_id = u.id
+                                WHERE u.identity_id = @IdentityId
+                                """;
+
+        var roles = await connection.QueryAsync<string>(
+            rolesSql,
+            new
+            {
+                IdentityId = _userContext.IdentityId
+            });
+
+        // Update the user response with roles
+        var userWithRoles = new UserResponse
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            DistributorId = user.DistributorId,
+            DistributorPhoneNumber = user.DistributorPhoneNumber,
+            Roles = roles.ToList()
+        };
+
+        return Result.Success(userWithRoles);
     }
 }

@@ -1,4 +1,5 @@
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Distributors;
 using Conaprole.Orders.Domain.Users.Events;
 
 namespace Conaprole.Orders.Domain.Users;
@@ -27,6 +28,10 @@ public sealed class User : Entity
 
     public string IdentityId { get; private set; } = string.Empty;
 
+    public Guid? DistributorId { get; private set; }
+
+    public Distributor? Distributor { get; private set; }
+
     public IReadOnlyCollection<Role> Roles => _roles.ToList();
 
     public static User Create(FirstName firstName, LastName lastName, Email email)
@@ -43,5 +48,10 @@ public sealed class User : Entity
     public void SetIdentityId(string identityId)
     {
         IdentityId = identityId;
+    }
+
+    public void SetDistributor(Guid distributorId)
+    {
+        DistributorId = distributorId;
     }
 }

@@ -1,3 +1,4 @@
+using Conaprole.Orders.Domain.Distributors;
 using Conaprole.Orders.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -27,5 +28,12 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(user => user.Email).IsUnique();
 
         builder.HasIndex(user => user.IdentityId).IsUnique();
+
+        builder.Property(user => user.DistributorId)
+            .HasColumnName("distributor_id");
+
+        builder.HasOne(user => user.Distributor)
+            .WithMany()
+            .HasForeignKey(user => user.DistributorId);
     }
 }
