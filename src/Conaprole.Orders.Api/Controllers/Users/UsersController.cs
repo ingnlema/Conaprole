@@ -40,7 +40,8 @@ public class UsersController : ControllerBase
             request.Email,
             request.FirstName,
             request.LastName,
-            request.Password);
+            request.Password,
+            request.DistributorPhoneNumber);
 
         var result = await _sender.Send(command, cancellationToken);
 

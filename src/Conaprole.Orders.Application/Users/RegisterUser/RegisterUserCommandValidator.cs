@@ -13,5 +13,9 @@ internal sealed class RegisterUserCommandValidator : AbstractValidator<RegisterU
         RuleFor(c => c.Email).EmailAddress();
 
         RuleFor(c => c.Password).NotEmpty().MinimumLength(5);
+
+        RuleFor(c => c.DistributorPhoneNumber)
+            .MaximumLength(20)
+            .When(c => !string.IsNullOrEmpty(c.DistributorPhoneNumber));
     }
 }
