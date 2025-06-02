@@ -19,10 +19,9 @@ public sealed class GetDistributorCategoriesQueryHandler : IQueryHandler<GetDist
         using var connection = _sqlConnectionFactory.CreateConnection();
 
         const string sql = """
-            SELECT category 
-            FROM distributor_categories dc
-            JOIN distributor d ON dc.distributor_id = d.id
-            WHERE d.phone_number = @PhoneNumber
+            SELECT unnest(string_to_array(supported_categories, ',')) as category
+            FROM distributor 
+            WHERE phone_number = @PhoneNumber
         """;
 
         var categories = await connection.QueryAsync<string>(sql, new { PhoneNumber = request.DistributorPhoneNumber });
