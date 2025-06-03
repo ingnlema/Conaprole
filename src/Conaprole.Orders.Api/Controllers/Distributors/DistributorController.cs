@@ -3,6 +3,7 @@ using Conaprole.Orders.Application.Distributors.AddCategory;
 using Conaprole.Orders.Application.Distributors.CreateDistributor;
 using Conaprole.Orders.Application.Distributors.GetAssignedPointsOfSale;
 using Conaprole.Orders.Application.Distributors.GetCategories;
+using Conaprole.Orders.Application.Distributors.GetDistributors;
 using Conaprole.Orders.Application.Distributors.GetPointOfSaleDetails;
 using Conaprole.Orders.Application.Distributors.RemoveCategory;
 using MediatR;
@@ -23,6 +24,16 @@ public class DistributorController : ControllerBase
     public DistributorController(ISender sender)
     {
         _sender = sender;
+    }
+
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get all distributors", Description = "Retrieves a list of all distributors with their summary information including supported categories and assigned points of sale count.")]
+    [ProducesResponseType(typeof(List<DistributorSummaryResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetDistributors(CancellationToken cancellationToken)
+    {
+        var query = new GetDistributorsQuery();
+        var result = await _sender.Send(query, cancellationToken);
+        return Ok(result.Value);
     }
 
     [HttpPost]
