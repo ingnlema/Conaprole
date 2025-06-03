@@ -39,8 +39,8 @@ namespace Conaprole.Orders.Infrastructure.Repositories
 
         public async Task UpdateAsync(PointOfSale pos, CancellationToken ct = default)
         {
-            // Update method for aggregate root - EF Core should detect changes in tracked entities and their collections
-            _dbContext.Set<PointOfSale>().Update(pos);
+            // Don't call Update() if the entity is already being tracked by EF Core
+            // The entity should be tracked from GetByPhoneNumberAsync, so just let EF Core handle changes
             await Task.CompletedTask;
         }
     }
