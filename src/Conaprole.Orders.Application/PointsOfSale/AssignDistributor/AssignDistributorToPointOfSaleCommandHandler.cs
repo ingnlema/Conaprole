@@ -11,14 +11,17 @@ internal sealed class AssignDistributorToPointOfSaleCommandHandler : ICommandHan
     private readonly IPointOfSaleRepository _pointOfSaleRepository;
     private readonly IDistributorRepository _distributorRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPointOfSaleDistributorRepository _pointOfSaleDistributorRepository;
 
     public AssignDistributorToPointOfSaleCommandHandler(
         IPointOfSaleRepository pointOfSaleRepository,
         IDistributorRepository distributorRepository,
+        IPointOfSaleDistributorRepository pointOfSaleDistributorRepository,
         IUnitOfWork unitOfWork)
     {
         _pointOfSaleRepository = pointOfSaleRepository;
         _distributorRepository = distributorRepository;
+        _pointOfSaleDistributorRepository = pointOfSaleDistributorRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -36,11 +39,12 @@ internal sealed class AssignDistributorToPointOfSaleCommandHandler : ICommandHan
         if (!distributor.SupportedCategories.Contains(request.Category))
             return Result.Failure<bool>(DistributorErrors.CategoryNotSupported);
 
-        var success = pointOfSale.AssignDistributor(distributor.Id, request.Category);
-        if (!success)
+        var exists = await _pointOfSaleDistributorRepository.ExistsAsync(pointOfSale.Id, distributor.Id, request.Category, cancellationToken);
+        if (exists)
             return Result.Failure<bool>(PointOfSaleErrors.DistributorAlreadyAssigned);
 
-        await _pointOfSaleRepository.UpdateAsync(pointOfSale, cancellationToken);
+        var assignment =  PointOfSaleDistributor.Create(pointOfSale.Id, distributor.Id, request.Category);
+        await _pointOfSaleDistributorRepository.AssignAsync(assignment, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(true);

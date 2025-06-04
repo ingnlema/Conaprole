@@ -1,0 +1,30 @@
+Issue 1 - AddCategoryTest
+
+En namespace Conaprole.Orders.Api.FunctionalTests.Distributor se debe generar:
+AddCategoryTest, para esto puedes tomar como referencia ejemplos los test dentro del namespace Conaprole.Orders.Api.FunctionalTests.Orders.
+
+Si es necesario algun metodo auxiliar, puedes crearlo en la clase BaseFunctionalTest dentro del namespace Conaprole.Orders.Api.FunctionalTests.Infrastructure.
+
+AddCategoryTest debe tener [Collection("ApiCollection")] y debe heredar de BaseFunctionalTest.
+
+Para esto es importante que revises las entidades de dominio existentes, sus propiedades y metodos disponibles, esto lo encontraras en la capa de domino bajo el namespace Conaprole.Orders.Domain, 
+donde dependiendo el caso de uso se encontraran en namespace Conaprole.Orders.Domain.Orders, namespace Conaprole.Orders.Domain.Distributors, namespace Conaprole.Orders.Domain.PointsOfSale, etc.
+
+También es importante que chequees la configuración de la base de datos, que se encuentra en la capa de infraestructura bajo el namespace Conaprole.Orders.Api.Infrastructure.Configuration, 
+donde podrás ver los nombres de las tablas de base de datos, las relaciones entre las entidades y las propiedades de cada una de ellas.
+
+Luego de desarrollar el test debes ejecutarlo y validar que corre correctamente, en caso de error debes iterar y resolver los problemas que surjan hasta que el test corra.
+
+No deberías tener que modificar el código de la aplicación que se encuenta en el directorio src, en caso de hacerlo deja un comentario de cual es la razón de ese cambio.
+
+La idea principal de estos test es probar que los endpoints disponibles funciona correctamente, incluyendo sus casos de uso asociados.
+
+Debes respestar el enfoque y la nomeclatura utilizada en los test ya desarrollados, por ejemplo, aquellos que se encuentra en namespace Conaprole.Orders.Api.FunctionalTests.Orders.
+
+Es importante que también valides los DTOs de entrada, que se encuentran en el namespace Conaprole.Orders.Api.Controllers.Distributors.Dtos,namespace Conaprole.Orders.Api.Controllers.PointsOfSales.Dtos, etc., para asegurarte de que los datos enviados son correctos.
+También es importante que valides los DTOs de salida si los hay, que se encuentran por ejemplo en el namespace Conaprole.Orders.Application.Distributors.GetAssignedPointsOfSale para el caso de uso GetAssignedPointsOfSale, pero esto dependerá del caso de uso y su tipo, por ejemplo de si es una query o un command.
+
+Como dato cada caso de uso de la capa de aplicación tiene definido su command o query, el cual es un record que especifica los datos de entrada para ejecutar dicho caso de uso, este dato te puede ayudar si necesitas iterar para corregir algun error.
+
+Como información clave es un proyecto bien estructurado a nivel arquitectonico, el cual tiene un enfoque de clean architecture y busca tener definiciones alineada a DDD.
+Es importante mantener esta arquitectura de forma limpia y en caso de hacer algun ajuste a nivel de aplicación no romper el DIP ni ningun aspecto arquitectonico relevamte.

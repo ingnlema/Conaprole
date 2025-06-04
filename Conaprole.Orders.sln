@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8EDC0130-273A-42D1-BE90-91152A4A6BD9}"
+	ProjectSection(SolutionItems) = preProject
+		src\cicdbackup = src\cicdbackup
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{2F00C85F-0BB7-4767-9770-834ABED89912}"
 EndProject
