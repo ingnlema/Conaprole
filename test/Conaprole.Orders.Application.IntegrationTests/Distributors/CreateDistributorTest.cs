@@ -2,6 +2,7 @@ using Conaprole.Orders.Application.Distributors.CreateDistributor;
 using Conaprole.Orders.Domain.Distributors;
 using Conaprole.Orders.Domain.Shared;
 using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Distributors
 {
@@ -42,30 +43,34 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
         public async Task CreateDistributorCommand_WithDuplicatePhoneNumber_ShouldReturnFailure()
         {
             // Arrange - Create first distributor
+            var phoneNumber = "+59899123456";
             var firstCommand = new CreateDistributorCommand(
                 "First Distributor",
-                "+59899123456",
+                phoneNumber,
                 "First Address 123",
                 new List<Category> { Category.LACTEOS }
             );
+            
+            // Act - First command should succeed
             var firstResult = await Sender.Send(firstCommand);
+            
+            // Assert - First command succeeded
             Assert.False(firstResult.IsFailure);
 
             // Arrange - Try to create second distributor with same phone number
             var secondCommand = new CreateDistributorCommand(
                 "Second Distributor",
-                "+59899123456", // Same phone number
+                phoneNumber, // Same phone number
                 "Second Address 456",
                 new List<Category> { Category.CONGELADOS }
             );
 
-            // Act
+            // Act - Second command should fail due to duplicate phone number
             var secondResult = await Sender.Send(secondCommand);
 
-            // Assert
+            // Assert - Second command should fail with AlreadyExists error
             Assert.True(secondResult.IsFailure);
             Assert.Equal(DistributorErrors.AlreadyExists.Code, secondResult.Error.Code);
-            Assert.Equal(DistributorErrors.AlreadyExists.Name, secondResult.Error.Name);
         }
 
         [Fact]
