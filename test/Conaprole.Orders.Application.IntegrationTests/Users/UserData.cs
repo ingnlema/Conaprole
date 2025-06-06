@@ -8,7 +8,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Users;
 /// </summary>
 public static class UserData
 {
-    public const string Email = "logintest@test.com";
+    public static string Email => $"logintest-{Guid.NewGuid()}@test.com";
     public const string FirstName = "Login";
     public const string LastName = "Test";
     public const string Password = "testpassword123";
@@ -16,7 +16,7 @@ public static class UserData
     /// <summary>
     /// Comando preconfigurado para registrar el usuario.
     /// </summary>
-    public static RegisterUserCommand RegisterCommand =>
+    public static RegisterUserCommand CreateRegisterCommand() =>
         new(
             Email,
             FirstName,
@@ -25,13 +25,14 @@ public static class UserData
         );
 
     /// <summary>
-    /// Registra el usuario vía MediatR y devuelve su ID.
+    /// Registra el usuario vía MediatR y devuelve su ID y email para usar en tests.
     /// </summary>
-    public static async Task<Guid> SeedAsync(ISender sender)
+    public static async Task<(Guid UserId, string Email)> SeedAsync(ISender sender)
     {
-        var result = await sender.Send(RegisterCommand);
+        var command = CreateRegisterCommand();
+        var result = await sender.Send(command);
         if (result.IsFailure)
             throw new Exception($"Error seeding user: {result.Error.Code}");
-        return result.Value;
+        return (result.Value, command.Email);
     }
 }

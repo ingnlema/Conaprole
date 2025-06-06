@@ -13,11 +13,11 @@ public class LoginUserTest : BaseIntegrationTest
     [Fact]
     public async Task LoginUser_ShouldReturnAccessToken_WhenValidCredentials()
     {
-        // 1) Sembrar el usuario y obtener su ID
-        var userId = await UserData.SeedAsync(Sender);
+        // 1) Sembrar el usuario y obtener su ID y email
+        var (userId, userEmail) = await UserData.SeedAsync(Sender);
 
         // 2) Ejecutar el comando de login
-        var loginCommand = new LogInUserCommand(UserData.Email, UserData.Password);
+        var loginCommand = new LogInUserCommand(userEmail, UserData.Password);
         var loginResult = await Sender.Send(loginCommand);
 
         // 3) Verificar que el resultado sea exitoso
@@ -34,10 +34,10 @@ public class LoginUserTest : BaseIntegrationTest
     public async Task LoginUser_ShouldReturnFailure_WhenInvalidCredentials()
     {
         // 1) Sembrar el usuario
-        var userId = await UserData.SeedAsync(Sender);
+        var (userId, userEmail) = await UserData.SeedAsync(Sender);
 
         // 2) Intentar login con contraseña incorrecta
-        var loginCommand = new LogInUserCommand(UserData.Email, "wrongpassword");
+        var loginCommand = new LogInUserCommand(userEmail, "wrongpassword");
         var loginResult = await Sender.Send(loginCommand);
 
         // 3) Verificar que el resultado sea fallido
