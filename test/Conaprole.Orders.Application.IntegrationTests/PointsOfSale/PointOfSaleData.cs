@@ -27,6 +27,18 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
             );
 
         /// <summary>
+        /// Crea un comando de punto de venta con datos únicos.
+        /// </summary>
+        public static CreatePointOfSaleCommand CreateUniqueCommand(string uniqueIdentifier) =>
+            new(
+                $"{Name} {uniqueIdentifier}",
+                $"+598912345{uniqueIdentifier.PadLeft(2, '0')}",
+                City,
+                $"{Street} {uniqueIdentifier}",
+                ZipCode
+            );
+
+        /// <summary>
         /// Crea el punto de venta vía MediatR y devuelve su ID.
         /// </summary>
         public static async Task<Guid> SeedAsync(ISender sender)
@@ -35,6 +47,18 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
             if (result.IsFailure)
                 throw new Exception($"Error seeding point of sale: {result.Error.Code}");
             return result.Value;
+        }
+
+        /// <summary>
+        /// Crea un punto de venta único vía MediatR y devuelve su ID.
+        /// </summary>
+        public static async Task<(Guid Id, string PhoneNumber)> SeedUniqueAsync(ISender sender, string uniqueIdentifier)
+        {
+            var command = CreateUniqueCommand(uniqueIdentifier);
+            var result = await sender.Send(command);
+            if (result.IsFailure)
+                throw new Exception($"Error seeding point of sale: {result.Error.Code}");
+            return (result.Value, command.PhoneNumber);
         }
     }
 }

@@ -35,5 +35,29 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
             Assert.False(result.IsFailure);
             Assert.True(result.Value);
         }
+
+        [Fact]
+        public async Task AssignDistributorToPointOfSaleCommand_Should_Return_Failure_When_Already_Assigned()
+        {
+            // 1) Usar datos únicos para evitar conflictos con otros tests
+            var (distributorId, distributorPhone) = await DistributorData.SeedUniqueAsync(Sender, "DupTest");
+            var (pointOfSaleId, posPhone) = await PointOfSaleData.SeedUniqueAsync(Sender, "DupTest");
+
+            // 2) Crear el comando para asignar el distribuidor al punto de venta
+            var command = new AssignDistributorToPointOfSaleCommand(
+                posPhone,
+                distributorPhone,
+                Category.LACTEOS
+            );
+
+            // 3) Ejecutar el comando por primera vez (debe ser exitoso)
+            var firstResult = await Sender.Send(command);
+            Assert.False(firstResult.IsFailure);
+            Assert.True(firstResult.Value);
+
+            // 4) Ejecutar el comando por segunda vez (debe fallar porque ya está asignado)
+            var secondResult = await Sender.Send(command);
+            Assert.True(secondResult.IsFailure);
+        }
     }
 }
