@@ -1,6 +1,10 @@
 
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Conaprole.Orders.Application.Products.GetProducts;
 using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Xunit;
 
 
 namespace Conaprole.Orders.Application.IntegrationTests.Products
