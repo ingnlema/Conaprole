@@ -27,7 +27,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
         public async Task GetDistributorsQuery_WithDistributors_Returns_AllDistributors()
         {
             // Create test data
-            var distributorId = await DistributorData.SeedAsync(Sender);
+            var (distributorId, distributorPhoneNumber) = await DistributorData.SeedAsync(Sender);
 
             // Execute the query
             var queryResult = await Sender.Send(new GetDistributorsQuery());
