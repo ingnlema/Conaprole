@@ -35,5 +35,23 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
                 throw new Exception($"Error seeding distributor: {result.Error.Code}");
             return result.Value;
         }
+
+        /// <summary>
+        /// Crea un distribuidor con un número de teléfono único y devuelve su ID.
+        /// </summary>
+        public static async Task<Guid> SeedAsync(ISender sender, string uniquePhoneNumber)
+        {
+            var command = new CreateDistributorCommand(
+                Name,
+                uniquePhoneNumber,
+                Address,
+                DefaultCategories
+            );
+            
+            var result = await sender.Send(command);
+            if (result.IsFailure)
+                throw new Exception($"Error seeding distributor: {result.Error.Code}");
+            return result.Value;
+        }
     }
 }
