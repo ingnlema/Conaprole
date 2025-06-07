@@ -1,4 +1,5 @@
 using Conaprole.Orders.Application.Abstractions.Data;
+using Conaprole.Orders.Application.Abstractions.Authentication;
 using Conaprole.Orders.Infrastructure;
 using Conaprole.Orders.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 {
     private readonly PostgreSqlContainer _dbContainer;
     private readonly KeycloakContainer _keycloakContainer;
+    public TestUserContext TestUserContext { get; } = new();
     
     public IntegrationTestWebAppFactory()
     {
@@ -52,6 +54,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             services.AddSingleton<ISqlConnectionFactory>(_ => 
                 new SqlConnectionFactory(_dbContainer.GetConnectionString()));
             
+            // Replace IUserContext with test implementation
+            services.RemoveAll(typeof(IUserContext));
+            services.AddSingleton<IUserContext>(TestUserContext);
+            
             var keycloackAddress = _keycloakContainer.GetBaseAddress();
             
             var keycloakAddress = _keycloakContainer.GetBaseAddress();
@@ -73,7 +79,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         await _dbContainer.StartAsync();
         await _keycloakContainer.StartAsync();
         
-
+        // Apply migrations to the test database
+        using var scope = Services.CreateScope();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.MigrateAsync();
     }
 
     public new async Task DisposeAsync()
