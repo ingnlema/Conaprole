@@ -9,31 +9,29 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
     /// </summary>
     public static class DistributorData
     {
-        public const string PhoneNumber = "+59899887766";
         public const string Name = "Distribuidor Test";
         public const string Address = "Calle Falsa 123";
         public static readonly List<Category> DefaultCategories = new() { Category.LACTEOS };
 
         /// <summary>
-        /// Comando preconfigurado para crear el distribuidor.
+        /// Crea el distribuidor vía MediatR con un número de teléfono único y devuelve su ID y el número de teléfono usado.
         /// </summary>
-        public static CreateDistributorCommand CreateCommand =>
-            new(
+        public static async Task<(Guid Id, string PhoneNumber)> SeedAsync(ISender sender)
+        {
+            // Generate a unique phone number using current timestamp
+            var uniquePhoneNumber = $"+59899{DateTime.UtcNow.Ticks % 1000000:D6}";
+            
+            var command = new CreateDistributorCommand(
                 Name,
-                PhoneNumber,
+                uniquePhoneNumber,
                 Address,
                 DefaultCategories
             );
-
-        /// <summary>
-        /// Crea el distribuidor vía MediatR y devuelve su ID.
-        /// </summary>
-        public static async Task<Guid> SeedAsync(ISender sender)
-        {
-            var result = await sender.Send(CreateCommand);
+            
+            var result = await sender.Send(command);
             if (result.IsFailure)
                 throw new Exception($"Error seeding distributor: {result.Error.Code}");
-            return result.Value;
+            return (result.Value, uniquePhoneNumber);
         }
     }
 }
