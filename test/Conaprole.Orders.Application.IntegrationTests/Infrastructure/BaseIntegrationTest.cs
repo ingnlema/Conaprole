@@ -2,7 +2,7 @@ using Conaprole.Orders.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+namespace Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 
 public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>
 {
