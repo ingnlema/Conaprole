@@ -6,8 +6,23 @@
 2. [**Autenticación**](./authentication.md) - JWT y integración con Keycloak
 3. [**Autorización**](./authorization.md) - Sistema de permisos y roles
 4. [**Integración Keycloak**](./keycloak-integration.md) - Configuración y gestión de usuarios
-5. [**Guía de Implementación**](./implementation-guide.md) - Como agregar nuevos permisos y roles
-6. [**Diagramas**](./diagrams.md) - Diagramas de flujo y arquitectura
+5. [**Diagramas**](./diagrams.md) - Diagramas de flujo y arquitectura
+6. [**Guía de Implementación**](./implementation-guide.md) - Como agregar nuevos permisos y roles
+
+## Documentos por Audiencia
+
+### 👨‍💼 **Para Managers y Arquitectos**
+- [Arquitectura de Seguridad](./architecture.md) - Componentes y principios
+- [Diagramas](./diagrams.md) - Visualización de la arquitectura
+
+### 👨‍💻 **Para Desarrolladores**  
+- [Autenticación](./authentication.md) - Implementación JWT/Keycloak
+- [Autorización](./authorization.md) - Sistema de permisos
+- [Guía de Implementación](./implementation-guide.md) - Tutoriales paso a paso
+
+### 🔧 **Para DevOps/SysAdmins**
+- [Integración Keycloak](./keycloak-integration.md) - Configuración y despliegue
+- [Diagramas](./diagrams.md) - Arquitectura de despliegue
 
 ## Resumen Ejecutivo
 
