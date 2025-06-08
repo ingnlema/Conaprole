@@ -416,32 +416,6 @@ graph TB
     class LOGS,METRICS monitoring
 ```
 
-## Matriz de Responsabilidades de Seguridad
-
-```mermaid
-graph LR
-    subgraph "Responsabilidades por Capa"
-        subgraph "Keycloak"
-            KC_RESP[✅ Gestión de identidades<br/>✅ Autenticación de usuarios<br/>✅ Emisión de JWT tokens<br/>✅ Gestión de credenciales<br/>✅ Políticas de contraseñas<br/>✅ 2FA/MFA (futuro)]
-        end
-        
-        subgraph "API Application"
-            API_RESP[✅ Validación de JWT<br/>✅ Autorización por permisos<br/>✅ Transformación de claims<br/>✅ Lógica de negocio<br/>✅ Contexto de usuario<br/>✅ Auditoría de acciones]
-        end
-        
-        subgraph "Database"
-            DB_RESP[✅ Usuarios del dominio<br/>✅ Roles y permisos<br/>✅ Relaciones usuario-rol<br/>✅ Datos de negocio<br/>✅ Auditoría de cambios<br/>✅ Respaldos seguros]
-        end
-    end
-
-    classDef keycloak fill:#fff3e0
-    classDef api fill:#e3f2fd  
-    classDef database fill:#e8f5e8
-
-    class KC_RESP keycloak
-    class API_RESP api
-    class DB_RESP database
-```
 
 ---
 
