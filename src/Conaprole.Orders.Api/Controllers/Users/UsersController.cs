@@ -1,6 +1,9 @@
 using Conaprole.Orders.Application.Users.GetLoggedInUser;
 using Conaprole.Orders.Application.Users.LoginUser;
 using Conaprole.Orders.Application.Users.RegisterUser;
+using Conaprole.Orders.Application.Users.AssignRole;
+using Conaprole.Orders.Application.Users.RemoveRole;
+using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -72,6 +75,26 @@ public class UsersController : ControllerBase
         }
 
         return Ok(result.Value);
+    }
+
+    [HttpPost("{userId}/assign-role")]
+    // [HasPermission(Permissions.UsersWrite)]
+    public async Task<IActionResult> AssignRole(Guid userId, [FromBody] AssignRoleRequest request, CancellationToken cancellationToken)
+    {
+        var command = new AssignRoleCommand(userId, request.RoleName);
+        var result = await _sender.Send(command, cancellationToken);
+        
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
+    }
+
+    [HttpPost("{userId}/remove-role")]
+    // [HasPermission(Permissions.UsersWrite)]
+    public async Task<IActionResult> RemoveRole(Guid userId, [FromBody] RemoveRoleRequest request, CancellationToken cancellationToken)
+    {
+        var command = new RemoveRoleCommand(userId, request.RoleName);
+        var result = await _sender.Send(command, cancellationToken);
+        
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
 
 }
