@@ -52,36 +52,5 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             
             return new OrderDataResult(result.Value, uniqueExternalId, distributorPhoneNumber, pointOfSalePhoneNumber);
         }
-
-        /// <summary>
-        /// Crea una orden sin líneas de productos.
-        /// </summary>
-        public static async Task<Guid> SeedEmptyOrderAsync(ISender sender)
-        {
-            // 1. Crear distribuidor único
-            var distributorPhoneNumber = $"+59899{Random.Shared.Next(100000, 999999)}";
-            var distributorId = await DistributorData.SeedWithPhoneAsync(sender, distributorPhoneNumber);
-
-            // 2. Crear punto de venta único
-            var pointOfSalePhoneNumber = $"+59891{Random.Shared.Next(100000, 999999)}";
-            var pointOfSaleId = await PointOfSaleData.SeedWithPhoneAsync(sender, pointOfSalePhoneNumber);
-
-            // 3. Crear orden sin líneas de producto
-            var createOrderCommand = new CreateOrderCommand(
-                pointOfSalePhoneNumber,
-                distributorPhoneNumber,
-                City,
-                Street,
-                ZipCode,
-                CurrencyCode,
-                new List<CreateOrderLineCommand>()
-            );
-
-            var result = await sender.Send(createOrderCommand);
-            if (result.IsFailure)
-                throw new Exception($"Error seeding empty order: {result.Error.Code}");
-            
-            return result.Value;
-        }
     }
 }

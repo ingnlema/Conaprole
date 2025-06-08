@@ -15,16 +15,16 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         public async Task AddOrderLineToOrderCommand_WithValidData_Should_AddLineSuccessfully()
         {
             // Arrange
-            // 1. Crear una orden vacía
-            var orderId = await OrderData.SeedEmptyOrderAsync(Sender);
+            // 1. Crear una orden con un producto inicial
+            var initialOrderData = await OrderData.SeedAsync(Sender);
             
-            // 2. Crear un producto para agregar (único)
+            // 2. Crear un producto diferente para agregar
             var uniqueExternalId = $"PRODUCT_{Guid.NewGuid():N}";
             var productId = await ProductData.SeedWithExternalIdAsync(Sender, uniqueExternalId);
             
-            // 3. Preparar el comando
+            // 3. Preparar el comando para agregar el segundo producto
             var command = new AddOrderLineToOrderCommand(
-                orderId,
+                initialOrderData.OrderId,
                 new ExternalProductId(uniqueExternalId),
                 2
             );
@@ -62,11 +62,12 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         public async Task AddOrderLineToOrderCommand_WithNonExistentProduct_Should_ReturnFailure()
         {
             // Arrange
-            var orderId = await OrderData.SeedEmptyOrderAsync(Sender);
+            // 1. Crear una orden con un producto inicial
+            var initialOrderData = await OrderData.SeedAsync(Sender);
             var nonExistentProductId = $"NON_EXISTENT_{Guid.NewGuid():N}";
             
             var command = new AddOrderLineToOrderCommand(
-                orderId,
+                initialOrderData.OrderId,
                 new ExternalProductId(nonExistentProductId),
                 1
             );
