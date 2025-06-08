@@ -15,7 +15,7 @@ El sistema utiliza un realm llamado **"Conaprole"** que contiene toda la configu
 ```json
 {
   "clientId": "conaprole-auth-client",
-  "clientSecret": "EMI6IRqofvQmXHhvCX3MiX9bVdqKN4VS",
+  "clientSecret": "<secret>",
   "purpose": "Login de usuarios finales",
   "grantTypes": ["password", "refresh_token"],
   "scopes": ["openid", "email"]
@@ -31,7 +31,7 @@ El sistema utiliza un realm llamado **"Conaprole"** que contiene toda la configu
 ```json
 {
   "clientId": "conaprole-admin-client", 
-  "clientSecret": "MdyBcICzOkfdxLeDcbcyhi5Im3EtVOb9",
+  "clientSecret": "<secret>",
   "purpose": "Gestión administrativa de usuarios",
   "grantTypes": ["client_credentials"],
   "permissions": ["manage-users", "view-users"]
@@ -68,9 +68,9 @@ public sealed class KeycloakOptions
     "AdminUrl": "http://conaprole-idp:8080/admin/realms/Conaprole/",
     "TokenUrl": "http://conaprole-idp:8080/realms/Conaprole/protocol/openid-connect/token",
     "AdminClientId": "conaprole-admin-client",
-    "AdminClientSecret": "MdyBcICzOkfdxLeDcbcyhi5Im3EtVOb9",
+    "AdminClientSecret": "<secret>",
     "AuthClientId": "conaprole-auth-client",
-    "AuthClientSecret": "EMI6IRqofvQmXHhvCX3MiX9bVdqKN4VS"
+    "AuthClientSecret": "<secret>"
   }
 }
 ```
