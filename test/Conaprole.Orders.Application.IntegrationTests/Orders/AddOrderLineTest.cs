@@ -18,13 +18,14 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             // 1. Crear una orden vacía
             var orderId = await OrderData.SeedEmptyOrderAsync(Sender);
             
-            // 2. Crear un producto para agregar
-            var productId = await ProductData.SeedAsync(Sender);
+            // 2. Crear un producto para agregar (único)
+            var uniqueExternalId = $"PRODUCT_{Guid.NewGuid():N}";
+            var productId = await ProductData.SeedWithExternalIdAsync(Sender, uniqueExternalId);
             
             // 3. Preparar el comando
             var command = new AddOrderLineToOrderCommand(
                 orderId,
-                new ExternalProductId(ProductData.ExternalProductId),
+                new ExternalProductId(uniqueExternalId),
                 2
             );
 
@@ -41,11 +42,12 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         {
             // Arrange
             var nonExistentOrderId = Guid.NewGuid();
-            var productId = await ProductData.SeedAsync(Sender);
+            var uniqueExternalId = $"PRODUCT_{Guid.NewGuid():N}";
+            var productId = await ProductData.SeedWithExternalIdAsync(Sender, uniqueExternalId);
             
             var command = new AddOrderLineToOrderCommand(
                 nonExistentOrderId,
-                new ExternalProductId(ProductData.ExternalProductId),
+                new ExternalProductId(uniqueExternalId),
                 1
             );
 
@@ -61,7 +63,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         {
             // Arrange
             var orderId = await OrderData.SeedEmptyOrderAsync(Sender);
-            var nonExistentProductId = "NON_EXISTENT_PRODUCT";
+            var nonExistentProductId = $"NON_EXISTENT_{Guid.NewGuid():N}";
             
             var command = new AddOrderLineToOrderCommand(
                 orderId,
@@ -81,12 +83,12 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         {
             // Arrange
             // 1. Crear una orden con una línea de producto
-            var orderId = await OrderData.SeedAsync(Sender);
+            var orderData = await OrderData.SeedAsync(Sender);
             
             // 2. Intentar agregar el mismo producto otra vez
             var command = new AddOrderLineToOrderCommand(
-                orderId,
-                new ExternalProductId(ProductData.ExternalProductId),
+                orderData.OrderId,
+                new ExternalProductId(orderData.ProductExternalId),
                 3
             );
 

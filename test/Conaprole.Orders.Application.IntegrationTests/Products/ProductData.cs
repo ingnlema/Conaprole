@@ -40,5 +40,25 @@ namespace Conaprole.Orders.Application.IntegrationTests.Products
                 throw new Exception($"Error seeding product: {result.Error.Code}");
             return result.Value;
         }
+
+        /// <summary>
+        /// Crea un producto con ExternalProductId específico vía MediatR y devuelve su ID.
+        /// </summary>
+        public static async Task<Guid> SeedWithExternalIdAsync(ISender sender, string externalProductId)
+        {
+            var command = new CreateProductCommand(
+                externalProductId,
+                Name,
+                UnitPrice,
+                CurrencyCode,
+                Description,
+                DefaultCategory
+            );
+            
+            var result = await sender.Send(command);
+            if (result.IsFailure)
+                throw new Exception($"Error seeding product: {result.Error.Code}");
+            return result.Value;
+        }
     }
 }

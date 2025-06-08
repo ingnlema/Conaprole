@@ -35,5 +35,23 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
                 throw new Exception($"Error seeding distributor: {result.Error.Code}");
             return result.Value;
         }
+
+        /// <summary>
+        /// Crea el distribuidor con teléfono específico vía MediatR y devuelve su ID.
+        /// </summary>
+        public static async Task<Guid> SeedWithPhoneAsync(ISender sender, string phoneNumber)
+        {
+            var command = new CreateDistributorCommand(
+                Name,
+                phoneNumber,
+                Address,
+                DefaultCategories
+            );
+            
+            var result = await sender.Send(command);
+            if (result.IsFailure)
+                throw new Exception($"Error seeding distributor: {result.Error.Code}");
+            return result.Value;
+        }
     }
 }
