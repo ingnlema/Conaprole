@@ -1,15 +1,25 @@
 using Conaprole.Orders.Application.Distributors.CreateDistributor;
 using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
 using Conaprole.Orders.Domain.Shared;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Distributors
 {
     [Collection("IntegrationCollection")]
-    public class CreateDistributorTest : BaseIntegrationTest
+    public class CreateDistributorTest : BaseIntegrationTest, IAsyncLifetime
     {
         public CreateDistributorTest(IntegrationTestWebAppFactory factory)
             : base(factory) { }
+
+        public async Task InitializeAsync()
+        {
+            // Clean distributor data to ensure clean test state
+            await DbContext.Set<Conaprole.Orders.Domain.Distributors.Distributor>()
+                .ExecuteDeleteAsync();
+        }
+
+        public Task DisposeAsync() => Task.CompletedTask;
 
         [Fact]
         public async Task CreateDistributorCommand_WithValidData_ShouldReturnSuccessAndGuid()
