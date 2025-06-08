@@ -233,9 +233,9 @@ sequenceDiagram
     "AdminUrl": "http://conaprole-idp:8080/admin/realms/Conaprole/",
     "TokenUrl": "http://conaprole-idp:8080/realms/Conaprole/protocol/openid-connect/token",
     "AdminClientId": "conaprole-admin-client",
-    "AdminClientSecret": "MdyBcICzOkfdxLeDcbcyhi5Im3EtVOb9",
+    "AdminClientSecret": "<secreto>",
     "AuthClientId": "conaprole-auth-client",
-    "AuthClientSecret": "EMI6IRqofvQmXHhvCX3MiX9bVdqKN4VS"
+    "AuthClientSecret": "<secreto>"
   }
 }
 ```
