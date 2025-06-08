@@ -32,6 +32,7 @@ public class UsersController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("register")]
+    // [HasPermission(Permissions.UsersWrite)] // Public endpoint - no permission needed
     public async Task<IActionResult> Register(
         RegisterUserRequest request,
         CancellationToken cancellationToken)
@@ -56,6 +57,7 @@ public class UsersController : ControllerBase
     
     [AllowAnonymous]
     [HttpPost("login")]
+    // [HasPermission(Permissions.UsersRead)] // Public endpoint - no permission needed
     public async Task<IActionResult> LogIn(
         LogInUserRequest request,
         CancellationToken cancellationToken)
