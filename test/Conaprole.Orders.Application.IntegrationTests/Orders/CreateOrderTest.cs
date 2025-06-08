@@ -61,5 +61,92 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             Assert.Equal(ProductData.ExternalProductId, order.OrderLines.First().Product.ExternalProductId);
             Assert.Equal(2, order.OrderLines.First().Quantity);
         }
+
+        [Fact]
+        public async Task CreateOrderCommand_WithInvalidPointOfSale_Returns_Failure()
+        {
+            // 1) Sembrar solo distribuidor y producto, pero no punto de venta
+            var productId = await ProductData.SeedAsync(Sender);
+            var distributorId = await DistributorData.SeedAsync(Sender);
+
+            // 2) Crear comando con número de teléfono de punto de venta inexistente
+            var command = new CreateOrderCommand(
+                "+59899999999", // Número que no existe
+                DistributorData.PhoneNumber,
+                "Montevideo",
+                "Calle Test 123",
+                "11200",
+                "UYU",
+                new List<CreateOrderLineCommand>
+                {
+                    new(ProductData.ExternalProductId, 1)
+                }
+            );
+
+            // 3) Ejecutar el comando
+            var result = await Sender.Send(command);
+
+            // 4) Verificar que el resultado sea un fallo
+            Assert.True(result.IsFailure);
+            Assert.Equal("Order.InvalidPointOfSale", result.Error.Code);
+        }
+
+        [Fact]
+        public async Task CreateOrderCommand_WithInvalidDistributor_Returns_Failure()
+        {
+            // 1) Sembrar solo producto y punto de venta, pero no distribuidor
+            var productId = await ProductData.SeedAsync(Sender);
+            var pointOfSaleId = await PointOfSaleData.SeedAsync(Sender);
+
+            // 2) Crear comando con número de teléfono de distribuidor inexistente
+            var command = new CreateOrderCommand(
+                PointOfSaleData.PhoneNumber,
+                "+59888888888", // Número que no existe
+                "Montevideo",
+                "Calle Test 123",
+                "11200",
+                "UYU",
+                new List<CreateOrderLineCommand>
+                {
+                    new(ProductData.ExternalProductId, 1)
+                }
+            );
+
+            // 3) Ejecutar el comando
+            var result = await Sender.Send(command);
+
+            // 4) Verificar que el resultado sea un fallo
+            Assert.True(result.IsFailure);
+            Assert.Equal("Order.InvalidDistributor", result.Error.Code);
+        }
+
+        [Fact]
+        public async Task CreateOrderCommand_WithInvalidProduct_Returns_Failure()
+        {
+            // 1) Sembrar solo distribuidor y punto de venta, pero no producto
+            var distributorId = await DistributorData.SeedAsync(Sender);
+            var pointOfSaleId = await PointOfSaleData.SeedAsync(Sender);
+
+            // 2) Crear comando con ID de producto inexistente
+            var command = new CreateOrderCommand(
+                PointOfSaleData.PhoneNumber,
+                DistributorData.PhoneNumber,
+                "Montevideo",
+                "Calle Test 123",
+                "11200",
+                "UYU",
+                new List<CreateOrderLineCommand>
+                {
+                    new("INEXISTENT_PRODUCT", 1) // Producto que no existe
+                }
+            );
+
+            // 3) Ejecutar el comando
+            var result = await Sender.Send(command);
+
+            // 4) Verificar que el resultado sea un fallo
+            Assert.True(result.IsFailure);
+            Assert.Equal("Product.NotFound", result.Error.Code);
+        }
     }
 }
