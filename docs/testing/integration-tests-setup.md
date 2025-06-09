@@ -23,7 +23,7 @@ The integration tests use **Testcontainers** to set up PostgreSQL and Keycloak i
 
 **Problem**: `System.InvalidOperationException: The LINQ expression '__testEmails_0.Contains(u.Email.Value)' could not be translated.`
 
-**Solution**: EF Core cannot translate complex LINQ expressions involving Value Objects. Use individual queries instead:
+**Solution**: EF Core cannot translate complex LINQ expressions involving Value Objects. Use Value Object equality patterns instead:
 
 ```csharp
 // ❌ Avoid this pattern
@@ -31,16 +31,26 @@ var users = await DbContext.Set<User>()
     .Where(u => testEmails.Contains(u.Email.Value))
     .ToListAsync();
 
-// ✅ Use this pattern instead
+// ❌ Also avoid direct .Value property access in LINQ
+var user = await DbContext.Set<User>()
+    .FirstOrDefaultAsync(u => u.Email.Value == email);
+
+// ✅ Use Value Object equality instead
 var existingUsers = new List<User>();
 foreach (var email in testEmails)
 {
+    var emailValueObject = new Domain.Users.Email(email);
     var user = await DbContext.Set<User>()
-        .FirstOrDefaultAsync(u => u.Email.Value == email);
+        .FirstOrDefaultAsync(u => u.Email == emailValueObject);
     if (user != null)
         existingUsers.Add(user);
 }
 ```
+
+**Key Points:**
+- Create Value Object instances for comparison: `new Domain.Users.Email(email)`
+- Use direct equality: `u.Email == emailValueObject` instead of `u.Email.Value == email`
+- This leverages EF Core's HasConversion configuration for proper SQL translation
 
 ### 2. Container Startup Failures
 
