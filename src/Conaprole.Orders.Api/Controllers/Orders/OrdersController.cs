@@ -86,6 +86,7 @@ public class OrdersController : ControllerBase
     // [HasPermission(Permissions.OrdersWrite)]
     [ProducesResponseType(typeof(List<Guid>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [SwaggerRequestExample(typeof(BulkCreateOrdersRequest), typeof(BulkCreateOrdersRequestExample))]
     public async Task<IActionResult> CreateOrdersBulk(BulkCreateOrdersRequest request, CancellationToken cancellationToken)
     {
         if (request.Orders == null || !request.Orders.Any())
@@ -146,7 +147,10 @@ public class OrdersController : ControllerBase
     /// </summary>
     [HttpGet]
     // [HasPermission(Permissions.OrdersRead)]
-    [SwaggerOperation(Summary = "Gets orders with optional filters", Description = "Filter by date, status, distributor, point of sale, or specific IDs (comma-separated).")]
+    [SwaggerOperation(
+        Summary = "Gets orders with optional filters", 
+        Description = "Filter by date, status, distributor, point of sale, or specific IDs (comma-separated). " +
+                     "Example: GET /api/orders?ids=guid1,guid2,guid3 to get specific orders by their IDs.")]
     public async Task<IActionResult> GetOrders([FromQuery] GetOrdersRequest request, CancellationToken cancellationToken)
 
     {
