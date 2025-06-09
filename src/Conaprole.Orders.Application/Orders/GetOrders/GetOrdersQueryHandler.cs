@@ -30,7 +30,7 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
                   WHEN -2 THEN 'Canceled'
             END AS StatusName,             
             o.created_on_utc AS CreatedOnUtc,
-            d.phone_number AS Distributor,
+            d.phone_number AS DistributorPhoneNumber,
             pos.phone_number AS PointOfSalePhoneNumber,
             o.delivery_address_city AS City,
             o.delivery_address_street AS Street,

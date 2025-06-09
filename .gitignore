@@ -39,3 +39,6 @@ _ReSharper.Caches/
 *.DotSettings.user
 exports/
 containers/
+
+# Test results
+TestResults/
