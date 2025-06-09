@@ -3,6 +3,7 @@ using Conaprole.Orders.Application.PointsOfSale.AssignDistributor;
 using Conaprole.Orders.Application.PointsOfSale.CreatePointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.DisablePointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetActivePointsOfSale;
+using Conaprole.Orders.Application.PointsOfSale.GetPointsOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetDistributorsByPointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.UnassignDistributor;
 using Conaprole.Orders.Domain.Shared;
@@ -26,10 +27,16 @@ public class PointOfSaleController : ControllerBase
 
     [HttpGet]
     // [HasPermission(Permissions.PointsOfSaleRead)]
-    [SwaggerOperation(Summary = "List all active POS", Description = "Retrieves all active points of sale.")]
-    public async Task<IActionResult> GetActivePointsOfSale(CancellationToken cancellationToken)
+    [SwaggerOperation(
+        Summary = "List POS by status", 
+        Description = "Retrieves points of sale filtered by status. Supports filtering by active, inactive, or all POS. Defaults to active if no status is specified.")]
+    public async Task<IActionResult> GetPointsOfSale(
+        [FromQuery, SwaggerParameter(
+            "Filter by POS status. Valid values: 'active' (default), 'inactive', 'all'. Invalid values default to 'active'.")] 
+        string? status = "active", 
+        CancellationToken cancellationToken = default)
     {
-        var result = await _sender.Send(new GetActivePointsOfSaleQuery(), cancellationToken);
+        var result = await _sender.Send(new GetPointsOfSaleQuery(status), cancellationToken);
         return Ok(result.Value);
     }
 
@@ -50,7 +57,7 @@ public class PointOfSaleController : ControllerBase
         var command = new CreatePointOfSaleCommand(request.Name, request.PhoneNumber, request.City, request.Street, request.ZipCode);
         var result = await _sender.Send(command, cancellationToken);
         if (result.IsFailure) return BadRequest(result.Error);
-        return CreatedAtAction(nameof(GetActivePointsOfSale), new { }, result.Value);
+        return CreatedAtAction(nameof(GetPointsOfSale), new { }, result.Value);
     }
 
     [HttpPatch("{posPhoneNumber}")]
