@@ -72,6 +72,12 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
             parameters.Add("PointOfSalePhoneNumber", request.PointOfSalePhoneNumber);
         }
 
+        if (request.Ids != null && request.Ids.Count > 0)
+        {
+            sql += " AND o.id = ANY(@Ids)";
+            parameters.Add("Ids", request.Ids.ToArray());
+        }
+
         sql += " ORDER BY created_on_utc DESC";
 
         var orders = await connection.QueryAsync<OrderSummaryResponse>(sql, parameters);

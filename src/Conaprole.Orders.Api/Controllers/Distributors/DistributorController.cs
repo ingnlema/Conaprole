@@ -78,7 +78,7 @@ public class DistributorController : ControllerBase
     [SwaggerOperation(Summary = "Get orders for distributor", Description = "Returns a list of orders for a specific distributor, optionally filtered by point of sale.")]
     public async Task<IActionResult> GetOrders(string distPhoneNumber, [FromQuery] string? posPhoneNumber, CancellationToken cancellationToken)
     {
-        var query = new GetOrdersQuery(null, null, null, distPhoneNumber, posPhoneNumber);
+        var query = new GetOrdersQuery(null, null, null, distPhoneNumber, posPhoneNumber, null);
         var result = await _sender.Send(query, cancellationToken);
         return Ok(result.Value);
     }

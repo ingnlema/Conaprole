@@ -14,7 +14,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         public async Task GetOrdersQuery_Returns_Empty_List_When_No_Orders()
         {
             // 1) Ejecutar el query sin sembrar órdenes
-            var queryResult = await Sender.Send(new GetOrdersQuery(null, null, null, null, null));
+            var queryResult = await Sender.Send(new GetOrdersQuery(null, null, null, null, null, null));
             
             // 2) Verificar que el resultado es exitoso pero vacío
             Assert.False(queryResult.IsFailure);
@@ -29,7 +29,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             var orderId = await OrderData.SeedAsync(Sender);
 
             // 2) Ejecutar el query
-            var queryResult = await Sender.Send(new GetOrdersQuery(null, null, null, null, null));
+            var queryResult = await Sender.Send(new GetOrdersQuery(null, null, null, null, null, null));
             Assert.False(queryResult.IsFailure);
 
             // 3) Buscar la orden que acabamos de sembrar
