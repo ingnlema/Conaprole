@@ -3,6 +3,9 @@ using Conaprole.Orders.Application.Users.LoginUser;
 using Conaprole.Orders.Application.Users.RegisterUser;
 using Conaprole.Orders.Application.Users.AssignRole;
 using Conaprole.Orders.Application.Users.RemoveRole;
+using Conaprole.Orders.Application.Users.GetAllUsers;
+using Conaprole.Orders.Application.Users.GetUserRoles;
+using Conaprole.Orders.Application.Users.GetUserPermissions;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Infrastructure.Authorization;
 using MediatR;
@@ -95,6 +98,51 @@ public class UsersController : ControllerBase
         var result = await _sender.Send(command, cancellationToken);
         
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
+    }
+
+    [HttpGet]
+    // [HasPermission(Permissions.AdminAccess)]
+    public async Task<IActionResult> GetAllUsers([FromQuery] string? roleFilter, CancellationToken cancellationToken)
+    {
+        var query = new GetAllUsersQuery(roleFilter);
+        var result = await _sender.Send(query, cancellationToken);
+        
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+        
+        return Ok(result.Value);
+    }
+
+    [HttpGet("{userId}/roles")]
+    // [HasPermission(Permissions.AdminAccess)]
+    public async Task<IActionResult> GetUserRoles(Guid userId, CancellationToken cancellationToken)
+    {
+        var query = new GetUserRolesQuery(userId);
+        var result = await _sender.Send(query, cancellationToken);
+        
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+        
+        return Ok(result.Value);
+    }
+
+    [HttpGet("{userId}/permissions")]
+    // [HasPermission(Permissions.AdminAccess)]
+    public async Task<IActionResult> GetUserPermissions(Guid userId, CancellationToken cancellationToken)
+    {
+        var query = new GetUserPermissionsQuery(userId);
+        var result = await _sender.Send(query, cancellationToken);
+        
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+        
+        return Ok(result.Value);
     }
 
 }
