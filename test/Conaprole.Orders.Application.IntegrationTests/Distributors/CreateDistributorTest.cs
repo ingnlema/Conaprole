@@ -12,14 +12,17 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
         public CreateDistributorTest(IntegrationTestWebAppFactory factory)
             : base(factory) { }
 
-        public async Task InitializeAsync()
+        public new async Task InitializeAsync()
         {
+            // Call base InitializeAsync to clean database
+            await base.InitializeAsync();
+            
             // Clean distributor data to ensure clean test state
             await DbContext.Set<Conaprole.Orders.Domain.Distributors.Distributor>()
                 .ExecuteDeleteAsync();
         }
 
-        public Task DisposeAsync() => Task.CompletedTask;
+        public new Task DisposeAsync() => Task.CompletedTask;
 
         [Fact]
         public async Task CreateDistributorCommand_WithValidData_ShouldReturnSuccessAndGuid()

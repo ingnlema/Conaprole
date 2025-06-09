@@ -20,9 +20,15 @@ public class GetLoggedInUserTest : BaseIntegrationTest, IAsyncLifetime
         
         // Clean up any existing test users before each test
         var testEmails = new[] { UserData.Email, UserData.AlternativeEmail };
-        var existingUsers = await DbContext.Set<User>()
-            .Where(u => testEmails.Contains(u.Email.Value))
-            .ToListAsync();
+        // Use alternative approach to avoid LINQ translation issues with Email.Value
+        var existingUsers = new List<User>();
+        foreach (var email in testEmails)
+        {
+            var user = await DbContext.Set<User>()
+                .FirstOrDefaultAsync(u => u.Email.Value == email);
+            if (user != null)
+                existingUsers.Add(user);
+        }
         
         if (existingUsers.Any())
         {

@@ -11,13 +11,22 @@ public class LoginUserTest : BaseIntegrationTest, IAsyncLifetime
     public LoginUserTest(IntegrationTestWebAppFactory factory)
         : base(factory) { }
 
-    public async Task InitializeAsync()
+    public new async Task InitializeAsync()
     {
+        // Call base InitializeAsync to clean database
+        await base.InitializeAsync();
+        
         // Clean up any existing test users before each test
         var testEmails = new[] { UserData.Email, UserData.AlternativeEmail };
-        var existingUsers = await DbContext.Set<User>()
-            .Where(u => testEmails.Contains(u.Email.Value))
-            .ToListAsync();
+        // Use alternative approach to avoid LINQ translation issues with Email.Value
+        var existingUsers = new List<User>();
+        foreach (var email in testEmails)
+        {
+            var user = await DbContext.Set<User>()
+                .FirstOrDefaultAsync(u => u.Email.Value == email);
+            if (user != null)
+                existingUsers.Add(user);
+        }
         
         if (existingUsers.Any())
         {
@@ -26,7 +35,7 @@ public class LoginUserTest : BaseIntegrationTest, IAsyncLifetime
         }
     }
 
-    public Task DisposeAsync()
+    public new Task DisposeAsync()
     {
         return Task.CompletedTask;
     }
