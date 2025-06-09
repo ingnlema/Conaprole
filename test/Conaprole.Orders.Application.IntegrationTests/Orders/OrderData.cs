@@ -19,6 +19,12 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         public const string CurrencyCode = "UYU";
         public const int OrderLineQuantity = 2;
 
+        public static List<CreateOrderLineCommand> OrderLines =>
+            new List<CreateOrderLineCommand>
+            {
+                new(ProductData.ExternalProductId, OrderLineQuantity)
+            };
+
         /// <summary>
         /// Crea una orden completa con todas las dependencias necesarias.
         /// </summary>
@@ -41,10 +47,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
                 DeliveryStreet,
                 DeliveryZipCode,
                 CurrencyCode,
-                new List<CreateOrderLineCommand>
-                {
-                    new(ProductData.ExternalProductId, OrderLineQuantity)
-                }
+                OrderLines
             );
 
             var result = await sender.Send(createOrderCommand);
@@ -109,6 +112,21 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
                 throw new Exception($"Error seeding point of sale: {result.Error.Code}");
 
             return result.Value;
+        }
+
+        /// <summary>
+        /// Seeds all necessary dependencies (product, distributor, point of sale) without creating an order.
+        /// </summary>
+        public static async Task SeedDependenciesAsync(ISender sender)
+        {
+            // 1) Create product
+            await ProductData.SeedAsync(sender);
+            
+            // 2) Create distributor
+            await DistributorData.SeedAsync(sender);
+            
+            // 3) Create point of sale
+            await SeedPointOfSaleAsync(sender);
         }
     }
 }

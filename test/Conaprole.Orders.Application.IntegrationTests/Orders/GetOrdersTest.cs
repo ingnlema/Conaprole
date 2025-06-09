@@ -52,5 +52,49 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             // 6) Verificar que tiene fecha de creación
             Assert.True(fetched.CreatedOnUtc > DateTime.MinValue);
         }
+        
+        [Fact]
+        public async Task GetOrdersQuery_With_Ids_Returns_Only_Specified_Orders()
+        {
+            // 1) Sembrar múltiples órdenes
+            var orderId1 = await OrderData.SeedAsync(Sender);
+            var orderId2 = await OrderData.SeedAsync(Sender);
+            var orderId3 = await OrderData.SeedAsync(Sender);
+
+            // 2) Ejecutar el query pidiendo solo 2 órdenes específicas
+            var requestedIds = new List<Guid> { orderId1, orderId3 };
+            var queryResult = await Sender.Send(new GetOrdersQuery(null, null, null, null, null, requestedIds));
+            
+            Assert.False(queryResult.IsFailure);
+            Assert.NotNull(queryResult.Value);
+            
+            // 3) Verificar que devuelve exactamente 2 órdenes
+            var orders = queryResult.Value;
+            Assert.Equal(2, orders.Count);
+            
+            // 4) Verificar que devuelve las órdenes correctas
+            var returnedIds = orders.Select(o => o.Id).ToHashSet();
+            Assert.Contains(orderId1, returnedIds);
+            Assert.Contains(orderId3, returnedIds);
+            Assert.DoesNotContain(orderId2, returnedIds);
+        }
+
+        [Fact]
+        public async Task GetOrdersQuery_With_Empty_Ids_Returns_All_Orders()
+        {
+            // 1) Sembrar una orden
+            var orderId = await OrderData.SeedAsync(Sender);
+
+            // 2) Ejecutar el query con lista de IDs vacía
+            var queryResult = await Sender.Send(new GetOrdersQuery(null, null, null, null, null, new List<Guid>()));
+            
+            Assert.False(queryResult.IsFailure);
+            Assert.NotNull(queryResult.Value);
+            
+            // 3) Verificar que devuelve la orden (comportamiento similar a no pasar IDs)
+            var orders = queryResult.Value;
+            Assert.Single(orders);
+            Assert.Equal(orderId, orders.First().Id);
+        }
     }
 }
