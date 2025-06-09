@@ -42,8 +42,8 @@ internal sealed class GetUserPermissionsQueryHandler
                                p.id AS Id,
                                p.name AS Name
                            FROM permissions p
-                           INNER JOIN permission_role pr ON p.id = pr.permissions_id
-                           INNER JOIN roles r ON pr.roles_id = r.id
+                           INNER JOIN role_permissions pr ON p.id = pr.permission_id
+                           INNER JOIN roles r ON pr.role_id = r.id
                            INNER JOIN role_user ru ON r.id = ru.roles_id
                            INNER JOIN users u ON ru.users_id = u.id
                            WHERE u.id = @UserId
