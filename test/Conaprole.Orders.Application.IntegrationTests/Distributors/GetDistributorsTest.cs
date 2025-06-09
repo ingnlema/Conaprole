@@ -1,6 +1,9 @@
 using Conaprole.Orders.Application.Distributors.GetDistributors;
 using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 
+using Xunit;
+
+
 namespace Conaprole.Orders.Application.IntegrationTests.Distributors
 {
     [Collection("IntegrationCollection")]
@@ -19,8 +22,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
             Assert.False(queryResult.IsFailure);
             var distributors = queryResult.Value;
             Assert.NotNull(distributors);
-            // Note: In integration tests, there might be existing data from other tests
-            // so we just verify the query executes successfully
+            Assert.Empty(distributors);
         }
 
         [Fact]
@@ -40,10 +42,11 @@ namespace Conaprole.Orders.Application.IntegrationTests.Distributors
             
             var distributor = distributors.First();
             Assert.Equal(distributorId, distributor.Id);
-            Assert.NotNull(distributor.PhoneNumber);
-            Assert.NotNull(distributor.Name);
-            Assert.NotNull(distributor.Address);
+            Assert.Equal(DistributorData.PhoneNumber, distributor.PhoneNumber);
+            Assert.Equal(DistributorData.Name, distributor.Name);
+            Assert.Equal(DistributorData.Address, distributor.Address);
             Assert.NotNull(distributor.SupportedCategories);
+            Assert.Contains("LACTEOS", distributor.SupportedCategories);
             Assert.True(distributor.CreatedAt > DateTime.MinValue);
             Assert.True(distributor.AssignedPointsOfSaleCount >= 0);
         }
