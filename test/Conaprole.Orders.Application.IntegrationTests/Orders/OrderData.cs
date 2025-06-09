@@ -55,6 +55,43 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         }
 
         /// <summary>
+        /// Crea una orden con múltiples líneas para tests de eliminación.
+        /// </summary>
+        public static async Task<Guid> SeedOrderWithMultipleLinesAsync(ISender sender)
+        {
+            // 1) Crear productos
+            var firstProductId = await ProductData.SeedAsync(sender);
+            var secondProductId = await ProductData.SeedSecondProductAsync(sender);
+
+            // 2) Crear distribuidor
+            var distributorId = await DistributorData.SeedAsync(sender);
+
+            // 3) Crear punto de venta
+            var pointOfSaleId = await SeedPointOfSaleAsync(sender);
+
+            // 4) Crear orden con múltiples líneas
+            var createOrderCommand = new CreateOrderCommand(
+                PointOfSalePhone,
+                DistributorPhone,
+                DeliveryCity,
+                DeliveryStreet,
+                DeliveryZipCode,
+                CurrencyCode,
+                new List<CreateOrderLineCommand>
+                {
+                    new(ProductData.ExternalProductId, OrderLineQuantity),
+                    new(ProductData.SecondProductId, OrderLineQuantity + 1)
+                }
+            );
+
+            var result = await sender.Send(createOrderCommand);
+            if (result.IsFailure)
+                throw new Exception($"Error seeding order with multiple lines: {result.Error.Code}");
+
+            return result.Value;
+        }
+
+        /// <summary>
         /// Crea un punto de venta usando valores predeterminados.
         /// </summary>
         private static async Task<Guid> SeedPointOfSaleAsync(ISender sender)
