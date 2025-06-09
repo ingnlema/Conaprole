@@ -1,6 +1,6 @@
 using Conaprole.Orders.Application.Users.RegisterUser;
 using Conaprole.Orders.Application.IntegrationTests.Distributors;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using User = Conaprole.Orders.Domain.Users.User;
 

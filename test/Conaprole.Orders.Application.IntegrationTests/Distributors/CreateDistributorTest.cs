@@ -1,5 +1,5 @@
 using Conaprole.Orders.Application.Distributors.CreateDistributor;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 using Conaprole.Orders.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Xunit;

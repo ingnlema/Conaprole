@@ -7,7 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>Conaprole.Ordes.Application.IntegrationTests</RootNamespace>
+        <RootNamespace>Conaprole.Orders.Application.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

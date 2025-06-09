@@ -1,5 +1,5 @@
 using Conaprole.Orders.Application.Distributors.GetPointOfSaleDetails;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Distributors
 {

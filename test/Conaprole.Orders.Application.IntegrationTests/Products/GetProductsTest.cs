@@ -29,6 +29,8 @@ namespace Conaprole.Orders.Application.IntegrationTests.Products
             Assert.NotNull(fetched);
             Assert.Equal(ProductData.ExternalProductId, fetched.ExternalProductId);
             Assert.Equal(ProductData.Name,              fetched.Name);
+            Assert.Equal(ProductData.UnitPrice,         fetched.UnitPrice);
+            Assert.Equal(ProductData.Description,       fetched.Description);
         }
     }
 }
