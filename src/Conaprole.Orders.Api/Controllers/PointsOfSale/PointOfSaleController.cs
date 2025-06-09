@@ -2,6 +2,7 @@ using Conaprole.Orders.Api.Controllers.PointsOfSale.Dtos;
 using Conaprole.Orders.Application.PointsOfSale.AssignDistributor;
 using Conaprole.Orders.Application.PointsOfSale.CreatePointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.DisablePointOfSale;
+using Conaprole.Orders.Application.PointsOfSale.EnablePointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetActivePointsOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetDistributorsByPointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.UnassignDistributor;
@@ -59,6 +60,16 @@ public class PointOfSaleController : ControllerBase
     public async Task<IActionResult> Disable(string posPhoneNumber, CancellationToken cancellationToken)
     {
         var command = new DisablePointOfSaleCommand(posPhoneNumber);
+        var result = await _sender.Send(command, cancellationToken);
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
+    }
+
+    [HttpPatch("{posPhoneNumber}/enable")]
+    // [HasPermission(Permissions.PointsOfSaleWrite)]
+    [SwaggerOperation(Summary = "Enable POS", Description = "Enables a point of sale to allow it to receive new orders.")]
+    public async Task<IActionResult> Enable(string posPhoneNumber, CancellationToken cancellationToken)
+    {
+        var command = new EnablePointOfSaleCommand(posPhoneNumber);
         var result = await _sender.Send(command, cancellationToken);
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
