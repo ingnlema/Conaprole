@@ -18,12 +18,13 @@ public class LoginUserTest : BaseIntegrationTest, IAsyncLifetime
         
         // Clean up any existing test users before each test
         var testEmails = new[] { UserData.Email, UserData.AlternativeEmail };
-        // Use alternative approach to avoid LINQ translation issues with Email.Value
+        // Use EF Core-friendly approach to avoid LINQ translation issues with Email.Value
         var existingUsers = new List<User>();
         foreach (var email in testEmails)
         {
+            var emailValueObject = new Domain.Users.Email(email);
             var user = await DbContext.Set<User>()
-                .FirstOrDefaultAsync(u => u.Email.Value == email);
+                .FirstOrDefaultAsync(u => u.Email == emailValueObject);
             if (user != null)
                 existingUsers.Add(user);
         }

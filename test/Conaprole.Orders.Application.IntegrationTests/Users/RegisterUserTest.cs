@@ -19,12 +19,13 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         
         // Clean up any existing test users before each test
         var testEmails = new[] { UserData.Email, UserData.AlternativeEmail, "test3@conaprole.com" };
-        // Use alternative approach to avoid LINQ translation issues with Email.Value
+        // Use EF Core-friendly approach to avoid LINQ translation issues with Email.Value
         var existingUsers = new List<User>();
         foreach (var email in testEmails)
         {
+            var emailValueObject = new Domain.Users.Email(email);
             var user = await DbContext.Set<User>()
-                .FirstOrDefaultAsync(u => u.Email.Value == email);
+                .FirstOrDefaultAsync(u => u.Email == emailValueObject);
             if (user != null)
                 existingUsers.Add(user);
         }
@@ -55,8 +56,9 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.NotEqual(Guid.Empty, result.Value);
 
         // Verify user was created in database
+        var userEmail = new Domain.Users.Email(UserData.Email);
         var user = await DbContext.Set<User>()
-            .FirstOrDefaultAsync(u => u.Email.Value == UserData.Email);
+            .FirstOrDefaultAsync(u => u.Email == userEmail);
 
         Assert.NotNull(user);
         Assert.Equal(UserData.FirstName, user.FirstName.Value);
@@ -86,8 +88,9 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.NotEqual(Guid.Empty, result.Value);
 
         // Verify user was created with distributor association
+        var alternativeUserEmail = new Domain.Users.Email(UserData.AlternativeEmail);
         var user = await DbContext.Set<User>()
-            .FirstOrDefaultAsync(u => u.Email.Value == UserData.AlternativeEmail);
+            .FirstOrDefaultAsync(u => u.Email == alternativeUserEmail);
 
         Assert.NotNull(user);
         Assert.Equal(UserData.FirstName, user.FirstName.Value);
@@ -116,8 +119,9 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.True(result.IsFailure);
         
         // Verify no user was created
+        var testUserEmail = new Domain.Users.Email("test3@conaprole.com");
         var user = await DbContext.Set<User>()
-            .FirstOrDefaultAsync(u => u.Email.Value == "test3@conaprole.com");
+            .FirstOrDefaultAsync(u => u.Email == testUserEmail);
 
         Assert.Null(user);
     }
