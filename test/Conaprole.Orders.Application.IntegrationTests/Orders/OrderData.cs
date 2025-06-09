@@ -1,4 +1,5 @@
 using Conaprole.Orders.Application.Orders.CreateOrder;
+using Conaprole.Orders.Application.PointsOfSale.CreatePointOfSale;
 using Conaprole.Orders.Application.IntegrationTests.Products;
 using Conaprole.Orders.Application.IntegrationTests.Distributors;
 using MediatR;
@@ -31,8 +32,19 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             var distributorId = await DistributorData.SeedWithPhoneAsync(sender, distributorPhoneNumber);
 
             // 3. Crear punto de venta único
-            var pointOfSalePhoneNumber = $"+59891{Random.Shared.Next(100000, 999999)}";
-            var pointOfSaleId = await PointOfSaleData.SeedWithPhoneAsync(sender, pointOfSalePhoneNumber);
+            var pointOfSalePhoneNumber = $"+59899{Random.Shared.Next(100000, 999999)}";
+            var command = new CreatePointOfSaleCommand(
+                PointOfSaleData.Name,
+                pointOfSalePhoneNumber,
+                PointOfSaleData.City,
+                PointOfSaleData.Street,
+                PointOfSaleData.ZipCode
+            );
+            
+            var pointOfSaleResult = await sender.Send(command);
+            if (pointOfSaleResult.IsFailure)
+                throw new Exception($"Error seeding point of sale: {pointOfSaleResult.Error.Code}");
+            var pointOfSaleId = pointOfSaleResult.Value;
 
             // 4. Crear orden con línea de producto
             var orderLine = new CreateOrderLineCommand(uniqueExternalId, 1);

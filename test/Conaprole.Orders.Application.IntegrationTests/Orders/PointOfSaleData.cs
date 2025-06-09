@@ -8,11 +8,11 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
     /// </summary>
     public static class PointOfSaleData
     {
-        public const string PhoneNumber = "+59891234567";
-        public const string Name = "POS Test";
+        public const string Name = "Punto de Venta Test";
+        public const string PhoneNumber = "+59899112233";
         public const string City = "Montevideo";
-        public const string Street = "Test Street";
-        public const string ZipCode = "11200";
+        public const string Street = "Avenida Test 456";
+        public const string ZipCode = "11100";
 
         /// <summary>
         /// Comando preconfigurado para crear el punto de venta.
@@ -27,33 +27,25 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             );
 
         /// <summary>
-        /// Crea el punto de venta con teléfono único vía MediatR y devuelve su ID.
+        /// Crea el punto de venta vía MediatR y devuelve su ID.
         /// </summary>
         public static async Task<Guid> SeedAsync(ISender sender)
         {
-            var uniquePhoneNumber = $"+59891{Random.Shared.Next(100000, 999999)}";
-            var command = new CreatePointOfSaleCommand(
-                Name,
-                uniquePhoneNumber,
-                City,
-                Street,
-                ZipCode
-            );
-            
-            var result = await sender.Send(command);
+            var result = await sender.Send(CreateCommand);
             if (result.IsFailure)
                 throw new Exception($"Error seeding point of sale: {result.Error.Code}");
             return result.Value;
         }
 
         /// <summary>
-        /// Crea el punto de venta con teléfono específico vía MediatR y devuelve su ID.
+        /// Crea el punto de venta con teléfono único vía MediatR y devuelve su ID.
         /// </summary>
-        public static async Task<Guid> SeedWithPhoneAsync(ISender sender, string phoneNumber)
+        public static async Task<Guid> SeedWithUniquePhoneAsync(ISender sender)
         {
+            var uniquePhoneNumber = $"+59899{Random.Shared.Next(100000, 999999)}";
             var command = new CreatePointOfSaleCommand(
                 Name,
-                phoneNumber,
+                uniquePhoneNumber,
                 City,
                 Street,
                 ZipCode
