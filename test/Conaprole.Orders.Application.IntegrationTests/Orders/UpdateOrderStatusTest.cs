@@ -1,7 +1,7 @@
 using Conaprole.Orders.Application.Orders.UpdateOrderStatus;
 using Conaprole.Orders.Application.Orders.GetOrder;
 using Conaprole.Orders.Domain.Orders;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Orders
 {

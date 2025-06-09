@@ -3,7 +3,7 @@ using Conaprole.Orders.Application.Distributors.GetAssignedPointsOfSale;
 using Conaprole.Orders.Application.PointsOfSale.AssignDistributor;
 using Conaprole.Orders.Application.PointsOfSale.CreatePointOfSale;
 using Conaprole.Orders.Domain.Shared;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Distributors
 {

@@ -2,7 +2,7 @@ using Conaprole.Orders.Application.Orders.CreateOrder;
 using Conaprole.Orders.Application.Orders.GetOrder;
 using Conaprole.Orders.Application.IntegrationTests.Products;
 using Conaprole.Orders.Application.IntegrationTests.Distributors;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 using Xunit;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Orders
