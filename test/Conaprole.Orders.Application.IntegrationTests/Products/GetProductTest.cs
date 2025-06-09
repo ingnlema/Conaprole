@@ -1,5 +1,5 @@
 using Conaprole.Orders.Application.Products.GetProduct;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Products
 {
