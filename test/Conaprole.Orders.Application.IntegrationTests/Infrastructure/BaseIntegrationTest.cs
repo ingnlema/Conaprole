@@ -12,6 +12,7 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
     protected readonly ISender Sender;
     protected readonly ApplicationDbContext DbContext;
     protected readonly ISqlConnectionFactory SqlConnectionFactory;
+    protected readonly TestUserContext TestUserContext;
     
     protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)
     {
@@ -19,6 +20,7 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
         Sender = _scope.ServiceProvider.GetRequiredService<ISender>();
         DbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         SqlConnectionFactory = _scope.ServiceProvider.GetRequiredService<ISqlConnectionFactory>();
+        TestUserContext = factory.TestUserContext;
     }
     
     public async Task InitializeAsync()
