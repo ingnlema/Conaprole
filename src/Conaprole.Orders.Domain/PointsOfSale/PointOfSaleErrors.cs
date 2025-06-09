@@ -33,6 +33,10 @@ public static class PointOfSaleErrors
         "PointOfSale.AlreadyDisabled",
         "The point of sale is already disabled.");
 
+    public static readonly Error AlreadyEnabled = new(
+        "PointOfSale.AlreadyEnabled",
+        "The point of sale is already enabled.");
+
     public static readonly Error DistributorNotAssigned = new(
         "PointOfSale.DistributorNotAssigned",
         "The distributor is not assigned to this point of sale for the given category.");
