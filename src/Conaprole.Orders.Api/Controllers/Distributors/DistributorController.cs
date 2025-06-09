@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Conaprole.Orders.Application.Orders.GetOrders;
 using Conaprole.Orders.Domain.Shared;
 using Swashbuckle.AspNetCore.Annotations;
+// using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Distributors;
 
@@ -27,6 +28,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet]
+    // [HasPermission(Permissions.DistributorsRead)]
     [SwaggerOperation(Summary = "Get all distributors", Description = "Retrieves a list of all distributors with their summary information including supported categories and assigned points of sale count.")]
     [ProducesResponseType(typeof(List<DistributorSummaryResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetDistributors(CancellationToken cancellationToken)
@@ -37,6 +39,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpPost]
+    // [HasPermission(Permissions.DistributorsWrite)]
     [SwaggerOperation(Summary = "Create a new distributor", Description = "Creates a new distributor with name, phone number, address and supported categories.")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateDistributor([FromBody] CreateDistributorRequest request, CancellationToken cancellationToken)
@@ -51,6 +54,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/pos")]
+    // [HasPermission(Permissions.DistributorsRead)]
     [SwaggerOperation(Summary = "Get assigned POS", Description = "Retrieves a list of points of sale assigned to the specified distributor.")]
     public async Task<IActionResult> GetAssignedPointsOfSale(string distPhoneNumber, CancellationToken cancellationToken)
     {
@@ -60,6 +64,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/pos/{posPhoneNumber}")]
+    // [HasPermission(Permissions.DistributorsRead)]
     [SwaggerOperation(Summary = "Get POS details", Description = "Retrieves details (phone, address, active status, creation date) of a specific point of sale assigned to the distributor.")]
     public async Task<IActionResult> GetPointOfSaleDetails(string distPhoneNumber, string posPhoneNumber, CancellationToken cancellationToken)
     {
@@ -69,6 +74,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/orders")]
+    // [HasPermission(Permissions.OrdersRead)]
     [SwaggerOperation(Summary = "Get orders for distributor", Description = "Returns a list of orders for a specific distributor, optionally filtered by point of sale.")]
     public async Task<IActionResult> GetOrders(string distPhoneNumber, [FromQuery] string? posPhoneNumber, CancellationToken cancellationToken)
     {
@@ -78,6 +84,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/categories")]
+    // [HasPermission(Permissions.DistributorsRead)]
     [SwaggerOperation(Summary = "Get distributor categories", Description = "Returns the list of product categories that the distributor is authorized to deliver.")]
     public async Task<IActionResult> GetCategories(string distPhoneNumber, CancellationToken cancellationToken)
     {
@@ -87,6 +94,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpPost("{distPhoneNumber}/categories")]
+    // [HasPermission(Permissions.DistributorsWrite)]
     [SwaggerOperation(Summary = "Add category to distributor", Description = "Assigns a new supported product category to the distributor.")]
     public async Task<IActionResult> AddCategory(string distPhoneNumber, [FromBody] AddDistributorCategoryRequest request, CancellationToken cancellationToken)
     {
@@ -96,6 +104,7 @@ public class DistributorController : ControllerBase
     }
 
     [HttpDelete("{distPhoneNumber}/categories")]
+    // [HasPermission(Permissions.DistributorsWrite)]
     [SwaggerOperation(Summary = "Remove category from distributor", Description = "Revokes a product category previously assigned to the distributor.")]
     public async Task<IActionResult> RemoveCategory(string distPhoneNumber, [FromBody] RemoveDistributorCategoryRequest request, CancellationToken cancellationToken)
     {

@@ -54,4 +54,25 @@ public sealed class User : Entity
     {
         DistributorId = distributorId;
     }
+
+    public void AssignRole(Role role)
+    {
+        if (_roles.Any(r => r.Id == role.Id))
+        {
+            return; // Already has the role
+        }
+        
+        _roles.Add(role);
+        RaiseDomainEvent(new UserRoleAssignedDomainEvent(Id, role.Id));
+    }
+
+    public void RemoveRole(Role role)
+    {
+        var existingRole = _roles.FirstOrDefault(r => r.Id == role.Id);
+        if (existingRole != null)
+        {
+            _roles.Remove(existingRole);
+            RaiseDomainEvent(new UserRoleRemovedDomainEvent(Id, role.Id));
+        }
+    }
 }

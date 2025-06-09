@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using ProductResponse = Conaprole.Orders.Application.Products.GetProduct.ProductResponse;
+// using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Products;
 
@@ -27,6 +28,7 @@ public class ProductsController : ControllerBase
     /// Gets a product by its unique identifier.
     /// </summary>
     [HttpGet("{id}")]
+    // [HasPermission(Permissions.ProductsRead)]
     [SwaggerOperation(Summary = "Get product by ID", Description = "Returns a single product given its ID")]
     [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
@@ -45,6 +47,7 @@ public class ProductsController : ControllerBase
     /// Requires an external product ID, name, unit price, currency, description, and a category enum value.
     /// </remarks>
     [HttpPost]
+    // [HasPermission(Permissions.ProductsWrite)]
     [SwaggerOperation(Summary = "Creates a new product", Description = "Creates a product with a specific category")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
@@ -70,6 +73,7 @@ public class ProductsController : ControllerBase
     /// Lists all products.
     /// </summary>
     [HttpGet]
+    // [HasPermission(Permissions.ProductsRead)]
     [SwaggerOperation(Summary = "Get all products", Description = "Returns a list of all registered products")]
     [ProducesResponseType(typeof(List<ProductsResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProducts(CancellationToken cancellationToken)
