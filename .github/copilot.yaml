@@ -1,0 +1,21 @@
+# .github/copilot.yaml
+
+agent:
+  setup:
+    - name: Configuración de red para Copilot Agent
+      run: |
+        echo "Verificando conectividad..."
+        curl -I https://api.github.com || true
+        curl -I https://copilot.githubusercontent.com || true
+        curl -I https://docker.io || true
+
+network:
+  allow:
+    - github.com
+    - api.github.com
+    - ghcr.io
+    - docker.io
+    - quay.io
+    - copilot.githubusercontent.com
+    - copilot-proxy.githubusercontent.com
+    - keycloak.org
