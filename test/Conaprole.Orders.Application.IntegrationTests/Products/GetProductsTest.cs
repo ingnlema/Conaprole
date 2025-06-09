@@ -29,6 +29,20 @@ namespace Conaprole.Orders.Application.IntegrationTests.Products
             Assert.NotNull(fetched);
             Assert.Equal(ProductData.ExternalProductId, fetched.ExternalProductId);
             Assert.Equal(ProductData.Name,              fetched.Name);
+            Assert.Equal(ProductData.UnitPrice,         fetched.UnitPrice);
+            Assert.Equal(ProductData.Description,       fetched.Description);
+        }
+
+        [Fact]
+        public async Task GetProductsQuery_Returns_Empty_List_When_No_Products()
+        {
+            // 1) Ejecutar el query sin sembrar productos
+            var queryResult = await Sender.Send(new GetProductsQuery());
+            
+            // 2) Verificar que el resultado es exitoso pero vacío
+            Assert.False(queryResult.IsFailure);
+            Assert.NotNull(queryResult.Value);
+            Assert.Empty(queryResult.Value);
         }
     }
 }
