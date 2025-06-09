@@ -11,7 +11,7 @@ using Testcontainers.PostgreSql;
 using Testcontainers.Keycloak;
 using Conaprole.Orders.Infrastructure.Data;
 
-namespace Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+namespace Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
