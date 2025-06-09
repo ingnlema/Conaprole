@@ -1,6 +1,6 @@
 using Conaprole.Orders.Application.PointsOfSale.DisablePointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetActivePointsOfSale;
-using Conaprole.Ordes.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 using Xunit;
 
 namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
