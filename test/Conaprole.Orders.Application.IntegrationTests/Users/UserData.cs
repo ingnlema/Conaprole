@@ -8,31 +8,37 @@ namespace Conaprole.Orders.Application.IntegrationTests.Users;
 /// </summary>
 public static class UserData
 {
-    public const string Email = "test@conaprole.com";
     public const string FirstName = "Test";
     public const string LastName = "User";
     public const string Password = "Test123456!";
 
-    // Alternative data for tests that need multiple users
-    public const string AlternativeEmail = "test2@conaprole.com";
+    /// <summary>
+    /// Genera un email único para evitar conflictos en Keycloak.
+    /// </summary>
+    public static string GenerateUniqueEmail() => $"test-{Guid.NewGuid()}@conaprole.com";
 
     /// <summary>
-    /// Comando preconfigurado para crear el usuario.
+    /// Genera un email alternativo único para tests que necesitan múltiples usuarios.
+    /// </summary>
+    public static string GenerateUniqueAlternativeEmail() => $"test2-{Guid.NewGuid()}@conaprole.com";
+
+    /// <summary>
+    /// Comando para crear un usuario con email único.
     /// </summary>
     public static RegisterUserCommand CreateCommand =>
         new(
-            Email,
+            GenerateUniqueEmail(),
             FirstName,
             LastName,
             Password
         );
 
     /// <summary>
-    /// Comando preconfigurado para crear el usuario con distribuidor.
+    /// Comando para crear un usuario con distribuidor con email único.
     /// </summary>
     public static RegisterUserCommand CreateCommandWithDistributor(string distributorPhoneNumber) =>
         new(
-            Email,
+            GenerateUniqueEmail(),
             FirstName,
             LastName,
             Password,
@@ -40,11 +46,11 @@ public static class UserData
         );
 
     /// <summary>
-    /// Comando preconfigurado para crear un usuario alternativo.
+    /// Comando para crear un usuario alternativo con email único.
     /// </summary>
     public static RegisterUserCommand CreateAlternativeCommand =>
         new(
-            AlternativeEmail,
+            GenerateUniqueAlternativeEmail(),
             FirstName,
             LastName,
             Password
@@ -70,5 +76,32 @@ public static class UserData
         if (result.IsFailure)
             throw new Exception($"Error seeding user with distributor: {result.Error.Code}");
         return result.Value;
+    }
+
+    /// <summary>
+    /// Crea un usuario específico con email conocido y devuelve el email y ID.
+    /// Útil para tests que necesitan verificar el email específico usado.
+    /// </summary>
+    public static async Task<(string email, Guid userId)> SeedWithKnownEmailAsync(ISender sender)
+    {
+        var email = GenerateUniqueEmail();
+        var command = new RegisterUserCommand(email, FirstName, LastName, Password);
+        var result = await sender.Send(command);
+        if (result.IsFailure)
+            throw new Exception($"Error seeding user: {result.Error.Code}");
+        return (email, result.Value);
+    }
+
+    /// <summary>
+    /// Crea un usuario con distribuidor específico con email conocido y devuelve el email y ID.
+    /// </summary>
+    public static async Task<(string email, Guid userId)> SeedWithDistributorAndKnownEmailAsync(ISender sender, string distributorPhoneNumber)
+    {
+        var email = GenerateUniqueEmail();
+        var command = new RegisterUserCommand(email, FirstName, LastName, Password, distributorPhoneNumber);
+        var result = await sender.Send(command);
+        if (result.IsFailure)
+            throw new Exception($"Error seeding user with distributor: {result.Error.Code}");
+        return (email, result.Value);
     }
 }
