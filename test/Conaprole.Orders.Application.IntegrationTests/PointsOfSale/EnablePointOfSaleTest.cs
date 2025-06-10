@@ -1,4 +1,5 @@
 using Conaprole.Orders.Application.PointsOfSale.EnablePointOfSale;
+using Conaprole.Orders.Application.PointsOfSale.DisablePointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetActivePointsOfSale;
 using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 using Conaprole.Orders.Domain.PointsOfSale;
@@ -16,18 +17,15 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
         [Fact]
         public async Task EnablePointOfSaleCommand_WithInactivePointOfSale_ShouldReturnSuccessAndActivate()
         {
-            // 1) Sembrar el punto de venta y desactivarlo
+            // 1) Sembrar el punto de venta y desactivarlo usando el comando apropiado
             var pointOfSaleId = await PointOfSaleData.SeedAsync(Sender);
-            await SetPointOfSaleActiveStateAsync(pointOfSaleId, false);
+            
+            // Use the proper DisablePointOfSaleCommand instead of direct SQL manipulation
+            var disableCommand = new DisablePointOfSaleCommand(PointOfSaleData.PhoneNumber);
+            var disableResult = await Sender.Send(disableCommand);
+            Assert.False(disableResult.IsFailure, $"Failed to disable point of sale: {disableResult.Error?.Code}");
 
             // 2) Verificar que inicialmente está inactivo usando GetActivePointsOfSale
-            // Add a small delay to ensure the database update is committed
-            await Task.Delay(100);
-            
-            // Also verify the state directly in database
-            var isActiveInDb = await GetPointOfSaleIsActiveDirectlyAsync(pointOfSaleId);
-            Assert.False(isActiveInDb, $"Point of sale {pointOfSaleId} should be inactive in database but it's active");
-            
             var activePointsResult = await Sender.Send(new GetActivePointsOfSaleQuery());
             Assert.False(activePointsResult.IsFailure);
             
@@ -89,21 +87,5 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
             Assert.Equal(PointOfSaleErrors.AlreadyEnabled.Code, result.Error.Code);
         }
 
-        private async Task SetPointOfSaleActiveStateAsync(Guid pointOfSaleId, bool isActive)
-        {
-            const string sql = "UPDATE point_of_sale SET is_active = @IsActive WHERE id = @Id";
-            
-            using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.ExecuteAsync(sql, new { Id = pointOfSaleId, IsActive = isActive });
-        }
-
-        private async Task<bool> GetPointOfSaleIsActiveDirectlyAsync(Guid pointOfSaleId)
-        {
-            const string sql = "SELECT is_active FROM point_of_sale WHERE id = @Id";
-            
-            using var connection = SqlConnectionFactory.CreateConnection();
-            var result = await connection.QueryFirstOrDefaultAsync<bool?>(sql, new { Id = pointOfSaleId });
-            return result ?? false;
-        }
     }
 }
