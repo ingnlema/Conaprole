@@ -8,7 +8,7 @@ using Conaprole.Orders.Application.Distributors.GetPointOfSaleDetails;
 using Conaprole.Orders.Application.Distributors.RemoveCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Conaprole.Orders.Application.Orders.GetOrders;
+using Conaprole.Orders.Application.Distributors.GetOrdersForDistributor;
 using Conaprole.Orders.Domain.Shared;
 using Swashbuckle.AspNetCore.Annotations;
 // using Conaprole.Orders.Infrastructure.Authorization;
@@ -78,7 +78,7 @@ public class DistributorController : ControllerBase
     [SwaggerOperation(Summary = "Get orders for distributor", Description = "Returns a list of orders for a specific distributor, optionally filtered by point of sale.")]
     public async Task<IActionResult> GetOrders(string distPhoneNumber, [FromQuery] string? posPhoneNumber, CancellationToken cancellationToken)
     {
-        var query = new GetOrdersQuery(null, null, null, distPhoneNumber, posPhoneNumber);
+        var query = new GetOrdersForDistributorQuery(distPhoneNumber, posPhoneNumber);
         var result = await _sender.Send(query, cancellationToken);
         return Ok(result.Value);
     }

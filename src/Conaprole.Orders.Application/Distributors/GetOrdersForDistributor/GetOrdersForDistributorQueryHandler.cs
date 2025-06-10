@@ -1,20 +1,21 @@
 using Conaprole.Orders.Application.Abstractions.Data;
 using Conaprole.Orders.Application.Abstractions.Messaging;
+using Conaprole.Orders.Application.Orders.GetOrders;
 using Conaprole.Orders.Domain.Abstractions;
 using Dapper;
 
-namespace Conaprole.Orders.Application.Orders.GetOrders;
+namespace Conaprole.Orders.Application.Distributors.GetOrdersForDistributor;
 
-internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List<OrderSummaryResponse>>
+internal sealed class GetOrdersForDistributorQueryHandler : IQueryHandler<GetOrdersForDistributorQuery, List<OrderSummaryResponse>>
 {
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
-    public GetOrdersQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+    public GetOrdersForDistributorQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
     }
 
-     public async Task<Result<List<OrderSummaryResponse>>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<OrderSummaryResponse>>> Handle(GetOrdersForDistributorQuery request, CancellationToken cancellationToken)
     {
         using var connection = _sqlConnectionFactory.CreateConnection();
 
@@ -40,42 +41,16 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
         FROM orders o
         JOIN distributor d ON d.id = o.distributor_id
         JOIN point_of_sale pos ON pos.id = o.point_of_sale_id
-        WHERE 1=1
+        WHERE d.phone_number ILIKE @DistributorPhoneNumber
         """;
 
         var parameters = new DynamicParameters();
-
-        if (request.From.HasValue)
-        {
-            sql += " AND created_on_utc >= @From";
-            parameters.Add("From", request.From.Value);
-        }
-        if (request.To.HasValue)
-        {
-            sql += " AND created_on_utc <= @To";
-            parameters.Add("To", request.To.Value);
-        }
-        if (request.Status.HasValue)
-        {
-            sql += " AND status = @Status";
-            parameters.Add("Status", request.Status.Value);
-        }
-        if (!string.IsNullOrWhiteSpace(request.Distributor))
-        {
-            sql += " AND d.phone_number ILIKE @Distributor";
-            parameters.Add("Distributor", $"%{request.Distributor}%");
-        }
+        parameters.Add("DistributorPhoneNumber", $"%{request.DistributorPhoneNumber}%");
 
         if (!string.IsNullOrWhiteSpace(request.PointOfSalePhoneNumber))
         {
             sql += " AND pos.phone_number = @PointOfSalePhoneNumber";
             parameters.Add("PointOfSalePhoneNumber", request.PointOfSalePhoneNumber);
-        }
-
-        if (request.Ids != null && request.Ids.Count > 0)
-        {
-            sql += " AND o.id = ANY(@Ids)";
-            parameters.Add("Ids", request.Ids.ToArray());
         }
 
         sql += " ORDER BY created_on_utc DESC";

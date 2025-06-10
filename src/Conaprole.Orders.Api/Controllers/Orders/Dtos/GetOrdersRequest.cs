@@ -7,4 +7,5 @@ public record GetOrdersRequest
     public int? Status { get; set; }
     public string? Distributor { get; set; }
     public string? PointOfSalePhoneNumber { get; set; }
+    public string? Ids { get; set; }
 }

@@ -1,6 +1,7 @@
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.Controllers.Orders.Examples;
 using Conaprole.Orders.Application.Orders.AddOrderLine;
+using Conaprole.Orders.Application.Orders.BulkCreateOrders;
 using Conaprole.Orders.Application.Orders.CreateOrder;
 using Conaprole.Orders.Application.Orders.GetOrder;
 using Conaprole.Orders.Application.Orders.GetOrders;
@@ -78,6 +79,42 @@ public class OrdersController : ControllerBase
     }
     
     /// <summary>
+    /// Creates multiple orders in a single atomic transaction.
+    /// </summary>
+    [SwaggerOperation(Summary = "Create orders in bulk", Description = "Creates multiple orders atomically. If any order fails, none are created.")]
+    [HttpPost("bulk")]
+    // [HasPermission(Permissions.OrdersWrite)]
+    [ProducesResponseType(typeof(List<Guid>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [SwaggerRequestExample(typeof(BulkCreateOrdersRequest), typeof(BulkCreateOrdersRequestExample))]
+    public async Task<IActionResult> CreateOrdersBulk(BulkCreateOrdersRequest request, CancellationToken cancellationToken)
+    {
+        if (request.Orders == null || !request.Orders.Any())
+            return BadRequest(new Error("EmptyOrderList", "At least one order is required."));
+
+        var orderCommands = request.Orders
+            .Select(order => new CreateOrderCommand(
+                order.PointOfSalePhoneNumber,
+                order.DistributorPhoneNumber,
+                order.City,
+                order.Street,
+                order.ZipCode,
+                order.CurrencyCode,
+                order.OrderLines
+                    .Select(ol => new CreateOrderLineCommand(ol.ExternalProductId, ol.Quantity))
+                    .ToList()))
+            .ToList();
+
+        var command = new BulkCreateOrdersCommand(orderCommands);
+        var result = await _sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+
+        return Created("", result.Value);
+    }
+    
+    /// <summary>
     /// Updates the status of an order.
     /// </summary>
     [SwaggerOperation(Summary = "Update order status", Description = "Updates the status of an order (e.g. Confirmed, Delivered).")]
@@ -110,16 +147,40 @@ public class OrdersController : ControllerBase
     /// </summary>
     [HttpGet]
     // [HasPermission(Permissions.OrdersRead)]
-    [SwaggerOperation(Summary = "Gets orders with optional filters", Description = "Filter by date, status, distributor or point of sale.")]
+    [SwaggerOperation(
+        Summary = "Gets orders with optional filters", 
+        Description = "Filter by date, status, distributor, point of sale, or specific IDs (comma-separated). " +
+                     "Example: GET /api/orders?ids=guid1,guid2,guid3 to get specific orders by their IDs.")]
     public async Task<IActionResult> GetOrders([FromQuery] GetOrdersRequest request, CancellationToken cancellationToken)
 
     {
+        // Parse comma-separated IDs if provided
+        List<Guid>? ids = null;
+        if (!string.IsNullOrWhiteSpace(request.Ids))
+        {
+            var idStrings = request.Ids.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            ids = new List<Guid>();
+            
+            foreach (var idString in idStrings)
+            {
+                if (Guid.TryParse(idString.Trim(), out var id))
+                {
+                    ids.Add(id);
+                }
+                else
+                {
+                    return BadRequest(new Error("InvalidIds", $"Invalid GUID format: {idString.Trim()}"));
+                }
+            }
+        }
+
         var query = new GetOrdersQuery(
             request.From,
             request.To,
             request.Status,
             request.Distributor,
-            request.PointOfSalePhoneNumber);
+            request.PointOfSalePhoneNumber,
+            ids);
 
         var result = await _sender.Send(query, cancellationToken);
 
