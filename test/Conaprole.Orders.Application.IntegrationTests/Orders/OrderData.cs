@@ -2,6 +2,7 @@ using Conaprole.Orders.Application.Orders.CreateOrder;
 using Conaprole.Orders.Application.IntegrationTests.Products;
 using Conaprole.Orders.Application.IntegrationTests.Distributors;
 using Conaprole.Orders.Application.PointsOfSale.CreatePointOfSale;
+using Conaprole.Orders.Application.Abstractions.Data;
 using MediatR;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Orders
@@ -32,6 +33,39 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         {
             // 1) Crear producto
             var productId = await ProductData.SeedAsync(sender);
+
+            // 2) Crear distribuidor
+            var distributorId = await DistributorData.SeedAsync(sender);
+
+            // 3) Crear punto de venta
+            var pointOfSaleId = await SeedPointOfSaleAsync(sender);
+
+            // 4) Crear orden
+            var createOrderCommand = new CreateOrderCommand(
+                PointOfSalePhone,
+                DistributorPhone,
+                DeliveryCity,
+                DeliveryStreet,
+                DeliveryZipCode,
+                CurrencyCode,
+                OrderLines
+            );
+
+            var result = await sender.Send(createOrderCommand);
+            if (result.IsFailure)
+                throw new Exception($"Error seeding order: {result.Error.Code}");
+
+            return result.Value;
+        }
+
+        /// <summary>
+        /// Crea una orden completa con todas las dependencias necesarias.
+        /// Maneja duplicados de productos de forma inteligente.
+        /// </summary>
+        public static async Task<Guid> SeedAsync(ISender sender, ISqlConnectionFactory sqlConnectionFactory)
+        {
+            // 1) Crear producto (con manejo de duplicados)
+            var productId = await ProductData.SeedAsync(sender, sqlConnectionFactory);
 
             // 2) Crear distribuidor
             var distributorId = await DistributorData.SeedAsync(sender);

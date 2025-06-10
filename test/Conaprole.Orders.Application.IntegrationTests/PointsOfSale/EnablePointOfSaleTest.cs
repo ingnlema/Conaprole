@@ -21,6 +21,13 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
             await SetPointOfSaleActiveStateAsync(pointOfSaleId, false);
 
             // 2) Verificar que inicialmente está inactivo usando GetActivePointsOfSale
+            // Add a small delay to ensure the database update is committed
+            await Task.Delay(100);
+            
+            // Also verify the state directly in database
+            var isActiveInDb = await GetPointOfSaleIsActiveDirectlyAsync(pointOfSaleId);
+            Assert.False(isActiveInDb, $"Point of sale {pointOfSaleId} should be inactive in database but it's active");
+            
             var activePointsResult = await Sender.Send(new GetActivePointsOfSaleQuery());
             Assert.False(activePointsResult.IsFailure);
             
@@ -88,6 +95,15 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
             
             using var connection = SqlConnectionFactory.CreateConnection();
             await connection.ExecuteAsync(sql, new { Id = pointOfSaleId, IsActive = isActive });
+        }
+
+        private async Task<bool> GetPointOfSaleIsActiveDirectlyAsync(Guid pointOfSaleId)
+        {
+            const string sql = "SELECT is_active FROM point_of_sale WHERE id = @Id";
+            
+            using var connection = SqlConnectionFactory.CreateConnection();
+            var result = await connection.QueryFirstOrDefaultAsync<bool?>(sql, new { Id = pointOfSaleId });
+            return result ?? false;
         }
     }
 }

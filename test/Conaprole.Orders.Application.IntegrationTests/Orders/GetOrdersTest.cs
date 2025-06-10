@@ -57,9 +57,9 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
         public async Task GetOrdersQuery_With_Ids_Returns_Only_Specified_Orders()
         {
             // 1) Sembrar múltiples órdenes
-            var orderId1 = await OrderData.SeedAsync(Sender);
-            var orderId2 = await OrderData.SeedAsync(Sender);
-            var orderId3 = await OrderData.SeedAsync(Sender);
+            var orderId1 = await OrderData.SeedAsync(Sender, SqlConnectionFactory);
+            var orderId2 = await OrderData.SeedAsync(Sender, SqlConnectionFactory);
+            var orderId3 = await OrderData.SeedAsync(Sender, SqlConnectionFactory);
 
             // 2) Ejecutar el query pidiendo solo 2 órdenes específicas
             var requestedIds = new List<Guid> { orderId1, orderId3 };
