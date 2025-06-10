@@ -17,24 +17,8 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         // Call base InitializeAsync to clean database
         await base.InitializeAsync();
         
-        // Clean up any existing test users before each test
-        var testEmails = new[] { UserData.Email, UserData.AlternativeEmail, "test3@conaprole.com" };
-        // Use EF Core-friendly approach to avoid LINQ translation issues with Email.Value
-        var existingUsers = new List<User>();
-        foreach (var email in testEmails)
-        {
-            var emailValueObject = new Domain.Users.Email(email);
-            var user = await DbContext.Set<User>()
-                .FirstOrDefaultAsync(u => u.Email == emailValueObject);
-            if (user != null)
-                existingUsers.Add(user);
-        }
-        
-        if (existingUsers.Any())
-        {
-            DbContext.Set<User>().RemoveRange(existingUsers);
-            await DbContext.SaveChangesAsync();
-        }
+        // No need to clean up specific users since we're using unique emails
+        // Database cleanup is handled by base.InitializeAsync()
     }
 
     public new Task DisposeAsync()
@@ -46,7 +30,12 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
     public async Task RegisterUserCommand_Should_CreateUser_Successfully()
     {
         // Arrange
-        var command = UserData.CreateCommand;
+        var email = UserData.GenerateUniqueEmail();
+        var command = new RegisterUserCommand(
+            email,
+            UserData.FirstName,
+            UserData.LastName,
+            UserData.Password);
 
         // Act
         var result = await Sender.Send(command);
@@ -56,14 +45,14 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.NotEqual(Guid.Empty, result.Value);
 
         // Verify user was created in database
-        var userEmail = new Domain.Users.Email(UserData.Email);
+        var userEmail = new Domain.Users.Email(email);
         var user = await DbContext.Set<User>()
             .FirstOrDefaultAsync(u => u.Email == userEmail);
 
         Assert.NotNull(user);
         Assert.Equal(UserData.FirstName, user.FirstName.Value);
         Assert.Equal(UserData.LastName, user.LastName.Value);
-        Assert.Equal(UserData.Email, user.Email.Value);
+        Assert.Equal(email, user.Email.Value);
         Assert.NotEmpty(user.IdentityId);
         Assert.Null(user.DistributorId);
     }
@@ -73,8 +62,9 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
     {
         // Arrange - First create a distributor
         var distributorId = await DistributorData.SeedAsync(Sender);
+        var email = UserData.GenerateUniqueAlternativeEmail();
         var command = new RegisterUserCommand(
-            UserData.AlternativeEmail,
+            email,
             UserData.FirstName,
             UserData.LastName,
             UserData.Password,
@@ -88,14 +78,14 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.NotEqual(Guid.Empty, result.Value);
 
         // Verify user was created with distributor association
-        var alternativeUserEmail = new Domain.Users.Email(UserData.AlternativeEmail);
+        var alternativeUserEmail = new Domain.Users.Email(email);
         var user = await DbContext.Set<User>()
             .FirstOrDefaultAsync(u => u.Email == alternativeUserEmail);
 
         Assert.NotNull(user);
         Assert.Equal(UserData.FirstName, user.FirstName.Value);
         Assert.Equal(UserData.LastName, user.LastName.Value);
-        Assert.Equal(UserData.AlternativeEmail, user.Email.Value);
+        Assert.Equal(email, user.Email.Value);
         Assert.NotEmpty(user.IdentityId);
         Assert.Equal(distributorId, user.DistributorId);
     }

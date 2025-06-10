@@ -18,24 +18,8 @@ public class GetLoggedInUserTest : BaseIntegrationTest, IAsyncLifetime
         // Call base InitializeAsync to clean database
         await base.InitializeAsync();
         
-        // Clean up any existing test users before each test
-        var testEmails = new[] { UserData.Email, UserData.AlternativeEmail };
-        // Use EF Core-friendly approach to avoid LINQ translation issues with Email.Value
-        var existingUsers = new List<User>();
-        foreach (var email in testEmails)
-        {
-            var emailValueObject = new Domain.Users.Email(email);
-            var user = await DbContext.Set<User>()
-                .FirstOrDefaultAsync(u => u.Email == emailValueObject);
-            if (user != null)
-                existingUsers.Add(user);
-        }
-        
-        if (existingUsers.Any())
-        {
-            DbContext.Set<User>().RemoveRange(existingUsers);
-            await DbContext.SaveChangesAsync();
-        }
+        // No need to clean up specific users since we're using unique emails
+        // Database cleanup is handled by base.InitializeAsync()
         
         // Reset TestUserContext
         TestUserContext.IdentityId = string.Empty;
@@ -51,7 +35,7 @@ public class GetLoggedInUserTest : BaseIntegrationTest, IAsyncLifetime
     public async Task GetLoggedInUserQuery_Should_ReturnUser_WhenUserExists()
     {
         // Arrange - Create a user and set up the test context
-        var userId = await UserData.SeedAsync(Sender);
+        var (email, userId) = await UserData.SeedWithKnownEmailAsync(Sender);
         var testIdentityId = "test-identity-123";
         
         // Update the user with the test identity ID
@@ -70,7 +54,7 @@ public class GetLoggedInUserTest : BaseIntegrationTest, IAsyncLifetime
         
         var user = result.Value;
         Assert.Equal(userId, user.Id);
-        Assert.Equal(UserData.Email, user.Email);
+        Assert.Equal(email, user.Email);
         Assert.Equal(UserData.FirstName, user.FirstName);
         Assert.Equal(UserData.LastName, user.LastName);
         Assert.Contains("Registered", user.Roles);
@@ -85,7 +69,7 @@ public class GetLoggedInUserTest : BaseIntegrationTest, IAsyncLifetime
         var distributorId = await DistributorData.SeedAsync(Sender);
         
         // Create a user and associate with distributor
-        var userId = await UserData.SeedWithDistributorAsync(Sender, DistributorData.PhoneNumber);
+        var (email, userId) = await UserData.SeedWithDistributorAndKnownEmailAsync(Sender, DistributorData.PhoneNumber);
         var testIdentityId = "test-identity-with-distributor-456";
         
         // Update the user with the test identity ID
@@ -104,7 +88,7 @@ public class GetLoggedInUserTest : BaseIntegrationTest, IAsyncLifetime
         
         var user = result.Value;
         Assert.Equal(userId, user.Id);
-        Assert.Equal(UserData.Email, user.Email);
+        Assert.Equal(email, user.Email);
         Assert.Equal(UserData.FirstName, user.FirstName);
         Assert.Equal(UserData.LastName, user.LastName);
         Assert.Contains("Registered", user.Roles);

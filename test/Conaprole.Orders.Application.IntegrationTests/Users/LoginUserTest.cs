@@ -16,24 +16,8 @@ public class LoginUserTest : BaseIntegrationTest, IAsyncLifetime
         // Call base InitializeAsync to clean database
         await base.InitializeAsync();
         
-        // Clean up any existing test users before each test
-        var testEmails = new[] { UserData.Email, UserData.AlternativeEmail };
-        // Use EF Core-friendly approach to avoid LINQ translation issues with Email.Value
-        var existingUsers = new List<User>();
-        foreach (var email in testEmails)
-        {
-            var emailValueObject = new Domain.Users.Email(email);
-            var user = await DbContext.Set<User>()
-                .FirstOrDefaultAsync(u => u.Email == emailValueObject);
-            if (user != null)
-                existingUsers.Add(user);
-        }
-        
-        if (existingUsers.Any())
-        {
-            DbContext.Set<User>().RemoveRange(existingUsers);
-            await DbContext.SaveChangesAsync();
-        }
+        // No need to clean up specific users since we're using unique emails
+        // Database cleanup is handled by base.InitializeAsync()
     }
 
     public new Task DisposeAsync()
@@ -45,10 +29,10 @@ public class LoginUserTest : BaseIntegrationTest, IAsyncLifetime
     public async Task LoginUserCommand_Should_ReturnAccessToken_WhenCredentialsAreValid()
     {
         // Arrange - Create a user first
-        await UserData.SeedAsync(Sender);
+        var (email, userId) = await UserData.SeedWithKnownEmailAsync(Sender);
         
         var command = new LogInUserCommand(
-            UserData.Email,
+            email,
             UserData.Password);
 
         // Act
@@ -64,10 +48,10 @@ public class LoginUserTest : BaseIntegrationTest, IAsyncLifetime
     public async Task LoginUserCommand_Should_Fail_WhenCredentialsAreInvalid()
     {
         // Arrange - Create a user first
-        await UserData.SeedAsync(Sender);
+        var (email, userId) = await UserData.SeedWithKnownEmailAsync(Sender);
         
         var command = new LogInUserCommand(
-            UserData.Email,
+            email,
             "WrongPassword123!");
 
         // Act
@@ -81,8 +65,9 @@ public class LoginUserTest : BaseIntegrationTest, IAsyncLifetime
     public async Task LoginUserCommand_Should_Fail_WhenUserDoesNotExist()
     {
         // Arrange - Don't create any user
+        var nonExistentEmail = UserData.GenerateUniqueEmail();
         var command = new LogInUserCommand(
-            "nonexistent@example.com",
+            nonExistentEmail,
             UserData.Password);
 
         // Act
