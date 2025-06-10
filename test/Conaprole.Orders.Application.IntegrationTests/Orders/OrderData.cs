@@ -4,6 +4,7 @@ using Conaprole.Orders.Application.IntegrationTests.Distributors;
 using Conaprole.Orders.Application.PointsOfSale.CreatePointOfSale;
 using Conaprole.Orders.Application.Abstractions.Data;
 using MediatR;
+using Dapper;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Orders
 {
@@ -67,11 +68,11 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             // 1) Crear producto (con manejo de duplicados)
             var productId = await ProductData.SeedAsync(sender, sqlConnectionFactory);
 
-            // 2) Crear distribuidor
-            var distributorId = await DistributorData.SeedAsync(sender);
+            // 2) Crear distribuidor (con manejo de duplicados)
+            var distributorId = await DistributorData.SeedAsync(sender, sqlConnectionFactory);
 
-            // 3) Crear punto de venta
-            var pointOfSaleId = await SeedPointOfSaleAsync(sender);
+            // 3) Crear punto de venta (con manejo de duplicados)
+            var pointOfSaleId = await SeedPointOfSaleAsync(sender, sqlConnectionFactory);
 
             // 4) Crear orden
             var createOrderCommand = new CreateOrderCommand(
@@ -142,6 +143,38 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             );
 
             var result = await sender.Send(command);
+            if (result.IsFailure)
+                throw new Exception($"Error seeding point of sale: {result.Error.Code}");
+
+            return result.Value;
+        }
+
+        /// <summary>
+        /// Crea un punto de venta usando valores predeterminados.
+        /// Si el punto de venta ya existe con el mismo PhoneNumber, devuelve el ID del existente.
+        /// </summary>
+        private static async Task<Guid> SeedPointOfSaleAsync(ISender sender, ISqlConnectionFactory sqlConnectionFactory)
+        {
+            var command = new CreatePointOfSaleCommand(
+                "Punto de Venta Test",
+                PointOfSalePhone,
+                DeliveryCity,
+                DeliveryStreet,
+                DeliveryZipCode
+            );
+
+            var result = await sender.Send(command);
+            if (result.IsFailure && result.Error.Code == "PointOfSale.AlreadyExists")
+            {
+                // If point of sale already exists, get it by PhoneNumber using direct SQL
+                using var connection = sqlConnectionFactory.CreateConnection();
+                const string sql = "SELECT id FROM point_of_sale WHERE phone_number = @PhoneNumber";
+                var existingId = await connection.QueryFirstOrDefaultAsync<Guid?>(sql, new { PhoneNumber = PointOfSalePhone });
+                
+                if (existingId.HasValue)
+                    return existingId.Value;
+            }
+            
             if (result.IsFailure)
                 throw new Exception($"Error seeding point of sale: {result.Error.Code}");
 
