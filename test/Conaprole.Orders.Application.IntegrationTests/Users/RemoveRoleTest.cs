@@ -1,4 +1,5 @@
 using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.Users.AssignRole;
 using Conaprole.Orders.Application.Users.RemoveRole;
 using Conaprole.Orders.Domain.Users;
 
@@ -55,12 +56,11 @@ public class RemoveRoleTest : BaseIntegrationTest
     {
         // Arrange
         var user = User.Create(
-            FirstName.Create("Test").Value,
-            LastName.Create("User").Value,
-            Email.Create("invalidroleremove@test.com").Value,
-            "identity-id");
+            new FirstName("Test"),
+            new LastName("User"),
+            new Email("invalidroleremove@test.com"));
 
-        DbContext.Users.Add(user);
+        DbContext.Set<User>().Add(user);
         await DbContext.SaveChangesAsync();
 
         var command = new RemoveRoleCommand(user.Id, "InvalidRole");
