@@ -1,4 +1,5 @@
 using Conaprole.Orders.Application.Users.GetAllUsers;
+using Conaprole.Orders.Application.Users.RegisterUser;
 using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using User = Conaprole.Orders.Domain.Users.User;
@@ -15,18 +16,6 @@ public class GetAllUsersTest : BaseIntegrationTest, IAsyncLifetime
     {
         // Call base InitializeAsync to clean database
         await base.InitializeAsync();
-        
-        // Clean up any existing test users before each test
-        var testEmails = new[] { UserData.Email, UserData.AlternativeEmail, "admin@conaprole.com" };
-        var existingUsers = await DbContext.Set<User>()
-            .Where(u => testEmails.Contains(u.Email.Value))
-            .ToListAsync();
-        
-        if (existingUsers.Any())
-        {
-            DbContext.Set<User>().RemoveRange(existingUsers);
-            await DbContext.SaveChangesAsync();
-        }
     }
 
     public new Task DisposeAsync()
@@ -37,9 +26,9 @@ public class GetAllUsersTest : BaseIntegrationTest, IAsyncLifetime
     [Fact]
     public async Task GetAllUsersQuery_Should_ReturnAllUsers_WhenNoFilter()
     {
-        // Arrange - Create test users
-        var user1Id = await UserData.SeedAsync(Sender);
-        var user2Id = await CreateAlternativeUserAsync();
+        // Arrange - Create test users with known emails for validation
+        var (email1, user1Id) = await UserData.SeedWithKnownEmailAsync(Sender);
+        var (email2, user2Id) = await CreateAlternativeUserWithKnownEmailAsync();
 
         // Act
         var result = await Sender.Send(new GetAllUsersQuery());
@@ -57,12 +46,12 @@ public class GetAllUsersTest : BaseIntegrationTest, IAsyncLifetime
         Assert.NotNull(testUser1);
         Assert.NotNull(testUser2);
         
-        Assert.Equal(UserData.Email, testUser1.Email);
+        Assert.Equal(email1, testUser1.Email);
         Assert.Equal(UserData.FirstName, testUser1.FirstName);
         Assert.Equal(UserData.LastName, testUser1.LastName);
         Assert.Contains("Registered", testUser1.Roles);
         
-        Assert.Equal(UserData.AlternativeEmail, testUser2.Email);
+        Assert.Equal(email2, testUser2.Email);
         Assert.Contains("Registered", testUser2.Roles);
     }
 
@@ -71,7 +60,7 @@ public class GetAllUsersTest : BaseIntegrationTest, IAsyncLifetime
     {
         // Arrange - Create test users
         var user1Id = await UserData.SeedAsync(Sender);
-        var user2Id = await CreateAlternativeUserAsync();
+        var (_, user2Id) = await CreateAlternativeUserWithKnownEmailAsync();
 
         // Act - Filter by Registered role
         var result = await Sender.Send(new GetAllUsersQuery("Registered"));
@@ -102,11 +91,14 @@ public class GetAllUsersTest : BaseIntegrationTest, IAsyncLifetime
         Assert.Empty(result.Value);
     }
 
-    private async Task<Guid> CreateAlternativeUserAsync()
+    private async Task<(string email, Guid userId)> CreateAlternativeUserWithKnownEmailAsync()
     {
-        var result = await Sender.Send(UserData.CreateAlternativeCommand);
+        var email = UserData.GenerateUniqueAlternativeEmail();
+        var command = new Conaprole.Orders.Application.Users.RegisterUser.RegisterUserCommand(
+            email, UserData.FirstName, UserData.LastName, UserData.Password);
+        var result = await Sender.Send(command);
         if (result.IsFailure)
             throw new Exception($"Error creating alternative user: {result.Error.Code}");
-        return result.Value;
+        return (email, result.Value);
     }
 }

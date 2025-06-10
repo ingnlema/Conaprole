@@ -15,18 +15,6 @@ public class GetUserPermissionsTest : BaseIntegrationTest, IAsyncLifetime
     {
         // Call base InitializeAsync to clean database
         await base.InitializeAsync();
-        
-        // Clean up any existing test users before each test
-        var testEmails = new[] { UserData.Email, UserData.AlternativeEmail };
-        var existingUsers = await DbContext.Set<User>()
-            .Where(u => testEmails.Contains(u.Email.Value))
-            .ToListAsync();
-        
-        if (existingUsers.Any())
-        {
-            DbContext.Set<User>().RemoveRange(existingUsers);
-            await DbContext.SaveChangesAsync();
-        }
     }
 
     public new Task DisposeAsync()
