@@ -35,5 +35,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(user => user.Distributor)
             .WithMany()
             .HasForeignKey(user => user.DistributorId);
+
+        builder.HasMany(user => user.Roles)
+            .WithMany(role => role.Users)
+            .UsingEntity("role_user");
     }
 }

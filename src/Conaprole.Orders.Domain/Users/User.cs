@@ -32,7 +32,8 @@ public sealed class User : Entity
 
     public Distributor? Distributor { get; private set; }
 
-    public IReadOnlyCollection<Role> Roles => _roles.ToList();
+    // EF Core needs access to the actual collection for change tracking
+    public ICollection<Role> Roles => _roles;
 
     public static User Create(FirstName firstName, LastName lastName, Email email)
     {
