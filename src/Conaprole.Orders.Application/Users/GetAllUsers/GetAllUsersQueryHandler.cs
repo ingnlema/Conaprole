@@ -27,8 +27,7 @@ internal sealed class GetAllUsersQueryHandler
                       u.id AS Id,
                       u.email AS Email,
                       u.first_name AS FirstName,
-                      u.last_name AS LastName,
-                      u.created_on_utc AS CreatedOnUtc
+                      u.last_name AS LastName
                   FROM users u
                   """;
 
@@ -36,13 +35,14 @@ internal sealed class GetAllUsersQueryHandler
         if (!string.IsNullOrEmpty(request.RoleFilter))
         {
             sql += """
+                   
                    INNER JOIN role_user ru ON u.id = ru.users_id
                    INNER JOIN roles r ON ru.roles_id = r.id
                    WHERE r.name = @RoleFilter
                    """;
         }
 
-        sql += " ORDER BY u.created_on_utc DESC";
+        sql += " ORDER BY u.id DESC";
 
         var users = await connection.QueryAsync<UserSummaryResponse>(
             sql,
