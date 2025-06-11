@@ -54,16 +54,10 @@ public class RemoveRoleTest : BaseIntegrationTest
     [Fact]
     public async Task Handle_Should_ReturnFailure_WhenRoleNotFound()
     {
-        // Arrange
-        var user = User.Create(
-            new FirstName("Test"),
-            new LastName("User"),
-            new Email("invalidroleremove@test.com"));
+        // Arrange - Create a user via RegisterUserCommand
+        var userId = await UserData.SeedAsync(Sender);
 
-        DbContext.Set<User>().Add(user);
-        await DbContext.SaveChangesAsync();
-
-        var command = new RemoveRoleCommand(user.Id, "InvalidRole");
+        var command = new RemoveRoleCommand(userId, "InvalidRole");
 
         // Act
         var result = await Sender.Send(command);
