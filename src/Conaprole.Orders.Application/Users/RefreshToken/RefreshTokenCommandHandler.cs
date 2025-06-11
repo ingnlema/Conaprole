@@ -1,26 +1,26 @@
 using Conaprole.Orders.Application.Abstractions.Authentication;
 using Conaprole.Orders.Application.Abstractions.Messaging;
+using Conaprole.Orders.Application.Users.LoginUser;
 using Conaprole.Orders.Domain.Abstractions;
 using Conaprole.Orders.Domain.Users;
 
-namespace Conaprole.Orders.Application.Users.LoginUser;
+namespace Conaprole.Orders.Application.Users.RefreshToken;
 
-internal sealed class LogInUserCommandHandler : ICommandHandler<LogInUserCommand, AccessTokenResponse>
+internal sealed class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, AccessTokenResponse>
 {
     private readonly IJwtService _jwtService;
 
-    public LogInUserCommandHandler(IJwtService jwtService)
+    public RefreshTokenCommandHandler(IJwtService jwtService)
     {
         _jwtService = jwtService;
     }
 
     public async Task<Result<AccessTokenResponse>> Handle(
-        LogInUserCommand request,
+        RefreshTokenCommand request,
         CancellationToken cancellationToken)
     {
-        var result = await _jwtService.GetAccessTokenAsync(
-            request.Email,
-            request.Password,
+        var result = await _jwtService.GetAccessTokenFromRefreshTokenAsync(
+            request.RefreshToken,
             cancellationToken);
 
         if (result.IsFailure)
