@@ -1,6 +1,7 @@
 using Conaprole.Orders.Application.Exceptions;
 using Conaprole.Orders.Domain.Abstractions;
 using Conaprole.Orders.Domain.Products;
+using Conaprole.Orders.Domain.Users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -12,6 +13,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
     
     private readonly IPublisher _publisher;
     public DbSet<Product> Products { get; set; } = null!;
+    public DbSet<Role> Roles { get; set; } = null!;
 
 
     public ApplicationDbContext(DbContextOptions options, IPublisher publisher)
@@ -31,6 +33,19 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
     {
         try
         {
+            // Handle Role entities that might be detached but should be marked as existing
+            foreach (var entry in ChangeTracker.Entries<Role>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    // If this is a static role (has an ID), mark it as unchanged instead of added
+                    if (entry.Entity.Id > 0)
+                    {
+                        entry.State = EntityState.Unchanged;
+                    }
+                }
+            }
+
             var result = await base.SaveChangesAsync(cancellationToken);
             
             await PublishDomainEventsAsync();
