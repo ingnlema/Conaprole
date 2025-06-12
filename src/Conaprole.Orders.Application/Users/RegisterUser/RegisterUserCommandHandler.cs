@@ -47,6 +47,7 @@ internal sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserC
             }
 
             user.SetDistributor(distributor.Id);
+            user.AssignRole(Role.Distributor);
         }
 
         var identityId = await _authenticationService.RegisterAsync(

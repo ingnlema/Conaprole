@@ -55,6 +55,11 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.Equal(email, user.Email.Value);
         Assert.NotEmpty(user.IdentityId);
         Assert.Null(user.DistributorId);
+        
+        // Verify user has only the Registered role
+        Assert.Contains(Domain.Users.Role.Registered, user.Roles);
+        Assert.DoesNotContain(Domain.Users.Role.Distributor, user.Roles);
+        Assert.Single(user.Roles);
     }
 
     [Fact]
@@ -77,7 +82,7 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.False(result.IsFailure);
         Assert.NotEqual(Guid.Empty, result.Value);
 
-        // Verify user was created with distributor association
+        // Verify user was created with distributor association and Distributor role
         var alternativeUserEmail = new Domain.Users.Email(email);
         var user = await DbContext.Set<User>()
             .FirstOrDefaultAsync(u => u.Email == alternativeUserEmail);
@@ -88,6 +93,11 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.Equal(email, user.Email.Value);
         Assert.NotEmpty(user.IdentityId);
         Assert.Equal(distributorId, user.DistributorId);
+        
+        // Verify user has both Registered and Distributor roles
+        Assert.Contains(Domain.Users.Role.Registered, user.Roles);
+        Assert.Contains(Domain.Users.Role.Distributor, user.Roles);
+        Assert.Equal(2, user.Roles.Count);
     }
 
     [Fact]
