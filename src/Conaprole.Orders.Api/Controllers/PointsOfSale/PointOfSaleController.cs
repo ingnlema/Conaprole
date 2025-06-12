@@ -6,6 +6,7 @@ using Conaprole.Orders.Application.PointsOfSale.EnablePointOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetActivePointsOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetPointsOfSale;
 using Conaprole.Orders.Application.PointsOfSale.GetDistributorsByPointOfSale;
+using Conaprole.Orders.Application.PointsOfSale.GetPointOfSaleByPhoneNumber;
 using Conaprole.Orders.Application.PointsOfSale.UnassignDistributor;
 using Conaprole.Orders.Domain.Shared;
 using MediatR;
@@ -38,6 +39,19 @@ public class PointOfSaleController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await _sender.Send(new GetPointsOfSaleQuery(status), cancellationToken);
+        return Ok(result.Value);
+    }
+
+    [HttpGet("by-phone/{phoneNumber}")]
+    // [HasPermission(Permissions.PointsOfSaleRead)]
+    [SwaggerOperation(Summary = "Get POS by phone number", Description = "Retrieves a point of sale by its phone number. Returns the POS data including its active status.")]
+    public async Task<IActionResult> GetPointOfSaleByPhoneNumber(string phoneNumber, CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(new GetPointOfSaleByPhoneNumberQuery(phoneNumber), cancellationToken);
+        if (result.IsFailure)
+        {
+            return NotFound(result.Error);
+        }
         return Ok(result.Value);
     }
 
