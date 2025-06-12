@@ -54,7 +54,10 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
                 pos.Id.Should().NotBeEmpty();
                 pos.Name.Should().NotBeNullOrEmpty();
                 pos.PhoneNumber.Should().NotBeNullOrEmpty();
-                pos.Address.Should().NotBeNullOrEmpty();
+                pos.Address.Should().NotBeNull();
+                pos.Address.City.Should().NotBeNullOrEmpty();
+                pos.Address.Street.Should().NotBeNullOrEmpty();
+                pos.Address.ZipCode.Should().NotBeNullOrEmpty();
                 pos.IsActive.Should().BeTrue();
                 pos.CreatedAt.Should().NotBe(default(DateTime));
             }

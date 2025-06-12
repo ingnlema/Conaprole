@@ -61,13 +61,17 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         INSERT INTO point_of_sale (id, phone_number, name, address, is_active, created_at)
         VALUES (@Id, @PhoneNumber, @Name, @Address, true, now());";
 
+        // Create a properly formatted address string that matches Address.ToString() output
+        var testAddress = new Address("Montevideo", "Avenida Test 123", "11000");
+        var addressString = testAddress.ToString();
+
         using var connection = SqlConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(sql, new
         {
             Id = id,
             Name = "POS de Prueba",
             PhoneNumber = phoneNumber,
-            Address = "POS Test Address"
+            Address = addressString
         });
 
         return id;
@@ -81,13 +85,17 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         INSERT INTO point_of_sale (id, phone_number, name, address, is_active, created_at)
         VALUES (@Id, @PhoneNumber, @Name, @Address, false, now());";
 
+        // Create a properly formatted address string that matches Address.ToString() output
+        var testAddress = new Address("Punta del Este", "Calle Test 456", "20000");
+        var addressString = testAddress.ToString();
+
         using var connection = SqlConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(sql, new
         {
             Id = id,
             Name = "POS Inactivo de Prueba",
             PhoneNumber = phoneNumber,
-            Address = "Inactive POS Test Address"
+            Address = addressString
         });
 
         return id;

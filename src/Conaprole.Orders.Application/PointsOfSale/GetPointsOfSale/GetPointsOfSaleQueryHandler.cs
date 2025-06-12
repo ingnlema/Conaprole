@@ -2,6 +2,7 @@ using Conaprole.Orders.Application.Abstractions.Data;
 using Conaprole.Orders.Application.Abstractions.Messaging;
 using Conaprole.Orders.Application.PointsOfSale.GetActivePointsOfSale;
 using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Domain.Shared;
 using Dapper;
 
 namespace Conaprole.Orders.Application.PointsOfSale.GetPointsOfSale;
@@ -25,7 +26,7 @@ internal sealed class GetPointsOfSaleQueryHandler
                 id AS Id,
                 name AS Name,
                 phone_number AS PhoneNumber,
-                address AS Address,
+                address AS AddressString,
                 is_active AS IsActive,
                 created_at AS CreatedAt
             FROM point_of_sale";
@@ -60,7 +61,27 @@ internal sealed class GetPointsOfSaleQueryHandler
 
         sql += " ORDER BY name";
 
-        var pointsOfSale = await connection.QueryAsync<PointOfSaleResponse>(sql, parameters);
-        return Result.Success(pointsOfSale.ToList());
+        var rawResults = await connection.QueryAsync<PointOfSaleRawData>(sql, parameters);
+        
+        var pointsOfSale = rawResults.Select(raw => new PointOfSaleResponse(
+            raw.Id,
+            raw.Name,
+            raw.PhoneNumber,
+            Address.FromString(raw.AddressString),
+            raw.IsActive,
+            raw.CreatedAt
+        )).ToList();
+        
+        return Result.Success(pointsOfSale);
+    }
+
+    private class PointOfSaleRawData
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
+        public string AddressString { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
