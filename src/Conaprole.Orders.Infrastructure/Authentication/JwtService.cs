@@ -21,7 +21,7 @@ internal sealed class JwtService : IJwtService
         _keycloakOptions = keycloakOptions.Value;
     }
 
-    public async Task<Result<string>> GetAccessTokenAsync(
+    public async Task<Result<TokenResult>> GetAccessTokenAsync(
         string email,
         string password,
         CancellationToken cancellationToken = default)
@@ -48,14 +48,49 @@ internal sealed class JwtService : IJwtService
 
             if (authorizationToken is null)
             {
-                return Result.Failure<string>(AuthenticationFailed);
+                return Result.Failure<TokenResult>(AuthenticationFailed);
             }
 
-            return authorizationToken.AccessToken;
+            return new TokenResult(authorizationToken.AccessToken, authorizationToken.RefreshToken);
         }
         catch (HttpRequestException)
         {
-            return Result.Failure<string>(AuthenticationFailed);
+            return Result.Failure<TokenResult>(AuthenticationFailed);
+        }
+    }
+
+    public async Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(
+        string refreshToken,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var authRequestParameters = new KeyValuePair<string, string>[]
+            {
+                new("client_id", _keycloakOptions.AuthClientId),
+                new("client_secret", _keycloakOptions.AuthClientSecret),
+                new("grant_type", "refresh_token"),
+                new("refresh_token", refreshToken)
+            };
+
+            var authorizationRequestContent = new FormUrlEncodedContent(authRequestParameters);
+
+            var response = await _httpClient.PostAsync("", authorizationRequestContent, cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+
+            var authorizationToken = await response.Content.ReadFromJsonAsync<AuthorizationToken>();
+
+            if (authorizationToken is null)
+            {
+                return Result.Failure<TokenResult>(AuthenticationFailed);
+            }
+
+            return new TokenResult(authorizationToken.AccessToken, authorizationToken.RefreshToken);
+        }
+        catch (HttpRequestException)
+        {
+            return Result.Failure<TokenResult>(AuthenticationFailed);
         }
     }
 }

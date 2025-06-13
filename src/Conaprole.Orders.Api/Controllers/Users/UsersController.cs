@@ -1,5 +1,6 @@
 using Conaprole.Orders.Application.Users.GetLoggedInUser;
 using Conaprole.Orders.Application.Users.LoginUser;
+using Conaprole.Orders.Application.Users.RefreshToken;
 using Conaprole.Orders.Application.Users.RegisterUser;
 using Conaprole.Orders.Application.Users.AssignRole;
 using Conaprole.Orders.Application.Users.RemoveRole;
@@ -69,6 +70,25 @@ public class UsersController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new LogInUserCommand(request.Email, request.Password);
+
+        var result = await _sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return Unauthorized(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("refresh")]
+    // [HasPermission(Permissions.UsersRead)] // Public endpoint - no permission needed
+    public async Task<IActionResult> RefreshToken(
+        RefreshTokenRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new RefreshTokenCommand(request.RefreshToken);
 
         var result = await _sender.Send(command, cancellationToken);
 
