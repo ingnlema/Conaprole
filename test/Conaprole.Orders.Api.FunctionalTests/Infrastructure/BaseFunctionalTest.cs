@@ -36,7 +36,10 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         await connection.ExecuteAsync("DELETE FROM orders");
         await connection.ExecuteAsync("DELETE FROM products");
         await connection.ExecuteAsync("DELETE FROM point_of_sale");
-        await connection.ExecuteAsync("DELETE FROM users WHERE distributor_id IS NOT NULL");
+        // Clean role_user junction table before deleting users to avoid FK constraint violations
+        await connection.ExecuteAsync("DELETE FROM role_user");
+        // Delete all users, not just those with distributors
+        await connection.ExecuteAsync("DELETE FROM users");
         await connection.ExecuteAsync("DELETE FROM distributor");
     }
 
