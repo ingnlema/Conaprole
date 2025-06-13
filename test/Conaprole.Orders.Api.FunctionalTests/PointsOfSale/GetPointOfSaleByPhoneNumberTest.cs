@@ -31,27 +31,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             pointOfSale.PhoneNumber.Should().Be(phoneNumber);
             pointOfSale.IsActive.Should().BeTrue();
         }
-
-        [Fact]
-        public async Task GetPointOfSaleByPhoneNumber_Should_Return_PointOfSale_From_New_Route()
-        {
-            // Arrange
-            var phoneNumber = "+59891234568";
-            var posId = await CreatePointOfSaleAsync(phoneNumber);
-
-            // Act
-            var response = await HttpClient.GetAsync($"api/pointsofsale/by-phone/{phoneNumber}");
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            
-            var pointOfSale = await response.Content.ReadFromJsonAsync<PointOfSaleResponse>();
-            pointOfSale.Should().NotBeNull();
-            pointOfSale!.Id.Should().Be(posId);
-            pointOfSale.PhoneNumber.Should().Be(phoneNumber);
-            pointOfSale.IsActive.Should().BeTrue();
-        }
-
+        
         [Fact]
         public async Task GetPointOfSaleByPhoneNumber_Should_Return_NotFound_When_PhoneNumber_DoesNotExist()
         {
@@ -60,11 +40,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
 
             // Act
             var response1 = await HttpClient.GetAsync($"api/pos/by-phone/{nonExistentPhoneNumber}");
-            var response2 = await HttpClient.GetAsync($"api/pointsofsale/by-phone/{nonExistentPhoneNumber}");
 
             // Assert
             response1.StatusCode.Should().Be(HttpStatusCode.NotFound);
-            response2.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -75,7 +53,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var posId = await CreateInactivePointOfSaleAsync(phoneNumber);
 
             // Act
-            var response = await HttpClient.GetAsync($"api/pointsofsale/by-phone/{phoneNumber}");
+            var response = await HttpClient.GetAsync($"api/pos/by-phone/{phoneNumber}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);

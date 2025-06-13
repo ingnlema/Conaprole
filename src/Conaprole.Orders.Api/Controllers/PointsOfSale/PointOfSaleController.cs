@@ -114,6 +114,6 @@ public class PointOfSaleController : ControllerBase
         var result = await _sender.Send(command, cancellationToken);
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
-
+    
 
 }

@@ -28,7 +28,7 @@
       timeout: 5s
       retries: 5
   conaprole-idp:
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:22.0.5
     container_name: Conaprole.Identity
     command: start-dev --import-realm
     environment:
