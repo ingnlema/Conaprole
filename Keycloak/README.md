@@ -48,7 +48,7 @@ COPY conaprole-realm-export.json /opt/keycloak/data/import/realm.json
 EXPOSE 8080
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start",
-  "--hostname=container-conaprole-keycloak.delightfulbay-f2b42d90.brazilsouth.azurecontainerapps.io",
+  "--hostname=<HOSTNAME>",
   "--hostname-strict=false",
   "--hostname-strict-https=false",
   "--proxy=edge",
@@ -57,38 +57,45 @@ ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start",
 ]
 ```
 
+> 🔁 Reemplazar `<HOSTNAME>` por el hostname que genere Azure para tu Container App.
+
 ---
 
-## 🧩 Recomendaciones clave para funcionamiento correcto
+## 🔐 Variables de entorno recomendadas
 
-- **HTTPS obligatorio**: asegurar que se acceda solo por HTTPS para evitar errores de “Mixed Content”.
-- **Sin iframes**: Keycloak bloquea carga en iframes a menos que se configure `X-Frame-Options`. En este despliegue se desactiva por defecto para evitar errores.
-- **Frontend URL del Realm**: ingresar manualmente en la consola de administración en:
-  `Realm Settings → General → Frontend URL`
+En tu Azure Container App, configurar estas variables de entorno desde Azure portal:
 
-  ```text
-  https://container-conaprole-keycloak.delightfulbay-f2b42d90.brazilsouth.azurecontainerapps.io
+| Nombre                          | Tipo              | Valor sugerido         |
+|---------------------------------|-------------------|------------------------|
+| `Keycloak__AdminClientSecret`   | Referencia secreto| `kc-admin-client`      |
+| `Keycloak__AuthClientSecret`    | Referencia secreto| `kc-auth-client`       |
+
+Estas claves serán accedidas automáticamente desde tu `appsettings.Staging.json`.
+
+---
+
+## 🧩 Recomendaciones clave
+
+- **HTTPS obligatorio**: asegurar que se acceda por HTTPS para evitar errores de “Mixed Content”.
+- **Frontend URL del Realm**: luego del despliegue, editar manualmente en:
+
+  ```
+  Realm Settings → General → Frontend URL
   ```
 
-- **Acceso a consola de administración**:
-
-  Si el acceso directo a:
+  Usar el dominio generado por Azure como:
   ```
-  https://container-conaprole-keycloak.../admin/master/console/
-  ```
-  no funciona, usar esta URL generada por Keycloak como workaround:
-  ```
-  https://container-conaprole-keycloak.../realms/master/protocol/openid-connect/auth?... (con redirect_uri codificada)
+  https://<HOSTNAME>.azurecontainerapps.io
   ```
 
 ---
 
 ## 🔐 Seguridad en producción
 
-- Quitar `--spi-x-frame-options-enabled=false` si no se necesitan iframes.
-- Utilizar certificados TLS válidos (no autofirmados).
-- Configurar hostname propio y URIs válidas para clientes.
-- Aplicar políticas CSP más estrictas si es necesario.
+- **Rotar secretos**: evitar usar secretos estáticos exportados en el JSON. Se recomienda rotarlos y gestionarlos vía Azure Key Vault o configuraciones de entorno.
+- **Eliminar `--spi-x-frame-options-enabled=false`** si no se necesita UI embebida.
+- **Agregar políticas CSP** si la app lo requiere.
+- **Usar dominios personalizados y certificados TLS válidos.**
 
 ---
 
@@ -96,5 +103,5 @@ ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start",
 
 Una vez desplegado:
 
-- Realm: `https://<app>.azurecontainerapps.io/realms/Conaprole`
-- Admin Console: `https://<app>.azurecontainerapps.io/admin/Conaprole/console/`
+- Realm: `https://<HOSTNAME>.azurecontainerapps.io/realms/Conaprole`
+- Admin Console: `https://<HOSTNAME>.azurecontainerapps.io/admin/Conaprole/console/`
