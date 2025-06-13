@@ -7,11 +7,13 @@ namespace Conaprole.Orders.Application.Users.AssignRole;
 internal sealed class AssignRoleCommandHandler : ICommandHandler<AssignRoleCommand>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AssignRoleCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    public AssignRoleCommandHandler(IUserRepository userRepository, IRoleRepository roleRepository, IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -23,7 +25,7 @@ internal sealed class AssignRoleCommandHandler : ICommandHandler<AssignRoleComma
             return Result.Failure(UserErrors.NotFound);
         }
 
-        var role = GetRoleByName(request.RoleName);
+        var role = await _roleRepository.GetByNameAsync(request.RoleName, cancellationToken);
         if (role is null)
         {
             return Result.Failure(new Error("Role.NotFound", $"Role '{request.RoleName}' not found."));
@@ -36,15 +38,4 @@ internal sealed class AssignRoleCommandHandler : ICommandHandler<AssignRoleComma
         return Result.Success();
     }
 
-    private static Role? GetRoleByName(string roleName)
-    {
-        return roleName switch
-        {
-            "Registered" => Role.Registered,
-            "API" => Role.API,
-            "Administrator" => Role.Administrator,
-            "Distributor" => Role.Distributor,
-            _ => null
-        };
-    }
 }
