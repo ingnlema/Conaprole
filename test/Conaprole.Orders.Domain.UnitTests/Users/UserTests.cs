@@ -35,8 +35,17 @@ public class UserTests : BaseTest
         var user = User.Create(UserData.FirstName,UserData.LastName,UserData.Email);
         //Assert
         user.Roles.Should().Contain(Role.Registered);
+    }
 
-
+    [Fact]
+    public void Create_Should_RaiseUserRoleAssignedDomainEvent()
+    {
+        //Act
+        var user = User.Create(UserData.FirstName,UserData.LastName,UserData.Email);
+        //Assert
+        var domainEvent = AssertDomainEventWasPublished<UserRoleAssignedDomainEvent>(user);
+        domainEvent.UserId.Should().Be(user.Id);
+        domainEvent.RoleId.Should().Be(Role.Registered.Id);
     }
 
 
