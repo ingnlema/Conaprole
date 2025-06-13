@@ -33,16 +33,63 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
     {
         try
         {
-            // Handle Role entities that might be detached but should be marked as existing
+            // Manually handle role tracking to prevent conflicts with static role instances
+            var trackedRoles = new Dictionary<int, Role>();
+            
+            // First pass: identify all roles being tracked and collect unique instances
+            var entries = ChangeTracker.Entries().ToList();
+            foreach (var entry in entries)
+            {
+                if (entry.Entity is Role role && role.Id > 0)
+                {
+                    if (!trackedRoles.ContainsKey(role.Id))
+                    {
+                        trackedRoles[role.Id] = role;
+                    }
+                }
+            }
+            
+            // Second pass: replace role references in users with the tracked instances
+            foreach (var entry in entries)
+            {
+                if (entry.Entity is User user)
+                {
+                    var rolesToReplace = new List<Role>();
+                    var rolesToAdd = new List<Role>();
+                    
+                    foreach (var userRole in user.Roles.ToList())
+                    {
+                        if (userRole.Id > 0 && trackedRoles.TryGetValue(userRole.Id, out var trackedRole))
+                        {
+                            if (userRole != trackedRole)
+                            {
+                                rolesToReplace.Add(userRole);
+                                rolesToAdd.Add(trackedRole);
+                            }
+                        }
+                    }
+                    
+                    // Replace the roles
+                    foreach (var roleToReplace in rolesToReplace)
+                    {
+                        user.Roles.Remove(roleToReplace);
+                    }
+                    foreach (var roleToAdd in rolesToAdd)
+                    {
+                        if (!user.Roles.Contains(roleToAdd))
+                        {
+                            user.Roles.Add(roleToAdd);
+                        }
+                    }
+                }
+            }
+            
+            // Mark static roles as unchanged to prevent EF from trying to insert them
             foreach (var entry in ChangeTracker.Entries<Role>())
             {
-                if (entry.State == EntityState.Added)
+                if (entry.Entity.Id > 0 && entry.State == EntityState.Added)
                 {
-                    // If this is a static role (has an ID), mark it as unchanged instead of added
-                    if (entry.Entity.Id > 0)
-                    {
-                        entry.State = EntityState.Unchanged;
-                    }
+                    entry.State = EntityState.Unchanged;
                 }
             }
 
