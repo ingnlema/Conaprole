@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
 using Conaprole.Orders.Api.FunctionalTests.Users;
+using Conaprole.Orders.Application.Abstractions.Authentication;
 using Conaprole.Orders.Application.Abstractions.Data;
 using Conaprole.Orders.Infrastructure;
 using Conaprole.Orders.Infrastructure.Authentication;
@@ -22,6 +23,8 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
 {
     private readonly PostgreSqlContainer _dbContainer;
     private readonly KeycloakContainer _keycloakContainer;
+    
+    public TestUserContext TestUserContext { get; private set; } = null!;
     
     public FunctionalTestWebAppFactory()
     {
@@ -57,6 +60,11 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
             
             services.AddSingleton<ISqlConnectionFactory>(_ => 
                 new SqlConnectionFactory(_dbContainer.GetConnectionString()));
+            
+            // Replace IUserContext with TestUserContext for testing
+            TestUserContext = new TestUserContext();
+            services.RemoveAll(typeof(IUserContext));
+            services.AddSingleton<IUserContext>(TestUserContext);
             
             var keycloakAddress = _keycloakContainer.GetBaseAddress();
             if (!keycloakAddress.EndsWith("/"))
