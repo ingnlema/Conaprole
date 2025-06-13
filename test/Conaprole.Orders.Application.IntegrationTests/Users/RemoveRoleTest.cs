@@ -2,6 +2,7 @@ using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
 using Conaprole.Orders.Application.Users.AssignRole;
 using Conaprole.Orders.Application.Users.RemoveRole;
 using Conaprole.Orders.Domain.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Users;
 
@@ -30,11 +31,14 @@ public class RemoveRoleTest : BaseIntegrationTest
         // Assert
         Assert.True(result.IsSuccess);
         
-        // Verify the role was removed
-        var updatedUser = await DbContext.Set<User>().FindAsync(userId);
+        // Verify the role was removed - fetch roles from database to avoid static instances
+        var updatedUser = await DbContext.Set<User>()
+            .Include(u => u.Roles)
+            .FirstAsync(u => u.Id == userId);
+        
         Assert.NotNull(updatedUser);
-        Assert.DoesNotContain(updatedUser!.Roles, r => r.Id == Role.Administrator.Id && r.Name == Role.Administrator.Name);
-        Assert.Contains(updatedUser.Roles, r => r.Id == Role.Registered.Id && r.Name == Role.Registered.Name); // Should still have the default role
+        Assert.DoesNotContain(updatedUser.Roles, r => r.Name == "Administrator");
+        Assert.Contains(updatedUser.Roles, r => r.Name == "Registered"); // Should still have the default role
     }
 
     [Fact]
