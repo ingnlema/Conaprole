@@ -28,8 +28,8 @@ public class AssignRoleTest : BaseIntegrationTest
         // Verify the role was assigned
         var updatedUser = await DbContext.Set<User>().FindAsync(userId);
         Assert.NotNull(updatedUser);
-        Assert.Contains(Role.Administrator, updatedUser!.Roles);
-        Assert.Contains(Role.Registered, updatedUser.Roles); // Should still have the default role
+        Assert.Contains(updatedUser!.Roles, r => r.Id == Role.Administrator.Id && r.Name == Role.Administrator.Name);
+        Assert.Contains(updatedUser.Roles, r => r.Id == Role.Registered.Id && r.Name == Role.Registered.Name); // Should still have the default role
     }
 
     [Fact]

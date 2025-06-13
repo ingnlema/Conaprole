@@ -33,8 +33,8 @@ public class RemoveRoleTest : BaseIntegrationTest
         // Verify the role was removed
         var updatedUser = await DbContext.Set<User>().FindAsync(userId);
         Assert.NotNull(updatedUser);
-        Assert.DoesNotContain(Role.Administrator, updatedUser!.Roles);
-        Assert.Contains(Role.Registered, updatedUser.Roles); // Should still have the default role
+        Assert.DoesNotContain(updatedUser!.Roles, r => r.Id == Role.Administrator.Id && r.Name == Role.Administrator.Name);
+        Assert.Contains(updatedUser.Roles, r => r.Id == Role.Registered.Id && r.Name == Role.Registered.Name); // Should still have the default role
     }
 
     [Fact]

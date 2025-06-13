@@ -57,8 +57,8 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.Null(user.DistributorId);
         
         // Verify user has only the Registered role
-        Assert.Contains(Domain.Users.Role.Registered, user.Roles);
-        Assert.DoesNotContain(Domain.Users.Role.Distributor, user.Roles);
+        Assert.Contains(user.Roles, r => r.Id == Domain.Users.Role.Registered.Id && r.Name == Domain.Users.Role.Registered.Name);
+        Assert.DoesNotContain(user.Roles, r => r.Id == Domain.Users.Role.Distributor.Id && r.Name == Domain.Users.Role.Distributor.Name);
         Assert.Single(user.Roles);
     }
 
@@ -95,8 +95,8 @@ public class RegisterUserTest : BaseIntegrationTest, IAsyncLifetime
         Assert.Equal(distributorId, user.DistributorId);
         
         // Verify user has both Registered and Distributor roles
-        Assert.Contains(Domain.Users.Role.Registered, user.Roles);
-        Assert.Contains(Domain.Users.Role.Distributor, user.Roles);
+        Assert.Contains(user.Roles, r => r.Id == Domain.Users.Role.Registered.Id && r.Name == Domain.Users.Role.Registered.Name);
+        Assert.Contains(user.Roles, r => r.Id == Domain.Users.Role.Distributor.Id && r.Name == Domain.Users.Role.Distributor.Name);
         Assert.Equal(2, user.Roles.Count);
     }
 
