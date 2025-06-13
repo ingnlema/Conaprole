@@ -32,9 +32,9 @@ namespace Conaprole.Orders.Application.IntegrationTests.PointsOfSale
             Assert.True(pointOfSale.CreatedAt > DateTime.MinValue);
             
             // Verify address contains expected data
-            Assert.Contains(PointOfSaleData.Street, pointOfSale.Address);
-            Assert.Contains(PointOfSaleData.City, pointOfSale.Address);
-            Assert.Contains(PointOfSaleData.ZipCode, pointOfSale.Address);
+            Assert.Equal(PointOfSaleData.Street, pointOfSale.Address.Street);
+            Assert.Equal(PointOfSaleData.City, pointOfSale.Address.City);
+            Assert.Equal(PointOfSaleData.ZipCode, pointOfSale.Address.ZipCode);
         }
 
         [Fact]
