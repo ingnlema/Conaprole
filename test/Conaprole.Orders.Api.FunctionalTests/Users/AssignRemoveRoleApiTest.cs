@@ -20,7 +20,9 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     public async Task AssignRole_ShouldAssignRoleToUser_WhenValidRequest()
     {
         // Arrange - Create a test user first
-        var registerRequest = new RegisterUserRequest("roleassign@test.com", "Test", "User", "12345");
+        var email = $"roleassign+{Guid.NewGuid():N}@test.com";
+
+        var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         
@@ -59,8 +61,9 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task AssignRole_ShouldReturnBadRequest_WhenRoleNotFound()
     {
+        var email = $"roleassign+{Guid.NewGuid():N}@test.com";
         // Arrange - Create a test user first
-        var registerRequest = new RegisterUserRequest("invalidrole@test.com", "Test", "User", "12345");
+        var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         
@@ -77,8 +80,9 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task RemoveRole_ShouldRemoveRoleFromUser_WhenValidRequest()
     {
+        var email = $"roleassign+{Guid.NewGuid():N}@test.com";
         // Arrange - Create a test user and assign a role first
-        var registerRequest = new RegisterUserRequest("roleremove@test.com", "Test", "User", "12345");
+        var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         
@@ -127,8 +131,9 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task RemoveRole_ShouldReturnBadRequest_WhenRoleNotFound()
     {
+        var email = $"roleassign+{Guid.NewGuid():N}@test.com";
         // Arrange - Create a test user first
-        var registerRequest = new RegisterUserRequest("removeinvalidrole@test.com", "Test", "User", "12345");
+        var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         
