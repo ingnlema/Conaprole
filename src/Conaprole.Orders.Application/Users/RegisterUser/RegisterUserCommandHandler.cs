@@ -11,17 +11,20 @@ internal sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserC
     private readonly IAuthenticationService _authenticationService;
     private readonly IUserRepository _userRepository;
     private readonly IDistributorRepository _distributorRepository;
+    private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public RegisterUserCommandHandler(
         IAuthenticationService authenticationService,
         IUserRepository userRepository,
         IDistributorRepository distributorRepository,
+        IRoleRepository roleRepository,
         IUnitOfWork unitOfWork)
     {
         _authenticationService = authenticationService;
         _userRepository = userRepository;
         _distributorRepository = distributorRepository;
+        _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -33,6 +36,14 @@ internal sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserC
             new FirstName(request.FirstName),
             new LastName(request.LastName),
             new Email(request.Email));
+
+        // Assign the default Registered role to all users
+        var registeredRole = await _roleRepository.GetByNameAsync("Registered", cancellationToken);
+        if (registeredRole is null)
+        {
+            return Result.Failure<Guid>(new Error("Role.NotFound", "The 'Registered' role was not found."));
+        }
+        user.AssignRole(registeredRole);
 
         // If distributor phone number is provided, try to associate the distributor
         if (!string.IsNullOrEmpty(request.DistributorPhoneNumber))
@@ -46,8 +57,14 @@ internal sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserC
                 return Result.Failure<Guid>(DistributorErrors.NotFound);
             }
 
+            var distributorRole = await _roleRepository.GetByNameAsync("Distributor", cancellationToken);
+            if (distributorRole is null)
+            {
+                return Result.Failure<Guid>(new Error("Role.NotFound", "The 'Distributor' role was not found."));
+            }
+
             user.SetDistributor(distributor.Id);
-            user.AssignRole(Role.Distributor);
+            user.AssignRole(distributorRole);
         }
 
         var identityId = await _authenticationService.RegisterAsync(
