@@ -29,19 +29,36 @@ public class UserTests : BaseTest
     }
 
     [Fact]
-    public void Create_Should_AddRegisterRoleToUser()
+    public void Create_Should_NotHaveAnyRolesByDefault()
     {
         //Act
         var user = User.Create(UserData.FirstName,UserData.LastName,UserData.Email);
+        //Assert
+        user.Roles.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void AssignRole_Should_AddRoleToUser()
+    {
+        //Arrange
+        var user = User.Create(UserData.FirstName,UserData.LastName,UserData.Email);
+        
+        //Act
+        user.AssignRole(Role.Registered);
+        
         //Assert
         user.Roles.Should().Contain(Role.Registered);
     }
 
     [Fact]
-    public void Create_Should_RaiseUserRoleAssignedDomainEvent()
+    public void AssignRole_Should_RaiseUserRoleAssignedDomainEvent()
     {
-        //Act
+        //Arrange
         var user = User.Create(UserData.FirstName,UserData.LastName,UserData.Email);
+        
+        //Act
+        user.AssignRole(Role.Registered);
+        
         //Assert
         var domainEvent = AssertDomainEventWasPublished<UserRoleAssignedDomainEvent>(user);
         domainEvent.UserId.Should().Be(user.Id);
