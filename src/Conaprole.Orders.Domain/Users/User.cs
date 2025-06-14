@@ -39,9 +39,6 @@ public sealed class User : Entity
     {
         var user = new User(Guid.NewGuid(), firstName, lastName, email);
 
-        // Assign the default Registered role to all new users
-        user.AssignRole(Role.Registered);
-
         user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
 
         return user;
