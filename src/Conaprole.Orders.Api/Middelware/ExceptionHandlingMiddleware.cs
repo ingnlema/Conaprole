@@ -57,6 +57,12 @@ public class ExceptionHandlingMiddleware
                 "Validation error",
                 "One or more validation errors has occurred",
                 validationException.Errors),
+            ConflictException conflictException => new ExceptionDetails(
+                StatusCodes.Status409Conflict,
+                "Conflict",
+                "Conflict error",
+                conflictException.Message,
+                null),
             _ => new ExceptionDetails(
                 StatusCodes.Status500InternalServerError,
                 "ServerError",
