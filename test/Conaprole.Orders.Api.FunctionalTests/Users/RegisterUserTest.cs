@@ -61,4 +61,20 @@ public class RegisterUserTest : BaseFunctionalTest
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
+    [Fact]
+    public async Task Register_ShouldReturnConflict_WhenUserAlreadyExists()
+    {
+        // Arrange: First create a user
+        var request = new RegisterUserRequest("duplicate@test.com", "first", "last", "12345");
+        
+        var firstResponse = await HttpClient.PostAsJsonAsync("/api/users/register", request);
+        firstResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        // Act: Try to create the same user again
+        var duplicateResponse = await HttpClient.PostAsJsonAsync("/api/users/register", request);
+        
+        // Assert: Should return 409 Conflict, not 500 Internal Server Error
+        duplicateResponse.StatusCode.Should().Be(HttpStatusCode.Conflict);
+    }
+
 }
