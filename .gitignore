@@ -21,6 +21,9 @@ Thumbs.db
 *.log
 *.tmp
 
+# Logs directory (Serilog)
+logs/
+
 # Docker y datos generados por contenedores
 .containers/
 
