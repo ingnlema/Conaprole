@@ -1,5 +1,7 @@
+using System.Net;
 using System.Net.Http.Json;
 using Conaprole.Orders.Application.Abstractions.Authentication;
+using Conaprole.Orders.Application.Exceptions;
 using Conaprole.Orders.Domain.Users;
 using Conaprole.Orders.Infrastructure.Authentication.Models;
 
@@ -40,6 +42,38 @@ internal sealed class AuthenticationService : IAuthenticationService
                 cancellationToken);
 
             return ExtractIdentityIdFromLocationHeader(response);
+        }
+        catch (HttpRequestException ex)
+        {
+            // In .NET 5+, HttpRequestException.Data contains the status code
+            if (ex.Data.Contains("StatusCode"))
+            {
+                var statusCode = (HttpStatusCode)ex.Data["StatusCode"]!;
+                
+                switch (statusCode)
+                {
+                    case HttpStatusCode.Conflict:
+                        throw new ConflictException("User already exists", ex);
+                    case HttpStatusCode.BadRequest:
+                        throw new ValidationException(new[] { new ValidationError("User", "Invalid user data") });
+                    default:
+                        throw; // Re-throw for other HTTP status codes
+                }
+            }
+            
+            // Fallback: Parse the message for status codes (less reliable but covers edge cases)
+            if (ex.Message.Contains("409") || ex.Message.Contains("Conflict"))
+            {
+                throw new ConflictException("User already exists", ex);
+            }
+            
+            if (ex.Message.Contains("400") || ex.Message.Contains("Bad Request"))
+            {
+                throw new ValidationException(new[] { new ValidationError("User", "Invalid user data") });
+            }
+
+            // For any other HTTP error, re-throw to maintain existing behavior
+            throw;
         }
         catch (Exception e)
         {
