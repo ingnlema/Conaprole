@@ -143,6 +143,50 @@ internal sealed class AuthenticationService : IAuthenticationService
         }
     }
 
+    public async Task DeleteAsync(
+        string identityId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync(
+                $"users/{identityId}",
+                cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+        }
+        catch (HttpRequestException ex)
+        {
+            // In .NET 5+, HttpRequestException.Data contains the status code
+            if (ex.Data.Contains("StatusCode"))
+            {
+                var statusCode = (HttpStatusCode)ex.Data["StatusCode"]!;
+                
+                switch (statusCode)
+                {
+                    case HttpStatusCode.NotFound:
+                        throw new NotFoundException("User", identityId);
+                    default:
+                        throw; // Re-throw for other HTTP status codes
+                }
+            }
+            
+            // Fallback: Parse the message for status codes (less reliable but covers edge cases)
+            if (ex.Message.Contains("404") || ex.Message.Contains("Not Found"))
+            {
+                throw new NotFoundException("User", identityId);
+            }
+
+            // For any other HTTP error, re-throw to maintain existing behavior
+            throw;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     private static string ExtractIdentityIdFromLocationHeader(
         HttpResponseMessage httpResponseMessage)
     {

@@ -13,4 +13,8 @@ public interface IAuthenticationService
         string identityId,
         string newPassword,
         CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(
+        string identityId,
+        CancellationToken cancellationToken = default);
 }
