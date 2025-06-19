@@ -7,6 +7,7 @@ using Conaprole.Orders.Application.Users.RemoveRole;
 using Conaprole.Orders.Application.Users.GetAllUsers;
 using Conaprole.Orders.Application.Users.GetUserRoles;
 using Conaprole.Orders.Application.Users.GetUserPermissions;
+using Conaprole.Orders.Application.Users.ChangePassword;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Infrastructure.Authorization;
 using MediatR;
@@ -163,6 +164,24 @@ public class UsersController : ControllerBase
         }
         
         return Ok(result.Value);
+    }
+
+    [HttpPut("{userId}/change-password")]
+    [Authorize] // Just require authentication, custom authorization logic below
+    public async Task<IActionResult> ChangePassword(
+        Guid userId, 
+        [FromBody] ChangePasswordRequest request, 
+        CancellationToken cancellationToken)
+    {
+        var command = new ChangePasswordCommand(userId, request.NewPassword);
+        var result = await _sender.Send(command, cancellationToken);
+        
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+        
+        return NoContent();
     }
 
 }

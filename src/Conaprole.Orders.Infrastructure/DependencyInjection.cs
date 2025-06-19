@@ -109,7 +109,7 @@ public static class DependencyInjection
     
     private static void AddAuthorization(IServiceCollection services)
     {
-        services.AddScoped<AuthorizationService>();
+        services.AddScoped<Application.Abstractions.Authentication.IAuthorizationService, AuthorizationService>();
 
         services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
 
