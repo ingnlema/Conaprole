@@ -1,44 +1,86 @@
-# Keycloak Deployment - Realm Conaprole
+# Keycloak Deployment - Realm Conaprole (Persistente)
 
-Este repositorio contiene todo lo necesario para construir y desplegar una imagen personalizada de Keycloak `v22.0.5` con importación automática del realm `Conaprole` en Azure Container Apps.
-
----
-
-## 📦 Contenido
-
-- `Dockerfile`: Imagen personalizada de Keycloak con configuración de hostname, proxy y realm import.
-- `conaprole-realm-export.json`: Export del realm que incluye usuarios, clientes y roles.
-- `README.md`: Instrucciones actualizadas para despliegue exitoso en infraestructuras similares.
+Este repositorio contiene todo lo necesario para construir y desplegar una imagen personalizada de Keycloak `v22.0.5` con importación inicial del realm `Conaprole` y **persistencia de datos** a través de una base de datos PostgreSQL externa. Esta guía está orientada a entornos de Azure utilizando Azure Container Apps.
 
 ---
 
-## 🚀 Pasos para desplegar
+## 📆 Finalidad
 
-### 1. Build y push de la imagen
+Este despliegue permite:
 
-```bash
-docker buildx build \
-  --platform linux/amd64 \
-  -t <registry>.azurecr.io/keycloak:latest \
-  --push \
-  .
+- Inicializar el Realm `Conaprole` con sus **clientes**, **roles** y **configuraciones base** necesarias para la integración con APIs.
+- Garantizar **persistencia de datos** (usuarios, sesiones, configuraciones nuevas) mediante PostgreSQL.
+- Ejecutar en Azure de forma segura y replicable.
+
+> ⚠️ La importación del realm se realiza **una única vez al primer arranque** si el realm no existe en la base de datos. Es clave para que las APIs funcionen correctamente con los clientes configurados.
+
+---
+
+## 📆 Contenido
+
+- `Dockerfile`: Imagen personalizada de Keycloak con configuración de hostname, proxy, realm y soporte para PostgreSQL.
+- `conaprole-realm-export.json`: Export del realm con configuraciones iniciales.
+- `README.md`: Esta guía.
+
+---
+
+## ✅ Requisitos previos
+
+- Tener un **Azure Container Registry (ACR)** accesible.
+- Contar con una **base de datos PostgreSQL en Azure** (crear una base llamada `keycloak`).
+- Tener habilitado el servicio **Azure Container Apps**.
+
+---
+
+## 🚀 Despliegue paso a paso
+
+### 1. Crear base de datos PostgreSQL (si no existe)
+
+Conectarse al servidor PostgreSQL y ejecutar:
+
+```sql
+CREATE DATABASE keycloak
+  WITH OWNER = <usuario>
+       ENCODING = 'UTF8'
+       CONNECTION LIMIT = -1;
 ```
 
-> Reemplazar `<registry>` por el nombre de tu Azure Container Registry.
+> El usuario debe tener permisos de creación de tablas y esquemas.
 
 ---
 
-### 2. Crear Azure Container App
+### 2. Crear secretos en Azure (recomendado)
 
-- Imagen: `<registry>.azurecr.io/keycloak:latest`
-- Puerto expuesto: `8080`
-- Ingress: habilitado público (HTTPS)
-- Tamaño sugerido: `0.5 vCPU / 1 GiB RAM`
-- Revisión continua: activada (opcional)
+Desde el portal de Azure, en tu Container App:
+
+1. Ir a `Settings` > `Secrets`.
+2. Crear:
+
+| Nombre           | Valor                 |
+| ---------------- | --------------------- |
+| `kc-db-username` | `usuario_postgres`    |
+| `kc-db-password` | `contraseña_postgres` |
+| `kc-admin-user`  | `admin`               |
+| `kc-admin-pass`  | `admin`               |
 
 ---
 
-## ⚙️ Dockerfile base recomendado
+### 3. Configurar variables de entorno
+
+Ir a `Containers > Environment Variables` y configurar:
+
+| Variable                  | Tipo             | Valor                                    |
+| ------------------------- | ---------------- | ---------------------------------------- |
+| `KEYCLOAK_ADMIN`          | Secret reference | `kc-admin-user`                          |
+| `KEYCLOAK_ADMIN_PASSWORD` | Secret reference | `kc-admin-pass`                          |
+| `KC_DB`                   | Manual entry     | `postgres`                               |
+| `KC_DB_URL`               | Manual entry     | `jdbc:postgresql://<host>:5432/keycloak` |
+| `KC_DB_USERNAME`          | Secret reference | `kc-db-username`                         |
+| `KC_DB_PASSWORD`          | Secret reference | `kc-db-password`                         |
+
+---
+
+### 4. Dockerfile base persistente
 
 ```dockerfile
 FROM quay.io/keycloak/keycloak:22.0.5
@@ -57,51 +99,67 @@ ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start",
 ]
 ```
 
-> 🔁 Reemplazar `<HOSTNAME>` por el hostname que genere Azure para tu Container App.
+> Reemplazar `<HOSTNAME>` por el hostname generado por Azure.
 
 ---
 
-## 🔐 Variables de entorno recomendadas
+### 5. Build y push de la imagen
 
-En tu Azure Container App, configurar estas variables de entorno desde Azure portal:
+```bash
+docker buildx build \
+  --platform linux/amd64 \
+  -t <registry>.azurecr.io/keycloak-persistent:latest \
+  --push \
+  .
+```
 
-| Nombre                          | Tipo              | Valor sugerido         |
-|---------------------------------|-------------------|------------------------|
-| `Keycloak__AdminClientSecret`   | Referencia secreto| `kc-admin-client`      |
-| `Keycloak__AuthClientSecret`    | Referencia secreto| `kc-auth-client`       |
-
-Estas claves serán accedidas automáticamente desde tu `appsettings.Staging.json`.
-
----
-
-## 🧩 Recomendaciones clave
-
-- **HTTPS obligatorio**: asegurar que se acceda por HTTPS para evitar errores de “Mixed Content”.
-- **Frontend URL del Realm**: luego del despliegue, editar manualmente en:
-
-  ```
-  Realm Settings → General → Frontend URL
-  ```
-
-  Usar el dominio generado por Azure como:
-  ```
-  https://<HOSTNAME>.azurecontainerapps.io
-  ```
+> Evitá sobrescribir `keycloak:latest`. Esta versión persistente es segura para producción.
 
 ---
 
-## 🔐 Seguridad en producción
+### 6. Crear o actualizar Container App
 
-- **Rotar secretos**: evitar usar secretos estáticos exportados en el JSON. Se recomienda rotarlos y gestionarlos vía Azure Key Vault o configuraciones de entorno.
-- **Eliminar `--spi-x-frame-options-enabled=false`** si no se necesita UI embebida.
-- **Agregar políticas CSP** si la app lo requiere.
-- **Usar dominios personalizados y certificados TLS válidos.**
+- Imagen: `<registry>.azurecr.io/keycloak-persistent:latest`
+- Puerto: `8080`
+- Ingress: `habilitado (público)`
+- Tamaño sugerido: `0.5 vCPU / 1 GiB RAM`
+- Command override: (vacío)
+- Arguments override: (vacío)
 
 ---
 
-## ✅ Verificación
+## 🔒 Seguridad en producción
 
-Una vez desplegado:
+- Usar secretos para credenciales sensibles.
+- Habilitar solo el hostname válido y HTTPS.
+- Eliminar `--spi-x-frame-options-enabled=false` si no necesitás UI embebida.
+- Configurar dominios personalizados y certificados TLS.
+- Aplicar políticas CSP si tenés frontend propio.
+
+---
+
+## 📅 Verificación de persistencia
+
+1. Crear un usuario o cliente desde la consola de admin.
+2. Reiniciar el Container App (Stop + Start).
+3. Confirmar que el dato sigue existiendo.
+
+> Si los datos persisten: ✅ la integración con PostgreSQL está funcionando.
+
+---
+
+## 🔍 Recursos expuestos
 
 - Realm: `https://<HOSTNAME>.azurecontainerapps.io/realms/Conaprole`
 - Admin Console: `https://<HOSTNAME>.azurecontainerapps.io/admin/Conaprole/console/`
+
+---
+
+## ✉️ Contacto
+
+Para consultas técnicas sobre este despliegue, contactar con el equipo de infraestructura o soporte.
+
+---
+
+Este README está diseñado para ser utilizado como referencia por otros equipos que deseen desplegar Keycloak en Azure con persistencia segura y configuración inicial automatizada.
+
