@@ -50,6 +50,7 @@ public void Configure(JwtBearerOptions options)
 public interface IAuthenticationService
 {
     Task<string> RegisterAsync(User user, string password, CancellationToken cancellationToken = default);
+    Task ChangePasswordAsync(string identityId, string newPassword, CancellationToken cancellationToken = default);
 }
 ```
 
@@ -68,6 +69,19 @@ public async Task<string> RegisterAsync(User user, string password, Cancellation
     var response = await _httpClient.PostAsJsonAsync("users", userRepresentationModel, cancellationToken);
     
     return ExtractIdentityIdFromLocationHeader(response);
+}
+
+public async Task ChangePasswordAsync(string identityId, string newPassword, CancellationToken cancellationToken = default)
+{
+    var credentialRequest = new CredentialRepresentationModel
+    {
+        Value = newPassword,
+        Temporary = false,
+        Type = "password"
+    };
+
+    var response = await _httpClient.PutAsJsonAsync($"users/{identityId}/reset-password", credentialRequest, cancellationToken);
+    response.EnsureSuccessStatusCode();
 }
 ```
 

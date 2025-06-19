@@ -1,9 +1,10 @@
+using Conaprole.Orders.Application.Abstractions.Authentication;
 using Conaprole.Orders.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Conaprole.Orders.Infrastructure.Authorization;
 
-internal sealed class AuthorizationService
+internal sealed class AuthorizationService : IAuthorizationService
 {
     private readonly ApplicationDbContext _dbContext;
 
@@ -30,9 +31,11 @@ internal sealed class AuthorizationService
     {
         var permissions = await _dbContext.Set<User>()
             .Where(u => u.IdentityId == identityId)
-            .SelectMany(u => u.Roles.Select(r => r.Permissions))
-            .FirstAsync();
+            .SelectMany(u => u.Roles)
+            .SelectMany(r => r.Permissions)
+            .Select(p => p.Name)
+            .ToListAsync();
 
-        return permissions.Select(p => p.Name).ToHashSet();
+        return permissions.ToHashSet();
     }
 }

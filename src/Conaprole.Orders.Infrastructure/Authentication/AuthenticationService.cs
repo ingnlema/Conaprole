@@ -83,6 +83,66 @@ internal sealed class AuthenticationService : IAuthenticationService
 
     }
 
+    public async Task ChangePasswordAsync(
+        string identityId,
+        string newPassword,
+        CancellationToken cancellationToken = default)
+    {
+        var credentialRequest = new CredentialRepresentationModel
+        {
+            Value = newPassword,
+            Temporary = false,
+            Type = PasswordCredentialType
+        };
+
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync(
+                $"users/{identityId}/reset-password",
+                credentialRequest,
+                cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+        }
+        catch (HttpRequestException ex)
+        {
+            // In .NET 5+, HttpRequestException.Data contains the status code
+            if (ex.Data.Contains("StatusCode"))
+            {
+                var statusCode = (HttpStatusCode)ex.Data["StatusCode"]!;
+                
+                switch (statusCode)
+                {
+                    case HttpStatusCode.NotFound:
+                        throw new NotFoundException("User", identityId);
+                    case HttpStatusCode.BadRequest:
+                        throw new ValidationException(new[] { new ValidationError("Password", "Invalid password data") });
+                    default:
+                        throw; // Re-throw for other HTTP status codes
+                }
+            }
+            
+            // Fallback: Parse the message for status codes (less reliable but covers edge cases)
+            if (ex.Message.Contains("404") || ex.Message.Contains("Not Found"))
+            {
+                throw new NotFoundException("User", identityId);
+            }
+            
+            if (ex.Message.Contains("400") || ex.Message.Contains("Bad Request"))
+            {
+                throw new ValidationException(new[] { new ValidationError("Password", "Invalid password data") });
+            }
+
+            // For any other HTTP error, re-throw to maintain existing behavior
+            throw;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
     private static string ExtractIdentityIdFromLocationHeader(
         HttpResponseMessage httpResponseMessage)
     {

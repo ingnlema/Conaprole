@@ -1,3 +1,4 @@
+using Conaprole.Orders.Application.Abstractions.Authentication;
 using Conaprole.Orders.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,7 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
 
         using var scope = _serviceProvider.CreateScope();
 
-        var authorizationService = scope.ServiceProvider.GetRequiredService<AuthorizationService>();
+        var authorizationService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.Authentication.IAuthorizationService>();
 
         var identityId = context.User.GetIdentityId();
 
