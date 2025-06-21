@@ -31,6 +31,7 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List
             END AS StatusName,             
             o.created_on_utc AS CreatedOnUtc,
             d.phone_number AS DistributorPhoneNumber,
+            d.name AS DistributorName,
             pos.phone_number AS PointOfSalePhoneNumber,
             o.delivery_address_city AS City,
             o.delivery_address_street AS Street,
