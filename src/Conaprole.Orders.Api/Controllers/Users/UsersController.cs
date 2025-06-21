@@ -8,6 +8,7 @@ using Conaprole.Orders.Application.Users.GetAllUsers;
 using Conaprole.Orders.Application.Users.GetUserRoles;
 using Conaprole.Orders.Application.Users.GetUserPermissions;
 using Conaprole.Orders.Application.Users.ChangePassword;
+using Conaprole.Orders.Application.Users.DeleteUser;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Infrastructure.Authorization;
 using MediatR;
@@ -174,6 +175,24 @@ public class UsersController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new ChangePasswordCommand(userId, request.NewPassword);
+        var result = await _sender.Send(command, cancellationToken);
+        
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+        
+        return NoContent();
+    }
+
+    [HttpDelete("{userId}")]
+    [HasPermission(Permissions.UsersWrite)]
+    [Authorize(Roles = $"{Roles.Administrator},{Roles.API}")]
+    public async Task<IActionResult> DeleteUser(
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteUserCommand(userId);
         var result = await _sender.Send(command, cancellationToken);
         
         if (result.IsFailure)
