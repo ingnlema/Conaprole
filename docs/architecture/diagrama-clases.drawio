@@ -1,0 +1,360 @@
+<mxfile host="Electron" modified="2024-06-22T22:10:00.000Z" agent="5.0" etag="abc123" version="24.5.1" type="device">
+  <diagram name="Diagrama-Clases-Conaprole" id="abc123">
+    <mxGraphModel dx="2074" dy="1196" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="2336" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="DIAGRAMA DE CLASES - API CORE CONAPROLE" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="627" y="20" width="400" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Orders Package -->
+        <mxCell id="orders-package" value="" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="50" y="80" width="500" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="orders-package-label" value="Orders" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Order Class -->
+        <mxCell id="order-class" value="&lt;&lt;AggregateRoot&gt;&gt;&#xa;Order&#xa;────────────────────&#xa;- Id: Guid&#xa;- DistributorId: Guid&#xa;- PointOfSaleId: Guid&#xa;- DeliveryAddress: Address&#xa;- Status: Status&#xa;- CreatedOnUtc: DateTime&#xa;- ConfirmedOnUtc: DateTime?&#xa;- RejectedOnUtc: DateTime?&#xa;- DeliveryOnUtc: DateTime?&#xa;- CanceledOnUtc: DateTime?&#xa;- DeliveredOnUtc: DateTime?&#xa;- Price: Money&#xa;- OrderLines: IReadOnlyCollection&lt;OrderLine&gt;&#xa;────────────────────&#xa;+ AddOrderLine(OrderLine): void&#xa;+ RemoveOrderLine(Guid): void&#xa;+ UpdateOrderLineQuantity(Guid, Quantity): void&#xa;+ UpdateStatus(Status, DateTime): void" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="120" width="320" height="280" as="geometry" />
+        </mxCell>
+        
+        <!-- OrderLine Class -->
+        <mxCell id="orderline-class" value="OrderLine&#xa;────────────────────&#xa;- Id: Guid&#xa;- Quantity: Quantity&#xa;- SubTotal: Money&#xa;- OrderId: OrderId&#xa;- CreatedOnUtc: DateTime&#xa;- Product: Product&#xa;────────────────────&#xa;+ UpdateQuantity(Quantity): void" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="420" y="200" width="200" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Status Enum -->
+        <mxCell id="status-enum" value="&lt;&lt;enumeration&gt;&gt;&#xa;Status&#xa;────────────────────&#xa;Created = 0&#xa;Confirmed = 1&#xa;Delivered = 2&#xa;Canceled = -2&#xa;Rejected = -1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="420" width="150" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- OrderId Value Object -->
+        <mxCell id="orderid-vo" value="&lt;&lt;Value Object&gt;&gt;&#xa;OrderId&#xa;────────────────────&#xa;+ Value: Guid" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="250" y="420" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Products Package -->
+        <mxCell id="products-package" value="" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="680" y="80" width="280" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="products-package-label" value="Products" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="90" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Product Class -->
+        <mxCell id="product-class" value="Product&#xa;────────────────────&#xa;- Id: Guid&#xa;- ExternalProductId: ExternalProductId&#xa;- Name: Name&#xa;- UnitPrice: Money&#xa;- Category: Category&#xa;- Description: Description&#xa;- LastUpdated: DateTime" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="120" width="240" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Category Enum -->
+        <mxCell id="category-enum" value="&lt;&lt;enumeration&gt;&gt;&#xa;Category&#xa;────────────────────&#xa;CONGELADOS = 1&#xa;LACTEOS = 2&#xa;SUBPRODUCTOS = 3" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="700" y="280" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Distributors Package -->
+        <mxCell id="distributors-package" value="" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="80" width="280" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="distributors-package-label" value="Distributors" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="90" width="80" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Distributor Class -->
+        <mxCell id="distributor-class" value="&lt;&lt;AggregateRoot&gt;&gt;&#xa;Distributor&#xa;────────────────────&#xa;- Id: Guid&#xa;- PhoneNumber: string&#xa;- Name: string&#xa;- Address: string&#xa;- CreatedAt: DateTime&#xa;- SupportedCategories: ICollection&lt;Category&gt;&#xa;- PointSales: ICollection&lt;PointOfSaleDistributor&gt;&#xa;────────────────────&#xa;+ AddCategory(Category): bool&#xa;+ RemoveCategory(Category): bool" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="120" width="240" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- PointsOfSale Package -->
+        <mxCell id="pos-package" value="" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="80" width="300" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="pos-package-label" value="PointsOfSale" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="90" width="80" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- PointOfSale Class -->
+        <mxCell id="pos-class" value="&lt;&lt;AggregateRoot&gt;&gt;&#xa;PointOfSale&#xa;────────────────────&#xa;- Id: Guid&#xa;- Name: string&#xa;- PhoneNumber: string&#xa;- Address: string&#xa;- CreatedAt: DateTime&#xa;- IsActive: bool&#xa;- Distributors: ICollection&lt;PointOfSaleDistributor&gt;&#xa;────────────────────&#xa;+ Deactivate(): void&#xa;+ Activate(): void&#xa;+ AssignDistributor(Guid, Category): bool&#xa;+ UnassignDistributor(Guid, Category): bool" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="120" width="260" height="180" as="geometry" />
+        </mxCell>
+        
+        <!-- PointOfSaleDistributor Class -->
+        <mxCell id="posdist-class" value="PointOfSaleDistributor&#xa;────────────────────&#xa;- Id: Guid&#xa;- PointOfSaleId: Guid&#xa;- DistributorId: Guid&#xa;- Category: Category&#xa;- AssignedAt: DateTime&#xa;- PointOfSale: PointOfSale&#xa;- Distributor: Distributor&#xa;────────────────────&#xa;+ Create(Guid, Guid, Category): PointOfSaleDistributor" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="320" width="260" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Users Package -->
+        <mxCell id="users-package" value="" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="50" y="560" width="700" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="users-package-label" value="Users" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="570" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- User Class -->
+        <mxCell id="user-class" value="&lt;&lt;AggregateRoot&gt;&gt;&#xa;User&#xa;────────────────────&#xa;- Id: Guid&#xa;- FirstName: FirstName&#xa;- LastName: LastName&#xa;- Email: Email&#xa;- IdentityId: string&#xa;- DistributorId: Guid?&#xa;- Distributor: Distributor?&#xa;- Roles: ICollection&lt;Role&gt;&#xa;────────────────────&#xa;+ Create(FirstName, LastName, Email): User&#xa;+ SetIdentityId(string): void&#xa;+ SetDistributor(Guid): void&#xa;+ AssignRole(Role): void&#xa;+ RemoveRole(Role): void" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="70" y="600" width="240" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- Role Class -->
+        <mxCell id="role-class" value="Role&#xa;────────────────────&#xa;- Id: int&#xa;- Name: string&#xa;- Users: ICollection&lt;User&gt;&#xa;- Permissions: ICollection&lt;Permission&gt;&#xa;────────────────────&#xa;+ Registered: Role {static}&#xa;+ API: Role {static}&#xa;+ Administrator: Role {static}&#xa;+ Distributor: Role {static}" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="350" y="600" width="180" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Permission Class -->
+        <mxCell id="permission-class" value="Permission&#xa;────────────────────&#xa;- Id: int&#xa;- Name: string&#xa;────────────────────&#xa;+ UsersRead: Permission {static}&#xa;+ UsersWrite: Permission {static}&#xa;+ DistributorsRead: Permission {static}&#xa;+ DistributorsWrite: Permission {static}&#xa;+ PointsOfSaleRead: Permission {static}&#xa;+ PointsOfSaleWrite: Permission {static}&#xa;+ ProductsRead: Permission {static}&#xa;+ ProductsWrite: Permission {static}&#xa;+ OrdersRead: Permission {static}&#xa;+ OrdersWrite: Permission {static}&#xa;+ AdminAccess: Permission {static}" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="570" y="600" width="160" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- RolePermission Junction -->
+        <mxCell id="rolepermission-class" value="RolePermission&#xa;────────────────────&#xa;- RoleId: int&#xa;- PermissionId: int" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="450" y="820" width="120" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Shared Package -->
+        <mxCell id="shared-package" value="" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="800" y="560" width="500" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="shared-package-label" value="Shared (Value Objects)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="570" width="140" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Money Value Object -->
+        <mxCell id="money-vo" value="&lt;&lt;Value Object&gt;&gt;&#xa;Money&#xa;────────────────────&#xa;+ Amount: decimal&#xa;+ Currency: Currency&#xa;────────────────────&#xa;+ operator +(Money, Money): Money&#xa;+ operator *(Money, Quantity): Money&#xa;+ operator -(Money, Money): Money&#xa;+ Zero(): Money&#xa;+ Zero(Currency): Money&#xa;+ IsZero(): bool" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="820" y="600" width="200" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Currency Value Object -->
+        <mxCell id="currency-vo" value="&lt;&lt;Value Object&gt;&gt;&#xa;Currency&#xa;────────────────────&#xa;+ Code: string&#xa;────────────────────&#xa;+ None: Currency {static}&#xa;+ Usd: Currency {static}&#xa;+ Uyu: Currency {static}&#xa;+ FromCode(string): Currency&#xa;+ All: IReadOnlyCollection&lt;Currency&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="600" width="240" height="120" as="geometry" />
+        </mxCell>
+        
+        <!-- Address Value Object -->
+        <mxCell id="address-vo" value="&lt;&lt;Value Object&gt;&gt;&#xa;Address&#xa;────────────────────&#xa;+ City: string&#xa;+ Street: string&#xa;+ ZipCode: string&#xa;────────────────────&#xa;+ FromString(string): Address" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="820" y="760" width="180" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- Quantity Value Object -->
+        <mxCell id="quantity-vo" value="&lt;&lt;Value Object&gt;&gt;&#xa;Quantity&#xa;────────────────────&#xa;+ Value: int&#xa;────────────────────&#xa;+ implicit operator int(Quantity)&#xa;+ explicit operator Quantity(int)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="760" width="220" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Other Value Objects -->
+        <mxCell id="other-vos" value="&lt;&lt;Value Objects&gt;&gt;&#xa;────────────────────&#xa;FirstName(string Value)&#xa;LastName(string Value)&#xa;Email(string Value)&#xa;Name(string Value)&#xa;Description(string Value)&#xa;ExternalProductId(string Value)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="760" width="200" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- Entity Base Class -->
+        <mxCell id="entity-class" value="&lt;&lt;abstract&gt;&gt;&#xa;Entity&#xa;────────────────────&#xa;+ Id: Guid&#xa;- _domainEvents: List&lt;IDomainEvent&gt;&#xa;────────────────────&#xa;+ GetDomainEvents(): IReadOnlyList&lt;IDomainEvent&gt;&#xa;+ ClearDomainEvents(): void&#xa;# RaiseDomainEvent(IDomainEvent): void" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;strokeColor=#6c8ebf;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="920" width="280" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- IAggregateRoot Interface -->
+        <mxCell id="iaggregate-interface" value="&lt;&lt;interface&gt;&gt;&#xa;IAggregateRoot&#xa;────────────────────&#xa;(marker interface)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#f0f0f0;strokeColor=#666666;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="920" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- IDomainEvent Interface -->
+        <mxCell id="idomain-interface" value="&lt;&lt;interface&gt;&gt;&#xa;IDomainEvent&#xa;────────────────────&#xa;(extends INotification)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#f0f0f0;strokeColor=#666666;fontFamily=Courier New;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="530" y="920" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- RELATIONSHIPS -->
+        
+        <!-- Order to OrderLine (1:N) -->
+        <mxCell id="order-orderline" value="" style="endArrow=diamond;endFill=1;endSize=20;html=1;entryX=0;entryY=0.5;exitX=1;exitY=0.5;strokeWidth=2;" edge="1" parent="1" source="order-class" target="orderline-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="400" y="260" as="sourcePoint" />
+            <mxPoint x="560" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="order-orderline-label" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="240" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="order-orderline-label2" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="240" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- OrderLine to Product (N:1) -->
+        <mxCell id="orderline-product" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;exitX=1;exitY=0.5;strokeWidth=2;" edge="1" parent="1" source="orderline-class" target="product-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="620" y="270" as="sourcePoint" />
+            <mxPoint x="700" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="orderline-product-label" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="250" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="orderline-product-label2" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="670" y="170" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Order to Distributor (N:1) -->
+        <mxCell id="order-distributor" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;exitX=1;exitY=0.3;strokeWidth=2;" edge="1" parent="1" source="order-class" target="distributor-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="390" y="200" as="sourcePoint" />
+            <mxPoint x="1020" y="190" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="800" y="190" />
+              <mxPoint x="800" y="120" />
+              <mxPoint x="1000" y="120" />
+              <mxPoint x="1000" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="order-distributor-label" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="170" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="order-distributor-label2" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="170" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Order to PointOfSale (N:1) -->
+        <mxCell id="order-pos" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;exitX=1;exitY=0.2;strokeWidth=2;" edge="1" parent="1" source="order-class" target="pos-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="390" y="180" as="sourcePoint" />
+            <mxPoint x="1340" y="210" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="850" y="170" />
+              <mxPoint x="850" y="70" />
+              <mxPoint x="1300" y="70" />
+              <mxPoint x="1300" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="order-pos-label" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="150" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="order-pos-label2" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="190" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- PointOfSale to PointOfSaleDistributor (1:N) -->
+        <mxCell id="pos-posdist" value="" style="endArrow=diamond;endFill=1;endSize=20;html=1;entryX=0.5;entryY=0;exitX=0.5;exitY=1;strokeWidth=2;" edge="1" parent="1" source="pos-class" target="posdist-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1470" y="300" as="sourcePoint" />
+            <mxPoint x="1470" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pos-posdist-label" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="300" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="pos-posdist-label2" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="300" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Distributor to PointOfSaleDistributor (1:N) -->
+        <mxCell id="dist-posdist" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;exitX=1;exitY=0.8;strokeWidth=2;" edge="1" parent="1" source="distributor-class" target="posdist-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="1260" y="250" as="sourcePoint" />
+            <mxPoint x="1340" y="390" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1300" y="250" />
+              <mxPoint x="1300" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dist-posdist-label" value="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="230" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="dist-posdist-label2" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="370" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- User to Role (N:M) -->
+        <mxCell id="user-role" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;exitX=1;exitY=0.5;strokeWidth=2;" edge="1" parent="1" source="user-class" target="role-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="310" y="700" as="sourcePoint" />
+            <mxPoint x="350" y="670" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="user-role-label" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="680" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="user-role-label2" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="650" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Role to Permission (N:M) -->
+        <mxCell id="role-permission" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.5;exitX=1;exitY=0.5;strokeWidth=2;" edge="1" parent="1" source="role-class" target="permission-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="530" y="670" as="sourcePoint" />
+            <mxPoint x="570" y="700" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="role-permission-label" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="650" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="role-permission-label2" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="680" width="20" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- User to Distributor (N:1) -->
+        <mxCell id="user-distributor" value="" style="endArrow=classic;html=1;entryX=0;entryY=0.8;exitX=1;exitY=0.3;strokeWidth=2;" edge="1" parent="1" source="user-class" target="distributor-class">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="310" y="650" as="sourcePoint" />
+            <mxPoint x="1020" y="240" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="500" y="650" />
+              <mxPoint x="500" y="500" />
+              <mxPoint x="980" y="500" />
+              <mxPoint x="980" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="user-distributor-label" value="*" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="630" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="user-distributor-label2" value="0..1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="220" width="30" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Inheritance relationships -->
+        
+        <!-- Entity inheritance -->
+        <mxCell id="order-entity" value="" style="endArrow=block;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="order-class" target="entity-class">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="230" y="400" as="sourcePoint" />
+            <mxPoint x="190" y="920" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="230" y="850" />
+              <mxPoint x="190" y="850" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="orderline-entity" value="" style="endArrow=block;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;strokeWidth=2;exitX=0.5;exitY=1;entryX=0.8;entryY=0;" edge="1" parent="1" source="orderline-class" target="entity-class">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="520" y="340" as="sourcePoint" />
+            <mxPoint x="254" y="920" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="520" y="870" />
+              <mxPoint x="274" y="870" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="product-entity" value="" style="endArrow=block;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;strokeWidth=2;exitX=0.5;exitY=1;entryX=1;entryY=0;" edge="1" parent="1" source="product-class" target="entity-class">
+          <mxGeometry x="-1" relative="1" as="geometry">
+            <mxPoint x="820" y="260" as="sourcePoint" />
+            <mxPoint x="330" y="920" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="820" y="890" />
+              <mxPoint x="330" y="890" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend" value="LEYENDA&#xa;────────────────────&#xa;□ Aggregate Root&#xa;□ Entity&#xa;□ Value Object&#xa;□ Enumeration&#xa;□ Interface&#xa;────────────────────&#xa;◆ Composition (1:N)&#xa;→ Association&#xa;△ Inheritance" style="text;html=1;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="920" width="140" height="140" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
