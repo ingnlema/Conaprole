@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using Conaprole.Orders.Infrastructure.Authentication;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Conaprole.Orders.Application.Abstractions.Authentication;
 
 namespace Conaprole.Orders.Infrastructure.Authorization;
 
@@ -26,7 +27,7 @@ internal sealed class CustomClaimsTransformation : IClaimsTransformation
 
         using var scope = _serviceProvider.CreateScope();
 
-        var authorizationService = scope.ServiceProvider.GetRequiredService<AuthorizationService>();
+        var authorizationService = scope.ServiceProvider.GetRequiredService<IAuthorizationService>();
 
         var identityId = principal.GetIdentityId();
 

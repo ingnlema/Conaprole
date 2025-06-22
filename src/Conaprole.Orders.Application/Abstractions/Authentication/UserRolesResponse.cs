@@ -1,6 +1,6 @@
 using Conaprole.Orders.Domain.Users;
 
-namespace Conaprole.Orders.Infrastructure.Authorization;
+namespace Conaprole.Orders.Application.Abstractions.Authentication;
 
 public class UserRolesResponse
 {
