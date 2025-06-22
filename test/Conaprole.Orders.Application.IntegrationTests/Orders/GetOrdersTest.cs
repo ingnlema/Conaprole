@@ -1,5 +1,6 @@
 using Conaprole.Orders.Application.Orders.GetOrders;
 using Conaprole.Orders.Application.IntegrationTests.Infrastructure;
+using Conaprole.Orders.Application.IntegrationTests.Distributors;
 using Xunit;
 
 namespace Conaprole.Orders.Application.IntegrationTests.Orders
@@ -39,6 +40,7 @@ namespace Conaprole.Orders.Application.IntegrationTests.Orders
             // 4) Verificar que coincide con nuestros datos de prueba
             Assert.NotNull(fetched);
             Assert.Equal(OrderData.DistributorPhone, fetched.DistributorPhoneNumber);
+            Assert.Equal(DistributorData.Name, fetched.DistributorName);
             Assert.Equal(OrderData.PointOfSalePhone, fetched.PointOfSalePhoneNumber);
             Assert.Equal(OrderData.DeliveryCity, fetched.City);
             Assert.Equal(OrderData.DeliveryStreet, fetched.Street);
