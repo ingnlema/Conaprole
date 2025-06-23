@@ -90,14 +90,21 @@ public async Task ChangePasswordAsync(string identityId, string newPassword, Can
 // src/Conaprole.Orders.Application/Abstractions/Authentication/IJwtService.cs
 public interface IJwtService
 {
-    Task<Result<string>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default);
+    Task<Result<TokenResult>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default);
+    Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 }
 ```
 
-**Implementación:**
+#### Modelo TokenResult
+```csharp
+// src/Conaprole.Orders.Application/Abstractions/Authentication/TokenResult.cs
+public sealed record TokenResult(string AccessToken, string RefreshToken);
+```
+
+**Implementación Login:**
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/JwtService.cs
-public async Task<Result<string>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default)
+public async Task<Result<TokenResult>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default)
 {
     var authRequestParameters = new KeyValuePair<string, string>[]
     {
@@ -113,7 +120,29 @@ public async Task<Result<string>> GetAccessTokenAsync(string email, string passw
     
     var authorizationToken = await response.Content.ReadFromJsonAsync<AuthorizationToken>();
     
-    return authorizationToken.AccessToken;
+    return new TokenResult(authorizationToken.AccessToken, authorizationToken.RefreshToken);
+}
+```
+
+**Implementación Refresh Token:**
+```csharp
+public async Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(
+    string refreshToken, 
+    CancellationToken cancellationToken = default)
+{
+    var authRequestParameters = new KeyValuePair<string, string>[]
+    {
+        new("client_id", _keycloakOptions.AuthClientId),
+        new("client_secret", _keycloakOptions.AuthClientSecret),
+        new("grant_type", "refresh_token"),
+        new("refresh_token", refreshToken)
+    };
+
+    var response = await _httpClient.PostAsync("", new FormUrlEncodedContent(authRequestParameters), cancellationToken);
+    
+    var authorizationToken = await response.Content.ReadFromJsonAsync<AuthorizationToken>();
+    
+    return new TokenResult(authorizationToken.AccessToken, authorizationToken.RefreshToken);
 }
 ```
 
@@ -205,7 +234,7 @@ sequenceDiagram
     Keycloak-->>API: JWT Access Token
     Note over API: Valida y retorna token
     
-    API-->>Client: { "accessToken": "eyJ..." }
+    API-->>Client: { "accessToken": "eyJ...", "refreshToken": "eyJ..." }
     
     Note over Client: Guarda token para requests futuros
 ```
@@ -230,6 +259,28 @@ sequenceDiagram
     JWT_Middleware-->>API: Usuario autenticado
     
     API-->>Client: Response autorizada
+```
+
+### 4. Refresh Token
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant JwtService
+    participant Keycloak
+
+    Note over Client: Access token expiró
+    
+    Client->>API: POST /users/refresh {refreshToken}
+    API->>JwtService: GetAccessTokenFromRefreshTokenAsync(refreshToken)
+    
+    JwtService->>Keycloak: POST /token (grant_type=refresh_token)
+    Keycloak-->>JwtService: Nuevos tokens JWT
+    
+    JwtService-->>API: TokenResult con nuevos tokens
+    API-->>Client: { "accessToken": "nuevo...", "refreshToken": "nuevo..." }
+    
+    Note over Client: Continúa usando nuevos tokens
 ```
 
 ## Configuración de Keycloak
@@ -267,6 +318,65 @@ protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage 
     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authorizationToken.AccessToken);
     
     return await base.SendAsync(request, cancellationToken);
+}
+```
+
+## Endpoints de Autenticación Disponibles
+
+### POST /api/users/login
+```csharp
+[AllowAnonymous]
+[HttpPost("login")]
+public async Task<IActionResult> LogIn(LoginUserRequest request, CancellationToken cancellationToken)
+{
+    var command = new LoginUserCommand(request.Email, request.Password);
+    var result = await _sender.Send(command, cancellationToken);
+    
+    return result.IsSuccess ? Ok(result.Value) : Unauthorized(result.Error);
+}
+```
+
+**Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "SecurePassword123"
+}
+```
+
+**Response:**
+```json
+{
+  "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### POST /api/users/refresh
+```csharp
+[AllowAnonymous]
+[HttpPost("refresh")]
+public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken)
+{
+    var command = new RefreshTokenCommand(request.RefreshToken);
+    var result = await _sender.Send(command, cancellationToken);
+    
+    return result.IsSuccess ? Ok(result.Value) : Unauthorized(result.Error);
+}
+```
+
+**Request:**
+```json
+{
+  "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Response:**
+```json
+{
+  "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
