@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Conaprole.Orders.Application.Users.ChangePassword;
 
-internal sealed class ChangePasswordCommandValidator : AbstractValidator<ChangePasswordCommand>
+public sealed class ChangePasswordCommandValidator : AbstractValidator<ChangePasswordCommand>
 {
     public ChangePasswordCommandValidator()
     {
