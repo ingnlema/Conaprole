@@ -1,0 +1,12 @@
+# HTML preview files - these are generated for local preview only
+*.html
+
+# Image exports (can be generated from source files)
+*.png
+*.jpg
+*.svg
+*.pdf
+
+# Temporary files
+*.tmp
+*.temp
