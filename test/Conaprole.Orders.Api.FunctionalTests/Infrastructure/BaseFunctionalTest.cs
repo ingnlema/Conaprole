@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
+using System.Net;
 using Conaprole.Orders.Api.Controllers.Users;
 using Conaprole.Orders.Api.FunctionalTests.Users;
 using Conaprole.Orders.Application.Abstractions.Data;
@@ -35,6 +36,12 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         var registerResponse = await HttpClient.PostAsJsonAsync(
             "/api/users/register", 
             UserData.RegisterTestUserRequest);
+        
+        // If user already exists, that's fine - we can use the existing user
+        if (registerResponse.StatusCode == HttpStatusCode.Conflict)
+        {
+            return; // User already exists, continue
+        }
         
         if (!registerResponse.IsSuccessStatusCode)
         {
