@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 using Conaprole.Orders.Api.Controllers.Users;
 using Conaprole.Orders.Api.FunctionalTests.Users;
 using Conaprole.Orders.Application.Abstractions.Data;
@@ -23,9 +24,24 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
     public async Task InitializeAsync()
     {
         await CleanDatabaseAsync();
+        await RegisterTestUserAsync();
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
+
+    protected async Task RegisterTestUserAsync()
+    {
+        // Register the test user that will be used for authentication
+        var registerResponse = await HttpClient.PostAsJsonAsync(
+            "/api/users/register", 
+            UserData.RegisterTestUserRequest);
+        
+        if (!registerResponse.IsSuccessStatusCode)
+        {
+            var error = await registerResponse.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Failed to register test user: {error}");
+        }
+    }
     
     protected async Task CleanDatabaseAsync()
     {
@@ -54,6 +70,12 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         var accessTokenResponse = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
 
         return accessTokenResponse!.AccessToken;
+    }
+
+    protected async Task SetAuthorizationHeaderAsync()
+    {
+        var token = await GetAccessToken();
+        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
     
     protected async Task<Guid> CreatePointOfSaleAsync(string phoneNumber = "+59891234567")

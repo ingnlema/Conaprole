@@ -22,6 +22,10 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             await CreateDistributorAsync(distributorPhone);
             await CreatePointOfSaleAsync(pointOfSalePhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             await ProductData.CreateAsync(HttpClient);
             
             var line = ProductData.OrderLine(2);
@@ -77,6 +81,10 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             await CreateDistributorAsync(distributorPhone);
             await CreatePointOfSaleAsync(pointOfSalePhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             await ProductData.CreateAsync(HttpClient);
             
             var validLine = ProductData.OrderLine(1);
@@ -114,6 +122,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task BulkCreateOrders_WithEmptyOrdersList_ShouldReturnBadRequest()
         {
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var bulkRequest = new BulkCreateOrdersRequest
             {
                 Orders = new List<CreateOrderRequest>()
@@ -129,6 +140,10 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var distributorPhone = "+59892222231";
 
             await CreateDistributorAsync(distributorPhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             await ProductData.CreateAsync(HttpClient);
             
             var line = ProductData.OrderLine(1);
@@ -159,6 +174,10 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var pointOfSalePhone = "+59895555561";
 
             await CreatePointOfSaleAsync(pointOfSalePhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             await ProductData.CreateAsync(HttpClient);
             
             var line = ProductData.OrderLine(1);
