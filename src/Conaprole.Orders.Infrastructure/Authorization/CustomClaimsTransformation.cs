@@ -31,18 +31,26 @@ internal sealed class CustomClaimsTransformation : IClaimsTransformation
 
         var identityId = principal.GetIdentityId();
 
-        var userRoles = await authorizationService.GetRolesForUserAsync(identityId);
-
-        var claimsIdentity = new ClaimsIdentity();
-
-        claimsIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub, userRoles.UserId.ToString()));
-
-        foreach (var role in userRoles.Roles)
+        try
         {
-            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
-        }
+            var userRoles = await authorizationService.GetRolesForUserAsync(identityId);
 
-        principal.AddIdentity(claimsIdentity);
+            var claimsIdentity = new ClaimsIdentity();
+
+            claimsIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub, userRoles.UserId.ToString()));
+
+            foreach (var role in userRoles.Roles)
+            {
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
+            }
+
+            principal.AddIdentity(claimsIdentity);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // User was deleted or doesn't exist - don't enrich claims
+            // The authentication will fail later with proper error handling
+        }
 
         return principal;
     }

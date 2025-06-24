@@ -166,4 +166,65 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+    [Fact]
+    public async Task ChangePassword_ShouldReturnUnauthorized_WhenUserIsDeletedButTokenStillValid()
+    {
+        // Arrange - Register user and get token
+        var email = $"deleteduser+{Guid.NewGuid():N}@test.com";
+        var password = "password123";
+
+        var registerRequest = new RegisterUserRequest(email, "Test", "User", password);
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var userId = await registerResponse.Content.ReadFromJsonAsync<Guid>();
+
+        // Login to get access token
+        var loginRequest = new LogInUserRequest(email, password);
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
+        
+        string userToken = loginResult!.AccessToken;
+
+        // Create admin and delete the user
+        await CreateAndAuthenticateAdminUserAsync();
+        var deleteResponse = await HttpClient.DeleteAsync($"/api/users/{userId}");
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        // Use the user's token (which is still valid but user is deleted)
+        HttpClient.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", userToken);
+
+        // Act - Try to change password of deleted user with their old token
+        var changePasswordRequest = new ChangePasswordRequest("newpassword123");
+        var response = await HttpClient.PutAsJsonAsync($"/api/users/{userId}/change-password", changePasswordRequest);
+
+        // Assert - Should return 401 Unauthorized (due to user not found in claims transformation)
+        // The JWT token is still valid but user doesn't exist anymore
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    private async Task CreateAndAuthenticateAdminUserAsync()
+    {
+        // Create an admin user
+        var adminEmail = $"admin+{Guid.NewGuid():N}@test.com";
+        var registerRequest = new RegisterUserRequest(adminEmail, "Admin", "User", "12345");
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var adminUserId = await registerResponse.Content.ReadFromJsonAsync<Guid>();
+
+        // Assign Administrator role
+        var assignRoleRequest = new AssignRoleRequest("Administrator");
+        var assignResponse = await HttpClient.PostAsJsonAsync($"/api/users/{adminUserId}/assign-role", assignRoleRequest);
+        assignResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        // Login to get access token
+        var loginRequest = new LogInUserRequest(adminEmail, "12345");
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
+        
+        HttpClient.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult!.AccessToken);
+    }
 }
