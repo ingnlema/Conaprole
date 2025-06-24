@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Conaprole.Orders.Application.Distributors.GetOrdersForDistributor;
 using Conaprole.Orders.Domain.Shared;
 using Swashbuckle.AspNetCore.Annotations;
-// using Conaprole.Orders.Infrastructure.Authorization;
+using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Distributors;
 
@@ -28,8 +28,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet]
-    // [HasPermission(Permissions.DistributorsRead)]
-    [SwaggerOperation(Summary = "Get all distributors", Description = "Retrieves a list of all distributors with their summary information including supported categories and assigned points of sale count.")]
+    [HasPermission(Permissions.DistributorsRead)]
+    [SwaggerOperation(Summary = "Obtener todos los distribuidores", Description = "Recupera una lista de todos los distribuidores con su información resumida incluyendo categorías soportadas y cantidad de puntos de venta asignados.")]
     [ProducesResponseType(typeof(List<DistributorSummaryResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetDistributors(CancellationToken cancellationToken)
     {
@@ -39,8 +39,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpPost]
-    // [HasPermission(Permissions.DistributorsWrite)]
-    [SwaggerOperation(Summary = "Create a new distributor", Description = "Creates a new distributor with name, phone number, address and supported categories.")]
+    [HasPermission(Permissions.DistributorsWrite)]
+    [SwaggerOperation(Summary = "Crear un nuevo distribuidor", Description = "Crea un nuevo distribuidor con nombre, número de teléfono, dirección y categorías soportadas.")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateDistributor([FromBody] CreateDistributorRequest request, CancellationToken cancellationToken)
     {
@@ -54,8 +54,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/pos")]
-    // [HasPermission(Permissions.DistributorsRead)]
-    [SwaggerOperation(Summary = "Get assigned POS", Description = "Retrieves a list of points of sale assigned to the specified distributor.")]
+    [HasPermission(Permissions.DistributorsRead)]
+    [SwaggerOperation(Summary = "Obtener puntos de venta asignados", Description = "Recupera una lista de puntos de venta asignados al distribuidor especificado.")]
     public async Task<IActionResult> GetAssignedPointsOfSale(string distPhoneNumber, CancellationToken cancellationToken)
     {
         var query = new GetAssignedPointsOfSaleQuery(distPhoneNumber);
@@ -64,8 +64,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/pos/{posPhoneNumber}")]
-    // [HasPermission(Permissions.DistributorsRead)]
-    [SwaggerOperation(Summary = "Get POS details", Description = "Retrieves details (phone, address, active status, creation date) of a specific point of sale assigned to the distributor.")]
+    [HasPermission(Permissions.DistributorsRead)]
+    [SwaggerOperation(Summary = "Obtener detalles del punto de venta", Description = "Recupera los detalles (teléfono, dirección, estado activo, fecha de creación) de un punto de venta específico asignado al distribuidor.")]
     public async Task<IActionResult> GetPointOfSaleDetails(string distPhoneNumber, string posPhoneNumber, CancellationToken cancellationToken)
     {
         var query = new GetPointOfSaleDetailsQuery(distPhoneNumber, posPhoneNumber);
@@ -74,8 +74,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/orders")]
-    // [HasPermission(Permissions.OrdersRead)]
-    [SwaggerOperation(Summary = "Get orders for distributor", Description = "Returns a list of orders for a specific distributor, optionally filtered by point of sale.")]
+    [HasPermission(Permissions.OrdersRead)]
+    [SwaggerOperation(Summary = "Obtener órdenes para distribuidor", Description = "Devuelve una lista de órdenes para un distribuidor específico, opcionalmente filtradas por punto de venta.")]
     public async Task<IActionResult> GetOrders(string distPhoneNumber, [FromQuery] string? posPhoneNumber, CancellationToken cancellationToken)
     {
         var query = new GetOrdersForDistributorQuery(distPhoneNumber, posPhoneNumber);
@@ -84,8 +84,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpGet("{distPhoneNumber}/categories")]
-    // [HasPermission(Permissions.DistributorsRead)]
-    [SwaggerOperation(Summary = "Get distributor categories", Description = "Returns the list of product categories that the distributor is authorized to deliver.")]
+    [HasPermission(Permissions.DistributorsRead)]
+    [SwaggerOperation(Summary = "Obtener categorías del distribuidor", Description = "Devuelve la lista de categorías de productos que el distribuidor está autorizado a entregar.")]
     public async Task<IActionResult> GetCategories(string distPhoneNumber, CancellationToken cancellationToken)
     {
         var query = new GetDistributorCategoriesQuery(distPhoneNumber);
@@ -94,8 +94,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpPost("{distPhoneNumber}/categories")]
-    // [HasPermission(Permissions.DistributorsWrite)]
-    [SwaggerOperation(Summary = "Add category to distributor", Description = "Assigns a new supported product category to the distributor.")]
+    [HasPermission(Permissions.DistributorsWrite)]
+    [SwaggerOperation(Summary = "Agregar categoría al distribuidor", Description = "Asigna una nueva categoría de producto soportada al distribuidor.")]
     public async Task<IActionResult> AddCategory(string distPhoneNumber, [FromBody] AddDistributorCategoryRequest request, CancellationToken cancellationToken)
     {
         var command = new AddDistributorCategoryCommand(distPhoneNumber, Enum.Parse<Category>(request.Category, ignoreCase: true));
@@ -104,8 +104,8 @@ public class DistributorController : ControllerBase
     }
 
     [HttpDelete("{distPhoneNumber}/categories")]
-    // [HasPermission(Permissions.DistributorsWrite)]
-    [SwaggerOperation(Summary = "Remove category from distributor", Description = "Revokes a product category previously assigned to the distributor.")]
+    [HasPermission(Permissions.DistributorsWrite)]
+    [SwaggerOperation(Summary = "Remover categoría del distribuidor", Description = "Revoca una categoría de producto previamente asignada al distribuidor.")]
     public async Task<IActionResult> RemoveCategory(string distPhoneNumber, [FromBody] RemoveDistributorCategoryRequest request, CancellationToken cancellationToken)
     {
         var command = new RemoveDistributorCategoryCommand(distPhoneNumber, Enum.Parse<Category>(request.Category, ignoreCase: true));
