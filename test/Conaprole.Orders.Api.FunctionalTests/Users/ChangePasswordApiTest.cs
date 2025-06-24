@@ -199,9 +199,9 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         var changePasswordRequest = new ChangePasswordRequest("newpassword123");
         var response = await HttpClient.PutAsJsonAsync($"/api/users/{userId}/change-password", changePasswordRequest);
 
-        // Assert - Should return 401 Unauthorized (due to user not found in claims transformation)
-        // The JWT token is still valid but user doesn't exist anymore
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        // Assert - Should return 400 BadRequest (user not found in database)
+        // The JWT token is still valid but user doesn't exist in the database anymore
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     private async Task CreateAndAuthenticateAdminUserAsync()
