@@ -76,6 +76,7 @@ La documentación arquitectónica está organizada en los siguientes documentos 
 - **[Principios SOLID y DIP](./solid-y-dip.md)** - Aplicación de principios SOLID con énfasis en inversión de dependencias
 - **[Domain Design](./domain-design.md)** - Patrones DDD y modelo de dominio
 - **[CQRS y MediatR](./cqrs-mediator.md)** - Implementación de comandos y queries
+- **[Convenciones de Código](./convenciones-codigo.md)** - Nomenclatura y organización del código fuente
 - **[Arquitectura de Seguridad](./security-architecture.md)** - Autenticación, autorización y permisos
 - **[Capa de Datos](./data-layer.md)** - Persistencia y repositorios
 - **[Inyección de Dependencias](./dependency-injection.md)** - Configuración del contenedor IoC
