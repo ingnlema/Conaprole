@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using ProductResponse = Conaprole.Orders.Application.Products.GetProduct.ProductResponse;
-// using Conaprole.Orders.Infrastructure.Authorization;
+using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Products;
 
@@ -25,11 +25,11 @@ public class ProductsController : ControllerBase
     }
     
     /// <summary>
-    /// Gets a product by its unique identifier.
+    /// Obtiene un producto por su identificador único.
     /// </summary>
     [HttpGet("{id}")]
-    // [HasPermission(Permissions.ProductsRead)]
-    [SwaggerOperation(Summary = "Get product by ID", Description = "Returns a single product given its ID")]
+    [HasPermission(Permissions.ProductsRead)]
+    [SwaggerOperation(Summary = "Obtener producto por ID", Description = "Devuelve un producto específico dado su ID")]
     [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProduct(Guid id, CancellationToken cancellationToken)
@@ -41,14 +41,14 @@ public class ProductsController : ControllerBase
     }
     
     /// <summary>
-    /// Creates a new product.
+    /// Crea un nuevo producto.
     /// </summary>
     /// <remarks>
-    /// Requires an external product ID, name, unit price, currency, description, and a category enum value.
+    /// Requiere un ID de producto externo, nombre, precio unitario, moneda, descripción y un valor de categoría enum.
     /// </remarks>
     [HttpPost]
-    // [HasPermission(Permissions.ProductsWrite)]
-    [SwaggerOperation(Summary = "Creates a new product", Description = "Creates a product with a specific category")]
+    [HasPermission(Permissions.ProductsWrite)]
+    [SwaggerOperation(Summary = "Crear un nuevo producto", Description = "Crea un producto con una categoría específica")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateProduct(CreateProductRequest request, CancellationToken cancellationToken)
@@ -70,11 +70,11 @@ public class ProductsController : ControllerBase
     }
     
     /// <summary>
-    /// Lists all products.
+    /// Lista todos los productos.
     /// </summary>
     [HttpGet]
-    // [HasPermission(Permissions.ProductsRead)]
-    [SwaggerOperation(Summary = "Get all products", Description = "Returns a list of all registered products")]
+    [HasPermission(Permissions.ProductsRead)]
+    [SwaggerOperation(Summary = "Obtener todos los productos", Description = "Devuelve una lista de todos los productos registrados")]
     [ProducesResponseType(typeof(List<ProductsResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProducts(CancellationToken cancellationToken)
     {

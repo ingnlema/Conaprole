@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
-// using Conaprole.Orders.Infrastructure.Authorization;
+using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
@@ -34,11 +34,11 @@ public class OrdersController : ControllerBase
     
     
     /// <summary>
-    /// Gets the details of a specific order by its ID.
+    /// Obtiene los detalles de una orden específica por su ID.
     /// </summary>
-    [SwaggerOperation(Summary = "Get order by ID", Description = "Returns a specific order with all details and lines.")]
+    [SwaggerOperation(Summary = "Obtener orden por ID", Description = "Devuelve una orden específica con todos los detalles y líneas.")]
     [HttpGet("{id}")]
-    // [HasPermission(Permissions.OrdersRead)]
+    [HasPermission(Permissions.OrdersRead)]
     [ProducesResponseType(typeof(OrderResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetOrder(Guid id, CancellationToken cancellationToken)
@@ -50,11 +50,11 @@ public class OrdersController : ControllerBase
     }
     
     /// <summary>
-    /// Creates a new order.
+    /// Crea una nueva orden.
     /// </summary>
-    [SwaggerOperation(Summary = "Create order", Description = "Creates a new order with address, distributor, POS and order lines.")]
+    [SwaggerOperation(Summary = "Crear orden", Description = "Crea una nueva orden con dirección, distribuidor, punto de venta y líneas de orden.")]
     [HttpPost]
-    // [HasPermission(Permissions.OrdersWrite)]
+    [HasPermission(Permissions.OrdersWrite)]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateOrder(CreateOrderRequest request, CancellationToken cancellationToken)
@@ -79,11 +79,11 @@ public class OrdersController : ControllerBase
     }
     
     /// <summary>
-    /// Creates multiple orders in a single atomic transaction.
+    /// Crea múltiples órdenes en una sola transacción atómica.
     /// </summary>
-    [SwaggerOperation(Summary = "Create orders in bulk", Description = "Creates multiple orders atomically. If any order fails, none are created.")]
+    [SwaggerOperation(Summary = "Crear órdenes en lote", Description = "Crea múltiples órdenes de manera atómica. Si alguna orden falla, ninguna se crea.")]
     [HttpPost("bulk")]
-    // [HasPermission(Permissions.OrdersWrite)]
+    [HasPermission(Permissions.OrdersWrite)]
     [ProducesResponseType(typeof(List<Guid>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [SwaggerRequestExample(typeof(BulkCreateOrdersRequest), typeof(BulkCreateOrdersRequestExample))]
@@ -115,11 +115,11 @@ public class OrdersController : ControllerBase
     }
     
     /// <summary>
-    /// Updates the status of an order.
+    /// Actualiza el estado de una orden.
     /// </summary>
-    [SwaggerOperation(Summary = "Update order status", Description = "Updates the status of an order (e.g. Confirmed, Delivered).")]
+    [SwaggerOperation(Summary = "Actualizar estado de orden", Description = "Actualiza el estado de una orden (ej. Confirmada, Entregada).")]
     [HttpPut("{id}/status")]
-    // [HasPermission(Permissions.OrdersWrite)]
+    [HasPermission(Permissions.OrdersWrite)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [SwaggerRequestExample(typeof(UpdateOrderStatusRequest), typeof(UpdateOrderStatusRequestExample))]
@@ -143,14 +143,14 @@ public class OrdersController : ControllerBase
 
     
     /// <summary>
-    /// Lists orders with optional filters.
+    /// Lista órdenes con filtros opcionales.
     /// </summary>
     [HttpGet]
-    // [HasPermission(Permissions.OrdersRead)]
+    [HasPermission(Permissions.OrdersRead)]
     [SwaggerOperation(
-        Summary = "Gets orders with optional filters", 
-        Description = "Filter by date, status, distributor, point of sale, or specific IDs (comma-separated). " +
-                     "Example: GET /api/orders?ids=guid1,guid2,guid3 to get specific orders by their IDs.")]
+        Summary = "Obtener órdenes con filtros opcionales", 
+        Description = "Filtrar por fecha, estado, distribuidor, punto de venta, o IDs específicos (separados por comas). " +
+                     "Ejemplo: GET /api/orders?ids=guid1,guid2,guid3 para obtener órdenes específicas por sus IDs.")]
     public async Task<IActionResult> GetOrders([FromQuery] GetOrdersRequest request, CancellationToken cancellationToken)
 
     {
@@ -188,14 +188,14 @@ public class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Adds a new line to an existing order.
+    /// Agrega una nueva línea a una orden existente.
     /// </summary>
-    [SwaggerOperation(Summary = "Add order line", Description = "Adds a product line to an existing order.")]
+    [SwaggerOperation(Summary = "Agregar línea de orden", Description = "Agrega una línea de producto a una orden existente.")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     [HttpPost("{orderId:guid}/lines")]
-    // [HasPermission(Permissions.OrdersWrite)]
+    [HasPermission(Permissions.OrdersWrite)]
     public async Task<IActionResult> AddLine(
         Guid orderId,
         [FromBody] AddOrderLineRequest request)
@@ -217,14 +217,14 @@ public class OrdersController : ControllerBase
     }
 
     /// <summary>
-    /// Removes an order line by its ID.
+    /// Remueve una línea de orden por su ID.
     /// </summary>
-    [SwaggerOperation(Summary = "Delete order line", Description = "Deletes a specific order line by ID.")]
+    [SwaggerOperation(Summary = "Eliminar línea de orden", Description = "Elimina una línea de orden específica por ID.")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     [HttpDelete("{orderId:guid}/lines/{orderLineId:guid}")]
-    // [HasPermission(Permissions.OrdersWrite)]
+    [HasPermission(Permissions.OrdersWrite)]
     public async Task<IActionResult> DeleteLine(
         Guid orderId,
         Guid orderLineId)
@@ -249,14 +249,14 @@ public class OrdersController : ControllerBase
 
 
     /// <summary>
-    /// Updates the quantity of an existing order line.
+    /// Actualiza la cantidad de una línea de orden existente.
     /// </summary>
-    [SwaggerOperation(Summary = "Update order line quantity", Description = "Updates the quantity of a line in an existing order.")]
+    [SwaggerOperation(Summary = "Actualizar cantidad de línea de orden", Description = "Actualiza la cantidad de una línea en una orden existente.")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     [HttpPut("{orderId:guid}/lines/{orderLineId:guid}")]
-    // [HasPermission(Permissions.OrdersWrite)]
+    [HasPermission(Permissions.OrdersWrite)]
     public async Task<IActionResult> UpdateLineQuantity(
         Guid orderId,
         Guid orderLineId,

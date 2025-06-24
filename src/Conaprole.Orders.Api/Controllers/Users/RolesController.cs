@@ -2,6 +2,7 @@ using Conaprole.Orders.Application.Users.GetAllRoles;
 using Conaprole.Orders.Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Conaprole.Orders.Api.Controllers.Users;
 
@@ -16,8 +17,14 @@ public class RolesController : ControllerBase
         _sender = sender;
     }
 
+    /// <summary>
+    /// Obtiene todos los roles disponibles en el sistema.
+    /// </summary>
     [HttpGet]
-    // [HasPermission(Permissions.AdminAccess)]
+    [HasPermission(Permissions.AdminAccess)]
+    [SwaggerOperation(Summary = "Obtener todos los roles", Description = "Recupera la lista completa de roles disponibles en el sistema. Solo accesible para administradores.")]
+    [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetAllRoles(CancellationToken cancellationToken)
     {
         var query = new GetAllRolesQuery();

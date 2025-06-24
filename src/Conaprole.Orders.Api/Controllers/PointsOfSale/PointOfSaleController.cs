@@ -12,7 +12,7 @@ using Conaprole.Orders.Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-// using Conaprole.Orders.Infrastructure.Authorization;
+using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.PointsOfSale;
 
@@ -28,13 +28,13 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpGet]
-    // [HasPermission(Permissions.PointsOfSaleRead)]
+    [HasPermission(Permissions.PointsOfSaleRead)]
     [SwaggerOperation(
-        Summary = "List POS by status", 
-        Description = "Retrieves points of sale filtered by status. Supports filtering by active, inactive, or all POS. Defaults to active if no status is specified.")]
+        Summary = "Listar puntos de venta por estado", 
+        Description = "Recupera puntos de venta filtrados por estado. Soporta filtros por activos, inactivos, o todos los puntos de venta. Por defecto muestra activos si no se especifica estado.")]
     public async Task<IActionResult> GetPointsOfSale(
         [FromQuery, SwaggerParameter(
-            "Filter by POS status. Valid values: 'active' (default), 'inactive', 'all'. Invalid values default to 'active'.")] 
+            "Filtrar por estado del punto de venta. Valores válidos: 'active' (por defecto), 'inactive', 'all'. Valores inválidos se convierten por defecto a 'active'.")] 
         string? status = "active", 
         CancellationToken cancellationToken = default)
     {
@@ -43,8 +43,8 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpGet("by-phone/{phoneNumber}")]
-    // [HasPermission(Permissions.PointsOfSaleRead)]
-    [SwaggerOperation(Summary = "Get POS by phone number", Description = "Retrieves a point of sale by its phone number. Returns the POS data including its active status.")]
+    [HasPermission(Permissions.PointsOfSaleRead)]
+    [SwaggerOperation(Summary = "Obtener punto de venta por teléfono", Description = "Recupera un punto de venta por su número de teléfono. Devuelve los datos del punto de venta incluyendo su estado activo.")]
     public async Task<IActionResult> GetPointOfSaleByPhoneNumber(string phoneNumber, CancellationToken cancellationToken)
     {
         var result = await _sender.Send(new GetPointOfSaleByPhoneNumberQuery(phoneNumber), cancellationToken);
@@ -56,8 +56,8 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpGet("{posPhoneNumber}/distributors")]
-    // [HasPermission(Permissions.PointsOfSaleRead)]
-    [SwaggerOperation(Summary = "Get distributors by POS", Description = "Returns the list of distributors assigned to a specific point of sale, including product categories.")]
+    [HasPermission(Permissions.PointsOfSaleRead)]
+    [SwaggerOperation(Summary = "Obtener distribuidores por punto de venta", Description = "Devuelve la lista de distribuidores asignados a un punto de venta específico, incluyendo categorías de productos.")]
     public async Task<IActionResult> GetDistributorsByPOS(string posPhoneNumber, CancellationToken cancellationToken)
     {
         var result = await _sender.Send(new GetDistributorsByPointOfSaleQuery(posPhoneNumber), cancellationToken);
@@ -65,8 +65,8 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpPost]
-    // [HasPermission(Permissions.PointsOfSaleWrite)]
-    [SwaggerOperation(Summary = "Create POS", Description = "Registers a new point of sale with its contact and address information.")]
+    [HasPermission(Permissions.PointsOfSaleWrite)]
+    [SwaggerOperation(Summary = "Crear punto de venta", Description = "Registra un nuevo punto de venta con su información de contacto y dirección.")]
     public async Task<IActionResult> Create([FromBody] CreatePointOfSaleRequest request, CancellationToken cancellationToken)
     {
         var command = new CreatePointOfSaleCommand(request.Name, request.PhoneNumber, request.City, request.Street, request.ZipCode);
@@ -76,8 +76,8 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpPatch("{posPhoneNumber}")]
-    // [HasPermission(Permissions.PointsOfSaleWrite)]
-    [SwaggerOperation(Summary = "Disable POS", Description = "Disables a point of sale to prevent it from receiving new orders.")]
+    [HasPermission(Permissions.PointsOfSaleWrite)]
+    [SwaggerOperation(Summary = "Desactivar punto de venta", Description = "Desactiva un punto de venta para prevenir que reciba nuevas órdenes.")]
     public async Task<IActionResult> Disable(string posPhoneNumber, CancellationToken cancellationToken)
     {
         var command = new DisablePointOfSaleCommand(posPhoneNumber);
@@ -86,8 +86,8 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpPatch("{posPhoneNumber}/enable")]
-    // [HasPermission(Permissions.PointsOfSaleWrite)]
-    [SwaggerOperation(Summary = "Enable POS", Description = "Enables a point of sale to allow it to receive new orders.")]
+    [HasPermission(Permissions.PointsOfSaleWrite)]
+    [SwaggerOperation(Summary = "Activar punto de venta", Description = "Activa un punto de venta para permitir que reciba nuevas órdenes.")]
     public async Task<IActionResult> Enable(string posPhoneNumber, CancellationToken cancellationToken)
     {
         var command = new EnablePointOfSaleCommand(posPhoneNumber);
@@ -96,8 +96,8 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpPost("{posPhoneNumber}/distributors")]
-    // [HasPermission(Permissions.PointsOfSaleWrite)]
-    [SwaggerOperation(Summary = "Assign distributor to POS", Description = "Assigns a distributor to a point of sale for a specific product category.")]
+    [HasPermission(Permissions.PointsOfSaleWrite)]
+    [SwaggerOperation(Summary = "Asignar distribuidor al punto de venta", Description = "Asigna un distribuidor a un punto de venta para una categoría de producto específica.")]
     public async Task<IActionResult> AssignDistributor(string posPhoneNumber, [FromBody] AssignDistributorToPointOfSaleRequest request, CancellationToken cancellationToken)
     {
         var command = new AssignDistributorToPointOfSaleCommand(posPhoneNumber, request.DistributorPhoneNumber, Enum.Parse<Category>(request.Category, ignoreCase: true));
@@ -106,8 +106,8 @@ public class PointOfSaleController : ControllerBase
     }
 
     [HttpDelete("{posPhoneNumber}/distributors/{distributorPhoneNumber}/categories/{category}")]
-    // [HasPermission(Permissions.PointsOfSaleWrite)]
-    [SwaggerOperation(Summary = "Unassign distributor from POS", Description = "Removes the association of a distributor with a point of sale for a given product category.")]
+    [HasPermission(Permissions.PointsOfSaleWrite)]
+    [SwaggerOperation(Summary = "Desasignar distribuidor del punto de venta", Description = "Remueve la asociación de un distribuidor con un punto de venta para una categoría de producto dada.")]
     public async Task<IActionResult> UnassignDistributor(string posPhoneNumber, string distributorPhoneNumber, Category category, CancellationToken cancellationToken)
     {
         var command = new UnassignDistributorFromPointOfSaleCommand(posPhoneNumber, distributorPhoneNumber, category);
