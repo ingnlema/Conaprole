@@ -33,6 +33,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             await AssignDistributorToPointOfSaleAsync(pos2Id, distributor1Id, Category.CONGELADOS);
             await AssignDistributorToPointOfSaleAsync(pos1Id, distributor2Id, Category.LACTEOS);
 
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             // Act
             var response = await HttpClient.GetAsync("api/distributors");
 

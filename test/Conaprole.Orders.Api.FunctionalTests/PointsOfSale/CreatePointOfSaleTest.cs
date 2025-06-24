@@ -28,6 +28,9 @@ public class CreatePointOfSaleTest : BaseFunctionalTest
         );
 
         // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
         var response = await HttpClient.PostAsJsonAsync("/api/pos", request);
 
         // Assert
@@ -52,6 +55,9 @@ public class CreatePointOfSaleTest : BaseFunctionalTest
         );
 
         // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
         var response = await HttpClient.PostAsJsonAsync("/api/pos", request);
 
         // Assert
@@ -71,6 +77,9 @@ public class CreatePointOfSaleTest : BaseFunctionalTest
         );
 
         // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
         var response = await HttpClient.PostAsJsonAsync("/api/pos", request);
 
         // Assert

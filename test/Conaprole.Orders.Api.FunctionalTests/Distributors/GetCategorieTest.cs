@@ -20,6 +20,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             await CreateDistributorAsync(distributorPhone);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync($"api/distributors/{distributorPhone}/categories");
 
             // Assert
@@ -37,6 +40,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             var nonExistentPhone = "+59800000001";
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync($"api/distributors/{nonExistentPhone}/categories");
 
             // Assert

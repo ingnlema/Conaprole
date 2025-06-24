@@ -20,6 +20,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var posId = await CreatePointOfSaleAsync(phoneNumber);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync($"api/pos/by-phone/{phoneNumber}");
 
             // Assert
@@ -39,6 +42,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var nonExistentPhoneNumber = "+59899999999";
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response1 = await HttpClient.GetAsync($"api/pos/by-phone/{nonExistentPhoneNumber}");
 
             // Assert
@@ -53,6 +59,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var posId = await CreateInactivePointOfSaleAsync(phoneNumber);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync($"api/pos/by-phone/{phoneNumber}");
 
             // Assert

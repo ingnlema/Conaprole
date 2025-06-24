@@ -23,6 +23,9 @@ public class AddCategoryTest : BaseFunctionalTest
         // Arrange
         var distributorPhone = "+59899887766";
         await CreateDistributorAsync(distributorPhone);
+
+        // Set authorization header for protected endpoints
+        await SetAuthorizationHeaderAsync();
         
         var request = new AddDistributorCategoryRequest("CONGELADOS");
 
@@ -39,6 +42,9 @@ public class AddCategoryTest : BaseFunctionalTest
     [Fact]
     public async Task AddCategory_WithNonExistentDistributor_ShouldReturnBadRequest()
     {
+        // Set authorization header for protected endpoints
+        await SetAuthorizationHeaderAsync();
+
         // Arrange
         var nonExistentPhone = "+59899999999";
         var request = new AddDistributorCategoryRequest("LACTEOS");
@@ -56,6 +62,9 @@ public class AddCategoryTest : BaseFunctionalTest
         // Arrange
         var distributorPhone = "+59899887766";
         await CreateDistributorAsync(distributorPhone); // This already creates a distributor with LACTEOS category
+
+        // Set authorization header for protected endpoints
+        await SetAuthorizationHeaderAsync();
         
         var request = new AddDistributorCategoryRequest("LACTEOS");
 

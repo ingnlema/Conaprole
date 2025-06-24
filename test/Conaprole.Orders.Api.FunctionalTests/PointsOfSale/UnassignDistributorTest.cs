@@ -28,6 +28,9 @@ public class UnassignDistributorTest : BaseFunctionalTest
         isAssignedBefore.Should().BeTrue();
 
         // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
         var response = await HttpClient.DeleteAsync($"api/pos/{posPhoneNumber}/distributors/{distributorPhoneNumber}/categories/{category}");
 
         // Assert
@@ -49,6 +52,9 @@ public class UnassignDistributorTest : BaseFunctionalTest
         await CreateDistributorAsync(distributorPhoneNumber);
 
         // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
         var response = await HttpClient.DeleteAsync($"api/pos/{nonExistentPosPhoneNumber}/distributors/{distributorPhoneNumber}/categories/{category}");
 
         // Assert
@@ -66,6 +72,9 @@ public class UnassignDistributorTest : BaseFunctionalTest
         await CreatePointOfSaleAsync(posPhoneNumber);
 
         // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
         var response = await HttpClient.DeleteAsync($"api/pos/{posPhoneNumber}/distributors/{nonExistentDistributorPhoneNumber}/categories/{category}");
 
         // Assert
@@ -85,6 +94,9 @@ public class UnassignDistributorTest : BaseFunctionalTest
         // Note: We don't create an assignment, so it doesn't exist
 
         // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
         var response = await HttpClient.DeleteAsync($"api/pos/{posPhoneNumber}/distributors/{distributorPhoneNumber}/categories/{category}");
 
         // Assert

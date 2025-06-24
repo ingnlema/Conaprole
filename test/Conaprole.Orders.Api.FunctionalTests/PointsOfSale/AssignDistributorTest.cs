@@ -34,6 +34,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             );
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.PostAsJsonAsync($"api/pos/{pointOfSalePhone}/distributors", request);
 
             // Assert
