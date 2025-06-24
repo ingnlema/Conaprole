@@ -73,6 +73,7 @@ La documentación arquitectónica está organizada en los siguientes documentos 
 ### 📚 Documentos de Arquitectura
 
 - **[Clean Architecture](./clean-architecture.md)** - Implementación de capas y principios
+- **[Principios SOLID y DIP](./solid-y-dip.md)** - Aplicación de principios SOLID con énfasis en inversión de dependencias
 - **[Domain Design](./domain-design.md)** - Patrones DDD y modelo de dominio
 - **[CQRS y MediatR](./cqrs-mediator.md)** - Implementación de comandos y queries
 - **[Arquitectura de Seguridad](./security-architecture.md)** - Autenticación, autorización y permisos
