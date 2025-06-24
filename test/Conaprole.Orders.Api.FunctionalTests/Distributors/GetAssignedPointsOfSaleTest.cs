@@ -32,6 +32,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             await AssignDistributorToPointOfSaleAsync(posId2, distributorId, Category.CONGELADOS);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync($"api/distributors/{distributorPhone}/pos");
 
             // Assert
@@ -65,6 +68,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             var nonExistentDistributorPhone = "+59899999999";
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync($"api/distributors/{nonExistentDistributorPhone}/pos");
 
             // Assert
@@ -83,6 +89,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             await CreateDistributorAsync(distributorPhone);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync($"api/distributors/{distributorPhone}/pos");
 
             // Assert

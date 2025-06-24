@@ -24,6 +24,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             await CreateDistributorAsync(distributorPhone);
             await CreatePointOfSaleAsync(pointOfSalePhone);
 
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             // 1) Crear el producto global y obtener su GUID interno
             var productId = await ProductData.CreateAsync(HttpClient);
 
@@ -57,7 +60,7 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var getResp = await HttpClient.GetAsync($"api/Orders/{orderId}");
             getResp.StatusCode.Should().Be(HttpStatusCode.OK);
             var order = await getResp.Content.ReadFromJsonAsync<OrderResponse>();
-            order.Status.Should().Be((int)Status.Confirmed);
+            order!.Status.Should().Be((int)Status.Confirmed);
         }
     }
 }

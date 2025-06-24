@@ -17,6 +17,9 @@ public class GetAllPermissionsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetPermissions_ShouldReturnAllPermissions_WhenCalled()
     {
+        // Set authorization header for protected endpoints
+        await SetAuthorizationHeaderAsync();
+
         // Act
         var response = await HttpClient.GetAsync("/api/permissions");
 

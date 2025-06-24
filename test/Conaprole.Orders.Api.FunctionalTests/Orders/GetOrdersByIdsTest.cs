@@ -22,6 +22,10 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             await CreateDistributorAsync(distributorPhone);
             await CreatePointOfSaleAsync(pointOfSalePhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             await ProductData.CreateAsync(HttpClient);
             
             var line = ProductData.OrderLine(1);
@@ -54,6 +58,10 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
 
             await CreateDistributorAsync(distributorPhone);
             await CreatePointOfSaleAsync(pointOfSalePhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             await ProductData.CreateAsync(HttpClient);
             
             var line = ProductData.OrderLine(1);
@@ -73,6 +81,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task GetOrders_FilterByIds_InvalidGuid_ShouldReturnBadRequest()
         {
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             // Request with invalid GUID
             var response = await HttpClient.GetAsync("api/Orders?ids=invalid-guid");
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

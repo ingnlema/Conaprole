@@ -23,6 +23,15 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task CreateOrder_AddLine_ShouldReturnNoContent_And_OrderContainsBothLines()
         {
+            var distributorPhone = "+59899887766";
+            var pointOfSalePhone = "+59891234567";
+
+            await CreateDistributorAsync(distributorPhone);
+            await CreatePointOfSaleAsync(pointOfSalePhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var sku1 = $"SKU-{Guid.NewGuid():N}";
             await ProductData.CreateAsync(HttpClient, sku1);
             var initialLine = new OrderLineRequest(sku1, 2);
@@ -30,12 +39,6 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             var sku2 = $"SKU-{Guid.NewGuid():N}";
             await ProductData.CreateAsync(HttpClient, sku2);
             var newLine = new OrderLineRequest(sku2, 3);
-
-            var distributorPhone = "+59899887766";
-            var pointOfSalePhone = "+59891234567";
-
-            await CreateDistributorAsync(distributorPhone);
-            await CreatePointOfSaleAsync(pointOfSalePhone);
 
             var createRequest = new CreateOrderRequest(
                 pointOfSalePhone,            

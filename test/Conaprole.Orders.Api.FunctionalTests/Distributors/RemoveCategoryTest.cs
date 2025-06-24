@@ -31,6 +31,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             {
                 Content = JsonContent.Create(request)
             };
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.SendAsync(httpRequest);
 
             // Assert
@@ -58,6 +61,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             {
                 Content = JsonContent.Create(request)
             };
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.SendAsync(httpRequest);
 
             // Assert
@@ -76,6 +82,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             {
                 Content = JsonContent.Create(request)
             };
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.SendAsync(httpRequest);
 
             // Assert

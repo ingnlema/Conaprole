@@ -29,6 +29,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             await AssignDistributorToPointOfSaleAsync(pointOfSaleId, distributorId, Category.LACTEOS);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync(
                 $"api/distributors/{Uri.EscapeDataString(distributorPhone)}/pos/{Uri.EscapeDataString(pointOfSalePhone)}"
             );
@@ -56,6 +59,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             await CreatePointOfSaleAsync(pointOfSalePhone);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync(
                 $"api/distributors/{Uri.EscapeDataString(distributorPhone)}/pos/{Uri.EscapeDataString(pointOfSalePhone)}"
             );

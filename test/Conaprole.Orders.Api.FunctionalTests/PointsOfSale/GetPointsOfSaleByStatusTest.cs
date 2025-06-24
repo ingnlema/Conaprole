@@ -26,6 +26,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var inactiveId = await CreateInactivePointOfSaleAsync(inactivePhoneNumber);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync("api/pos?status=active");
 
             // Assert
@@ -65,6 +68,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var inactiveId2 = await CreateInactivePointOfSaleAsync(inactivePhoneNumber2);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync("api/pos?status=inactive");
 
             // Assert
@@ -106,6 +112,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var inactiveId2 = await CreateInactivePointOfSaleAsync(inactivePhoneNumber2);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync("api/pos?status=all");
 
             // Assert
@@ -143,6 +152,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var inactiveId = await CreateInactivePointOfSaleAsync(inactivePhoneNumber);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync("api/pos");
 
             // Assert
@@ -176,6 +188,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var inactiveId = await CreateInactivePointOfSaleAsync(inactivePhoneNumber);
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.GetAsync("api/pos?status=invalid");
 
             // Assert

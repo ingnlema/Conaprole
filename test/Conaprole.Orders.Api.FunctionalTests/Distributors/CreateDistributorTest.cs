@@ -21,6 +21,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
         [Fact]
         public async Task CreateDistributor_WithValidData_ShouldReturnCreatedAndGuid()
         {
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             // Arrange
             var request = new CreateDistributorRequest(
                 "Distribuidor Test",
@@ -41,6 +44,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
         [Fact]
         public async Task CreateDistributor_WithDuplicatePhoneNumber_ShouldReturnBadRequest()
         {
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             // Arrange
             var phoneNumber = "+59899987654";
             

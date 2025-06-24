@@ -26,6 +26,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             initialState.Should().BeFalse();
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.PatchAsync($"api/pos/{phoneNumber}/enable", null);
 
             // Assert
@@ -43,6 +46,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var nonExistentPhoneNumber = "+59899999998";
 
             // Act
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.PatchAsync($"api/pos/{nonExistentPhoneNumber}/enable", null);
 
             // Assert
@@ -61,6 +67,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             initialState.Should().BeTrue();
 
             // Act - Try to enable an already active point of sale
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var response = await HttpClient.PatchAsync($"api/pos/{phoneNumber}/enable", null);
 
             // Assert
@@ -75,6 +84,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.PointsOfSale
             var posId = await CreatePointOfSaleAsync(phoneNumber);
 
             // First disable the point of sale
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var disableResponse = await HttpClient.PatchAsync($"api/pos/{phoneNumber}", null);
             disableResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 

@@ -29,6 +29,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
             await CreateDistributorAsync(distributorPhone);
             await CreatePointOfSaleAsync(pointOfSalePhone);
 
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+
             var sku = $"SKU-{Guid.NewGuid():N}";
             await ProductData.CreateAsync(HttpClient, sku);
 
