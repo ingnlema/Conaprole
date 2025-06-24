@@ -408,13 +408,13 @@ classDiagram
         +AddOrderLine(OrderLine)
         +UpdateStatus(Status)
     }
-    
+
     class OrderLine {
         +Quantity Quantity
         +Money SubTotal
         +UpdateQuantity(Quantity)
     }
-    
+
     class User {
         +FirstName FirstName
         +LastName LastName
@@ -422,7 +422,7 @@ classDiagram
         +AssignRole(Role)
         +HasPermission(string)
     }
-    
+
     class Distributor {
         +Name Name
         +PhoneNumber PhoneNumber
@@ -430,20 +430,34 @@ classDiagram
         +AddCategory(Category)
         +CanDistributeProduct(Product)
     }
-    
+
     class Product {
         +Name Name
         +Money UnitPrice
         +Category Category
         +UpdatePrice(Money)
     }
-    
-    Order ||--o{ OrderLine : contains
-    Order }o--|| Distributor : assigned_to
-    Order }o--|| PointOfSale : requested_by
-    OrderLine }o--|| Product : for
-    User ||--o{ Role : has
-    Distributor ||--o{ Category : distributes
+
+    class PointOfSale {
+        +string PhoneNumber
+        +Address Address
+    }
+
+    class Role {
+        +string Name
+    }
+
+    class Category {
+        +string Name
+    }
+
+    %% Relaciones válidas:
+    Order "1" --> "many" OrderLine : contains
+    Order "1" --> "1" Distributor : assigned_to
+    Order "1" --> "1" PointOfSale : requested_by
+    OrderLine "1" --> "1" Product : for
+    User "1" --> "many" Role : has
+    Distributor "1" --> "many" Category : distributes
 ```
 
 ## Conclusión
