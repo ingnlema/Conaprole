@@ -2,7 +2,9 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
 using Conaprole.Orders.Api.Controllers.Users;
+using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
+using Conaprole.Orders.Application.Users.LoginUser;
 using Conaprole.Orders.Domain.Users;
 using FluentAssertions;
 
@@ -52,6 +54,60 @@ public class LoginUserTest : BaseFunctionalTest
     
         var loginContent = await loginResponse.Content.ReadAsStringAsync();
         Debug.WriteLine("Login Response Content: " + loginContent);
+    }
+
+    [Fact]
+    public async Task Login_ShouldReturnUnauthorized_WhenUserIsDeleted()
+    {
+        // Arrange - Create and register user
+        var email = $"deleteduser+{Guid.NewGuid():N}@test.com";
+        var password = "12345";
+        
+        var registerRequest = new RegisterUserRequest(email, "Deleted", "User", password);
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var userId = await registerResponse.Content.ReadFromJsonAsync<Guid>();
+
+        // Create admin user to delete the original user
+        await CreateAndAuthenticateAdminUserAsync();
+        
+        // Delete the user
+        var deleteResponse = await HttpClient.DeleteAsync($"/api/users/{userId}");
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        
+        // Clear authentication header
+        HttpClient.DefaultRequestHeaders.Authorization = null;
+        
+        // Act - Try to login with deleted user
+        var loginRequest = new LogInUserRequest(email, password);
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
+        
+        // Assert - Should return 401 Unauthorized, not 500 Internal Server Error
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    private async Task CreateAndAuthenticateAdminUserAsync()
+    {
+        // Create an admin user 
+        var adminEmail = $"admin+{Guid.NewGuid():N}@test.com";
+        var registerRequest = new RegisterUserRequest(adminEmail, "Admin", "User", "12345");
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var adminUserId = await registerResponse.Content.ReadFromJsonAsync<Guid>();
+
+        // Assign Administrator role
+        var assignRoleRequest = new AssignRoleRequest("Administrator");
+        var assignResponse = await HttpClient.PostAsJsonAsync($"/api/users/{adminUserId}/assign-role", assignRoleRequest);
+        assignResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        // Login to get access token
+        var loginRequest = new LogInUserRequest(adminEmail, "12345");
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
+        
+        HttpClient.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult!.AccessToken);
     }
 
 }

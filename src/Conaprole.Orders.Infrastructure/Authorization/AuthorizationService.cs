@@ -22,7 +22,12 @@ internal sealed class AuthorizationService : IAuthorizationService
                 UserId = u.Id,
                 Roles = u.Roles.ToList()
             })
-            .FirstAsync();
+            .FirstOrDefaultAsync();
+
+        if (roles == null)
+        {
+            throw new UnauthorizedAccessException($"User with identity ID '{identityId}' not found");
+        }
 
         return roles;
     }
