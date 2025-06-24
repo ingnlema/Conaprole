@@ -11,7 +11,28 @@ La aplicación **Conaprole Orders** implementa un sistema de autorización granu
 // src/Conaprole.Orders.Domain/Users/Permission.cs
 public sealed class Permission
 {
+    // Permisos de Usuarios
     public static readonly Permission UsersRead = new(1, "users:read");
+    public static readonly Permission UsersWrite = new(2, "users:write");
+    
+    // Permisos de Distribuidores
+    public static readonly Permission DistributorsRead = new(3, "distributors:read");
+    public static readonly Permission DistributorsWrite = new(4, "distributors:write");
+    
+    // Permisos de Puntos de Venta
+    public static readonly Permission PointsOfSaleRead = new(5, "pointsofsale:read");
+    public static readonly Permission PointsOfSaleWrite = new(6, "pointsofsale:write");
+    
+    // Permisos de Productos
+    public static readonly Permission ProductsRead = new(7, "products:read");
+    public static readonly Permission ProductsWrite = new(8, "products:write");
+    
+    // Permisos de Órdenes
+    public static readonly Permission OrdersRead = new(9, "orders:read");
+    public static readonly Permission OrdersWrite = new(10, "orders:write");
+    
+    // Permisos Administrativos
+    public static readonly Permission AdminAccess = new(11, "admin:access");
     
     public int Id { get; init; }
     public string Name { get; init; }  // Formato: "resource:action"
@@ -24,6 +45,9 @@ public sealed class Permission
 public sealed class Role
 {
     public static readonly Role Registered = new(1, "Registered");
+    public static readonly Role API = new(2, "API");
+    public static readonly Role Distributor = new(3, "Distributor");
+    public static readonly Role Administrator = new(4, "Administrator");
     
     public int Id { get; init; }
     public string Name { get; init; }
@@ -31,6 +55,28 @@ public sealed class Role
     public ICollection<Permission> Permissions { get; init; } = new List<Permission>();
 }
 ```
+
+#### Descripción de Roles
+
+**Registered (Usuario Registrado)**
+- Rol básico asignado a todos los usuarios al registrarse
+- Permisos: Lectura básica de su propia información
+- Uso: Usuarios finales del sistema
+
+**API (Acceso Programático)**
+- Rol para sistemas externos que consumen la API
+- Permisos: Acceso específico según integración
+- Uso: Servicios, aplicaciones externas, integraciones
+
+**Distributor (Distribuidor)**
+- Rol para usuarios distribuidores
+- Permisos: Gestión de órdenes, productos, puntos de venta
+- Uso: Socios comerciales, distribuidores autorizados
+
+**Administrator (Administrador)**
+- Rol con acceso completo al sistema
+- Permisos: Todos los permisos disponibles
+- Uso: Personal administrativo, gestión del sistema
 
 ### User (Usuario)
 ```csharp
@@ -222,12 +268,28 @@ public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
 // src/Conaprole.Orders.Api/Controllers/Users/Security/Permissions.cs
 internal static class Permissions
 {
+    // Usuarios
     public const string UsersRead = "users:read";
-    // Futuros permisos:
-    // public const string UsersWrite = "users:write";
-    // public const string OrdersRead = "orders:read";
-    // public const string OrdersWrite = "orders:write";
-    // public const string AdminAccess = "admin:access";
+    public const string UsersWrite = "users:write";
+    
+    // Distribuidores
+    public const string DistributorsRead = "distributors:read";
+    public const string DistributorsWrite = "distributors:write";
+    
+    // Puntos de Venta
+    public const string PointsOfSaleRead = "pointsofsale:read";
+    public const string PointsOfSaleWrite = "pointsofsale:write";
+    
+    // Productos
+    public const string ProductsRead = "products:read";
+    public const string ProductsWrite = "products:write";
+    
+    // Órdenes
+    public const string OrdersRead = "orders:read";
+    public const string OrdersWrite = "orders:write";
+    
+    // Administración
+    public const string AdminAccess = "admin:access";
 }
 ```
 
@@ -237,10 +299,9 @@ internal static class Permissions
 public static class Roles
 {
     public const string Registered = "Registered";
-    // Futuros roles:
-    // public const string Administrator = "Administrator";
-    // public const string Distributor = "Distributor";
-    // public const string Manager = "Manager";
+    public const string API = "API";
+    public const string Distributor = "Distributor";
+    public const string Administrator = "Administrator";
 }
 ```
 
@@ -353,33 +414,110 @@ sequenceDiagram
 
 ## Ejemplos de Uso
 
-### Proteger un Endpoint
+### Endpoints Actualmente Protegidos
+
+#### Información del Usuario Autenticado
 ```csharp
-[HttpGet("sensitive-data")]
-[HasPermission("data:read")]
-public async Task<IActionResult> GetSensitiveData()
+// src/Conaprole.Orders.Api/Controllers/Users/UsersController.cs
+[HttpGet("me")]
+[HasPermission(Permissions.UsersRead)]
+public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationToken)
 {
-    // Solo usuarios con permiso "data:read" pueden acceder
-    return Ok(await _service.GetDataAsync());
+    // Solo usuarios con permiso "users:read" pueden acceder
+    var query = new GetLoggedInUserQuery();
+    var result = await _sender.Send(query, cancellationToken);
+    return Ok(result.Value);
 }
 ```
 
-### Verificación Programática
+### Endpoints Públicos (Sin Autenticación)
+
+#### Registro de Usuario
 ```csharp
-public async Task<IActionResult> ConditionalAction()
+[AllowAnonymous]
+[HttpPost("register")]
+public async Task<IActionResult> Register(RegisterUserRequest request, CancellationToken cancellationToken)
 {
-    var permissions = await _authorizationService.GetPermissionsForUserAsync(_userContext.IdentityId);
-    
-    if (permissions.Contains("admin:access"))
+    // Endpoint público - no requiere autenticación
+    var command = new RegisterUserCommand(request.Email, request.FirstName, request.LastName, request.Password);
+    var result = await _sender.Send(command, cancellationToken);
+    return result.IsSuccess ? Ok() : BadRequest(result.Error);
+}
+```
+
+#### Login de Usuario
+```csharp
+[AllowAnonymous]
+[HttpPost("login")]
+public async Task<IActionResult> LogIn(LogInUserRequest request, CancellationToken cancellationToken)
+{
+    var command = new LogInUserCommand(request.Email, request.Password);
+    var result = await _sender.Send(command, cancellationToken);
+    return result.IsFailure ? Unauthorized(result.Error) : Ok(result.Value);
+}
+```
+
+#### Refresh Token
+```csharp
+[AllowAnonymous]
+[HttpPost("refresh")]
+public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken)
+{
+    var command = new RefreshTokenCommand(request.RefreshToken);
+    var result = await _sender.Send(command, cancellationToken);
+    return result.IsFailure ? Unauthorized(result.Error) : Ok(result.Value);
+}
+```
+
+### Endpoints Preparados Para Autorización
+
+**Nota**: El sistema tiene la infraestructura completa de autorización implementada. Los siguientes endpoints tienen los permisos definidos pero comentados, listos para ser activados:
+
+#### Gestión de Productos
+```csharp
+[HttpGet("{id}")]
+// [HasPermission(Permissions.ProductsRead)]  // ⚠️ Listo para activar
+public async Task<IActionResult> GetProduct(Guid id, CancellationToken cancellationToken)
+
+[HttpPost]
+// [HasPermission(Permissions.ProductsWrite)]  // ⚠️ Listo para activar
+public async Task<IActionResult> CreateProduct(CreateProductRequest request, CancellationToken cancellationToken)
+```
+
+#### Gestión de Roles
+```csharp
+[HttpPost("{userId}/assign-role")]
+// [HasPermission(Permissions.UsersWrite)]  // ⚠️ Listo para activar
+public async Task<IActionResult> AssignRole(Guid userId, AssignRoleRequest request, CancellationToken cancellationToken)
+
+[HttpPost("{userId}/remove-role")]  
+// [HasPermission(Permissions.UsersWrite)]  // ⚠️ Listo para activar
+public async Task<IActionResult> RemoveRole(Guid userId, RemoveRoleRequest request, CancellationToken cancellationToken)
+```
+
+### Verificación Programática de Permisos
+
+```csharp
+// En cualquier servicio o controlador
+public class SomeBusinessService
+{
+    private readonly AuthorizationService _authorizationService;
+    private readonly IUserContext _userContext;
+
+    public async Task<Result> PerformSensitiveOperation()
     {
-        // Lógica para administradores
+        // Verificar permisos programáticamente
+        var permissions = await _authorizationService
+            .GetPermissionsForUserAsync(_userContext.IdentityId);
+        
+        if (!permissions.Contains("admin:access"))
+        {
+            return Result.Failure(UserErrors.InsufficientPermissions);
+        }
+
+        // Continuar con la operación sensible
+        return Result.Success();
     }
-    else if (permissions.Contains("user:basic"))
-    {
-        // Lógica para usuarios básicos
-    }
-    
-    return Ok();
 }
 ```
 

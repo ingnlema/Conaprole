@@ -25,8 +25,9 @@ La arquitectura de seguridad de **Conaprole Orders** sigue un patrón de **separ
 
 **Responsabilidades:**
 - Gestión de usuarios e identidades
-- Autenticación y emisión de JWT tokens
+- Autenticación y emisión de JWT tokens con refresh token support
 - Gestión de credenciales y políticas de contraseñas
+- Separación entre clientes administrativos y de autenticación
 
 ### 2. **API Application Layer**
 ```
@@ -46,9 +47,10 @@ La arquitectura de seguridad de **Conaprole Orders** sigue un patrón de **separ
 ```
 
 **Responsabilidades:**
-- Validación de JWT tokens
-- Transformación de claims con roles del dominio
-- Aplicación de políticas de autorización
+- Validación de JWT tokens (acceso y refresh)
+- Transformación de claims con roles del dominio específico
+- Aplicación de políticas de autorización granulares (11 permisos)
+- Gestión de 4 roles diferenciados del negocio
 
 ### 3. **Database (Authorization Store)**
 ```
@@ -64,9 +66,10 @@ La arquitectura de seguridad de **Conaprole Orders** sigue un patrón de **separ
 ```
 
 **Responsabilidades:**
-- Almacenamiento de usuarios del dominio
-- Gestión de roles y permisos específicos
-- Relaciones entre usuarios, roles y permisos
+- Almacenamiento de usuarios del dominio vinculados por IdentityId
+- Gestión de 4 roles específicos: Registered, API, Distributor, Administrator
+- 11 permisos granulares por recursos (users, distributors, pointsofsale, products, orders, admin)
+- Relaciones many-to-many entre usuarios, roles y permisos
 
 ## Flujo de Seguridad
 
@@ -176,6 +179,33 @@ sequenceDiagram
 - `RequireHttpsMetadata: true` para seguridad
 - Configuración de CORS restrictiva
 - Keycloak en clúster con alta disponibilidad
+
+## Estado Actual de la Implementación
+
+### ✅ Completamente Implementado
+- **Infraestructura de autorización**: HasPermissionAttribute, AuthorizationService, Claims Transformation
+- **11 permisos definidos**: Para todos los recursos principales del sistema
+- **4 roles configurados**: Registered, API, Distributor, Administrator
+- **Refresh token support**: Implementación completa de renovación de tokens
+- **Endpoints de autenticación**: Login, registro y refresh token funcionando
+- **User context**: Acceso al usuario autenticado en toda la aplicación
+
+### ⚠️ Parcialmente Implementado
+- **Autorización de endpoints**: Infraestructura lista, permisos comentados en muchos controladores
+- **Ejemplo de endpoint protegido activo**: `/api/users/me` con `[HasPermission(Permissions.UsersRead)]`
+- **Endpoints preparados**: Productos, distribuidores, puntos de venta, órdenes tienen permisos definidos pero comentados
+
+### 🎯 Para Activar Completamente
+1. **Descomentar atributos `[HasPermission]`** en controladores existentes
+2. **Verificar tests de autorización** para endpoints protegidos
+3. **Configurar roles por defecto** en el registro de usuarios según el tipo de cuenta
+4. **Implementar UI para gestión de roles** y permisos
+
+### 🔄 Próximas Funcionalidades Sugeridas
+- **Autorización basada en recursos**: Ej. solo ver órdenes de su distribuidor
+- **Tokens con scopes específicos**: Para integraciones API limitadas
+- **Auditoría de seguridad**: Logging de decisiones de autorización
+- **2FA/MFA integration**: Aprovechando capacidades de Keycloak
 
 ---
 

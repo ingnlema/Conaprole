@@ -241,7 +241,7 @@ sequenceDiagram
 #### Implementación
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/JwtService.cs
-public async Task<Result<string>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default)
+public async Task<Result<TokenResult>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default)
 {
     var authRequestParameters = new KeyValuePair<string, string>[]
     {
@@ -260,7 +260,55 @@ public async Task<Result<string>> GetAccessTokenAsync(string email, string passw
     
     var authorizationToken = await response.Content.ReadFromJsonAsync<AuthorizationToken>();
     
-    return authorizationToken?.AccessToken ?? Result.Failure<string>(AuthenticationFailed);
+    return new TokenResult(authorizationToken?.AccessToken, authorizationToken?.RefreshToken);
+}
+```
+
+### 3. Refresh Token
+
+#### Refresh Token Flow
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant JwtService
+    participant Keycloak
+
+    Client->>API: POST /users/refresh {refreshToken}
+    API->>JwtService: GetAccessTokenFromRefreshTokenAsync(refreshToken)
+    
+    JwtService->>Keycloak: POST /realms/Conaprole/protocol/openid-connect/token
+    Note over JwtService: grant_type=refresh_token
+    
+    Keycloak->>Keycloak: Validate refresh token
+    Keycloak-->>JwtService: New JWT Tokens
+    
+    JwtService-->>API: TokenResult con nuevos tokens
+    API-->>Client: {accessToken: "nuevo...", refreshToken: "nuevo..."}
+```
+
+#### Implementación
+```csharp
+public async Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(
+    string refreshToken, 
+    CancellationToken cancellationToken = default)
+{
+    var authRequestParameters = new KeyValuePair<string, string>[]
+    {
+        new("client_id", _keycloakOptions.AuthClientId),
+        new("client_secret", _keycloakOptions.AuthClientSecret),
+        new("grant_type", "refresh_token"),
+        new("refresh_token", refreshToken)
+    };
+
+    var authorizationRequestContent = new FormUrlEncodedContent(authRequestParameters);
+    var response = await _httpClient.PostAsync("", authorizationRequestContent, cancellationToken);
+    
+    response.EnsureSuccessStatusCode();
+    
+    var authorizationToken = await response.Content.ReadFromJsonAsync<AuthorizationToken>();
+    
+    return new TokenResult(authorizationToken?.AccessToken, authorizationToken?.RefreshToken);
 }
 ```
 
@@ -333,12 +381,21 @@ public sealed class AuthorizationToken
     [JsonPropertyName("refresh_expires_in")]
     public int RefreshExpiresIn { get; init; }
 
+    [JsonPropertyName("refresh_token")]
+    public string RefreshToken { get; init; } = string.Empty;
+
     [JsonPropertyName("token_type")]
     public string TokenType { get; init; } = string.Empty;
 
     [JsonPropertyName("scope")]
     public string Scope { get; init; } = string.Empty;
 }
+```
+
+### TokenResult Model
+```csharp
+// src/Conaprole.Orders.Application/Abstractions/Authentication/TokenResult.cs
+public sealed record TokenResult(string AccessToken, string RefreshToken);
 ```
 
 ## Beneficios de la Integración

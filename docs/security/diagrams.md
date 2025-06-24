@@ -219,17 +219,17 @@ erDiagram
 
     Roles {
         int Id PK
-        string Name UK "Ej: Registered, Admin"
+        string Name UK "Registered, API, Distributor, Administrator"
         string Description
         datetime CreatedAt
     }
 
     Permissions {
         int Id PK
-        string Name UK "Ej: users:read, orders:write"
+        string Name UK "users:read, distributors:write, etc."
         string Description
-        string Resource "Ej: users, orders"
-        string Action "Ej: read, write, delete"
+        string Resource "users, distributors, pointsofsale, products, orders"
+        string Action "read, write, admin"
         datetime CreatedAt
     }
 
@@ -416,6 +416,120 @@ graph TB
     class LOGS,METRICS monitoring
 ```
 
+
+## Permisos y Roles Implementados
+
+### Diagrama de Permisos por Recurso
+
+```mermaid
+graph TB
+    subgraph "Recursos del Sistema"
+        subgraph "👥 Users"
+            UP1[users:read]
+            UP2[users:write]
+        end
+        
+        subgraph "🏢 Distributors"
+            DP1[distributors:read]
+            DP2[distributors:write]
+        end
+        
+        subgraph "📍 Points of Sale"
+            PP1[pointsofsale:read]
+            PP2[pointsofsale:write]
+        end
+        
+        subgraph "📦 Products"
+            PROD1[products:read]
+            PROD2[products:write]
+        end
+        
+        subgraph "📋 Orders"
+            OP1[orders:read]
+            OP2[orders:write]
+        end
+        
+        subgraph "🔐 Admin"
+            AP1[admin:access]
+        end
+    end
+
+    classDef readPerm fill:#e8f5e8
+    classDef writePerm fill:#fff3e0
+    classDef adminPerm fill:#ffebee
+
+    class UP1,DP1,PP1,PROD1,OP1 readPerm
+    class UP2,DP2,PP2,PROD2,OP2 writePerm
+    class AP1 adminPerm
+```
+
+### Matriz de Roles y Permisos
+
+```mermaid
+graph LR
+    subgraph "Roles"
+        R1[Registered]
+        R2[API]
+        R3[Distributor]
+        R4[Administrator]
+    end
+    
+    subgraph "Permisos"
+        P1[users:read]
+        P2[users:write]
+        P3[distributors:read]
+        P4[distributors:write]
+        P5[pointsofsale:read]
+        P6[pointsofsale:write]
+        P7[products:read]
+        P8[products:write]
+        P9[orders:read]
+        P10[orders:write]
+        P11[admin:access]
+    end
+    
+    R1 --> P1
+    
+    R2 --> P1
+    R2 --> P7
+    R2 --> P9
+    
+    R3 --> P1
+    R3 --> P3
+    R3 --> P5
+    R3 --> P6
+    R3 --> P7
+    R3 --> P9
+    R3 --> P10
+    
+    R4 --> P1
+    R4 --> P2
+    R4 --> P3
+    R4 --> P4
+    R4 --> P5
+    R4 --> P6
+    R4 --> P7
+    R4 --> P8
+    R4 --> P9
+    R4 --> P10
+    R4 --> P11
+
+    classDef roleBasic fill:#e1f5fe
+    classDef roleAPI fill:#f3e5f5
+    classDef roleDistrib fill:#e8f5e8
+    classDef roleAdmin fill:#ffebee
+    classDef permRead fill:#e8f5e8
+    classDef permWrite fill:#fff3e0
+    classDef permAdmin fill:#ffebee
+
+    class R1 roleBasic
+    class R2 roleAPI
+    class R3 roleDistrib
+    class R4 roleAdmin
+    class P1,P3,P5,P7,P9 permRead
+    class P2,P4,P6,P8,P10 permWrite
+    class P11 permAdmin
+```
 
 ---
 

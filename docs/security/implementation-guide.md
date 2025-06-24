@@ -10,11 +10,31 @@ Esta guía proporciona instrucciones paso a paso para desarrolladores que necesi
 // src/Conaprole.Orders.Api/Controllers/Users/Security/Permissions.cs
 internal static class Permissions
 {
+    // Usuarios
     public const string UsersRead = "users:read";
-    public const string UsersWrite = "users:write";           // ✨ NUEVO
-    public const string OrdersRead = "orders:read";           // ✨ NUEVO  
-    public const string OrdersWrite = "orders:write";         // ✨ NUEVO
-    public const string AdminAccess = "admin:access";         // ✨ NUEVO
+    public const string UsersWrite = "users:write";
+    
+    // Distribuidores
+    public const string DistributorsRead = "distributors:read";
+    public const string DistributorsWrite = "distributors:write";
+    
+    // Puntos de Venta
+    public const string PointsOfSaleRead = "pointsofsale:read";
+    public const string PointsOfSaleWrite = "pointsofsale:write";
+    
+    // Productos
+    public const string ProductsRead = "products:read";
+    public const string ProductsWrite = "products:write";
+    
+    // Órdenes
+    public const string OrdersRead = "orders:read";
+    public const string OrdersWrite = "orders:write";
+    
+    // Administración
+    public const string AdminAccess = "admin:access";
+    
+    // ✨ NUEVO PERMISO
+    public const string ReportsRead = "reports:read";           
 }
 ```
 
@@ -24,11 +44,31 @@ internal static class Permissions
 // src/Conaprole.Orders.Domain/Users/Permission.cs
 public sealed class Permission
 {
+    // Permisos de Usuarios
     public static readonly Permission UsersRead = new(1, "users:read");
-    public static readonly Permission UsersWrite = new(2, "users:write");     // ✨ NUEVO
-    public static readonly Permission OrdersRead = new(3, "orders:read");     // ✨ NUEVO
-    public static readonly Permission OrdersWrite = new(4, "orders:write");   // ✨ NUEVO
-    public static readonly Permission AdminAccess = new(5, "admin:access");   // ✨ NUEVO
+    public static readonly Permission UsersWrite = new(2, "users:write");
+    
+    // Permisos de Distribuidores
+    public static readonly Permission DistributorsRead = new(3, "distributors:read");
+    public static readonly Permission DistributorsWrite = new(4, "distributors:write");
+    
+    // Permisos de Puntos de Venta
+    public static readonly Permission PointsOfSaleRead = new(5, "pointsofsale:read");
+    public static readonly Permission PointsOfSaleWrite = new(6, "pointsofsale:write");
+    
+    // Permisos de Productos
+    public static readonly Permission ProductsRead = new(7, "products:read");
+    public static readonly Permission ProductsWrite = new(8, "products:write");
+    
+    // Permisos de Órdenes
+    public static readonly Permission OrdersRead = new(9, "orders:read");
+    public static readonly Permission OrdersWrite = new(10, "orders:write");
+    
+    // Permisos Administrativos
+    public static readonly Permission AdminAccess = new(11, "admin:access");
+    
+    // ✨ NUEVO PERMISO
+    public static readonly Permission ReportsRead = new(12, "reports:read");
 
     private Permission(int id, string name) { Id = id; Name = name; }
     
@@ -41,11 +81,11 @@ public sealed class Permission
 
 ```bash
 # Generar migración
-dotnet ef migrations add AddNewPermissions --project src/Conaprole.Orders.Infrastructure --startup-project src/Conaprole.Orders.Api
+dotnet ef migrations add AddReportsPermission --project src/Conaprole.Orders.Infrastructure --startup-project src/Conaprole.Orders.Api
 ```
 
 ```csharp
-// Archivo de migración generado: YYYYMMDD_AddNewPermissions.cs
+// Archivo de migración generado: YYYYMMDD_AddReportsPermission.cs
 protected override void Up(MigrationBuilder migrationBuilder)
 {
     migrationBuilder.InsertData(
@@ -53,10 +93,7 @@ protected override void Up(MigrationBuilder migrationBuilder)
         columns: new[] { "Id", "Name" },
         values: new object[,]
         {
-            { 2, "users:write" },
-            { 3, "orders:read" },
-            { 4, "orders:write" },
-            { 5, "admin:access" }
+            { 12, "reports:read" }
         });
 }
 ```
@@ -64,25 +101,46 @@ protected override void Up(MigrationBuilder migrationBuilder)
 ### 4. Aplicar el Permiso en un Controlador
 
 ```csharp
-// src/Conaprole.Orders.Api/Controllers/Orders/OrdersController.cs
+// Nuevo controlador de ejemplo: src/Conaprole.Orders.Api/Controllers/Reports/ReportsController.cs
 [ApiController]
-[Route("api/orders")]
-public class OrdersController : ControllerBase
+[Route("api/reports")]
+public class ReportsController : ControllerBase
 {
     [HttpGet]
-    [HasPermission(Permissions.OrdersRead)]  // ✨ NUEVO PERMISO
-    public async Task<IActionResult> GetOrders()
+    [HasPermission(Permissions.ReportsRead)]  // ✨ NUEVO PERMISO
+    public async Task<IActionResult> GetReports()
     {
-        // Solo usuarios con permiso "orders:read" pueden acceder
+        // Solo usuarios con permiso "reports:read" pueden acceder
         return Ok();
+    }
+}
+```
+
+**Ejemplo con controlador existente:**
+```csharp
+// src/Conaprole.Orders.Api/Controllers/Products/ProductsController.cs
+[ApiController]
+[Route("api/products")]
+public class ProductsController : ControllerBase
+{
+    [HttpGet("{id}")]
+    [HasPermission(Permissions.ProductsRead)]  // Activar permiso existente
+    public async Task<IActionResult> GetProduct(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetProductQuery(id);
+        var result = await _sender.Send(query, cancellationToken);
+        
+        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
     }
 
     [HttpPost]
-    [HasPermission(Permissions.OrdersWrite)]  // ✨ NUEVO PERMISO
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request)
+    [HasPermission(Permissions.ProductsWrite)]  // Activar permiso existente
+    public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request)
     {
-        // Solo usuarios con permiso "orders:write" pueden acceder
-        return Ok();
+        var command = new CreateProductCommand(/* parameters */);
+        var result = await _sender.Send(command);
+        
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
 }
 ```
@@ -96,9 +154,10 @@ public class OrdersController : ControllerBase
 public static class Roles
 {
     public const string Registered = "Registered";
-    public const string Distributor = "Distributor";           // ✨ NUEVO
+    public const string API = "API";
+    public const string Distributor = "Distributor";
+    public const string Administrator = "Administrator";
     public const string Manager = "Manager";                   // ✨ NUEVO
-    public const string Administrator = "Administrator";       // ✨ NUEVO
 }
 ```
 
@@ -109,9 +168,10 @@ public static class Roles
 public sealed class Role
 {
     public static readonly Role Registered = new(1, "Registered");
-    public static readonly Role Distributor = new(2, "Distributor");         // ✨ NUEVO
-    public static readonly Role Manager = new(3, "Manager");                 // ✨ NUEVO
-    public static readonly Role Administrator = new(4, "Administrator");     // ✨ NUEVO
+    public static readonly Role API = new(2, "API");
+    public static readonly Role Distributor = new(3, "Distributor");
+    public static readonly Role Administrator = new(4, "Administrator");
+    public static readonly Role Manager = new(5, "Manager");                 // ✨ NUEVO
 
     private Role(int id, string name) { Id = id; Name = name; }
     
@@ -130,9 +190,10 @@ public void Configure(EntityTypeBuilder<Role> builder)
 {
     builder.HasData(
         new { Id = 1, Name = "Registered" },
-        new { Id = 2, Name = "Distributor" },    // ✨ NUEVO
-        new { Id = 3, Name = "Manager" },        // ✨ NUEVO
-        new { Id = 4, Name = "Administrator" }   // ✨ NUEVO
+        new { Id = 2, Name = "API" },            
+        new { Id = 3, Name = "Distributor" },    
+        new { Id = 4, Name = "Administrator" },
+        new { Id = 5, Name = "Manager" }         // ✨ NUEVO
     );
 }
 ```
@@ -145,23 +206,40 @@ public void Configure(EntityTypeBuilder<RolePermission> builder)
         // Registered role
         new RolePermission { RoleId = 1, PermissionId = 1 }, // users:read
 
-        // Distributor role
+        // API role (acceso programático)
         new RolePermission { RoleId = 2, PermissionId = 1 }, // users:read
-        new RolePermission { RoleId = 2, PermissionId = 3 }, // orders:read
-        new RolePermission { RoleId = 2, PermissionId = 4 }, // orders:write
+        new RolePermission { RoleId = 2, PermissionId = 7 }, // products:read
+        new RolePermission { RoleId = 2, PermissionId = 9 }, // orders:read
 
-        // Manager role  
+        // Distributor role
         new RolePermission { RoleId = 3, PermissionId = 1 }, // users:read
-        new RolePermission { RoleId = 3, PermissionId = 2 }, // users:write
-        new RolePermission { RoleId = 3, PermissionId = 3 }, // orders:read
-        new RolePermission { RoleId = 3, PermissionId = 4 }, // orders:write
+        new RolePermission { RoleId = 3, PermissionId = 3 }, // distributors:read
+        new RolePermission { RoleId = 3, PermissionId = 5 }, // pointsofsale:read
+        new RolePermission { RoleId = 3, PermissionId = 6 }, // pointsofsale:write
+        new RolePermission { RoleId = 3, PermissionId = 7 }, // products:read
+        new RolePermission { RoleId = 3, PermissionId = 9 }, // orders:read
+        new RolePermission { RoleId = 3, PermissionId = 10 }, // orders:write
 
         // Administrator role (todos los permisos)
         new RolePermission { RoleId = 4, PermissionId = 1 }, // users:read
         new RolePermission { RoleId = 4, PermissionId = 2 }, // users:write
-        new RolePermission { RoleId = 4, PermissionId = 3 }, // orders:read
-        new RolePermission { RoleId = 4, PermissionId = 4 }, // orders:write
-        new RolePermission { RoleId = 4, PermissionId = 5 }  // admin:access
+        new RolePermission { RoleId = 4, PermissionId = 3 }, // distributors:read
+        new RolePermission { RoleId = 4, PermissionId = 4 }, // distributors:write
+        new RolePermission { RoleId = 4, PermissionId = 5 }, // pointsofsale:read
+        new RolePermission { RoleId = 4, PermissionId = 6 }, // pointsofsale:write
+        new RolePermission { RoleId = 4, PermissionId = 7 }, // products:read
+        new RolePermission { RoleId = 4, PermissionId = 8 }, // products:write
+        new RolePermission { RoleId = 4, PermissionId = 9 }, // orders:read
+        new RolePermission { RoleId = 4, PermissionId = 10 }, // orders:write
+        new RolePermission { RoleId = 4, PermissionId = 11 }, // admin:access
+
+        // Manager role (nuevo)
+        new RolePermission { RoleId = 5, PermissionId = 1 }, // users:read
+        new RolePermission { RoleId = 5, PermissionId = 2 }, // users:write
+        new RolePermission { RoleId = 5, PermissionId = 3 }, // distributors:read
+        new RolePermission { RoleId = 5, PermissionId = 7 }, // products:read
+        new RolePermission { RoleId = 5, PermissionId = 9 }, // orders:read
+        new RolePermission { RoleId = 5, PermissionId = 12 } // reports:read
     );
 }
 ```
