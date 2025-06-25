@@ -4,6 +4,7 @@ using Conaprole.Orders.Api.Controllers.Users;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Application.Users.GetUserRoles;
+using Conaprole.Orders.Application.Users.LoginUser;
 using FluentAssertions;
 
 namespace Conaprole.Orders.Api.FunctionalTests.Users;
@@ -19,7 +20,10 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task AssignRole_ShouldAssignRoleToUser_WhenValidRequest()
     {
-        // Arrange - Create a test user first
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
+        // Create a test user first
         var email = $"roleassign+{Guid.NewGuid():N}@test.com";
 
         var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
@@ -48,7 +52,9 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task AssignRole_ShouldReturnBadRequest_WhenUserNotFound()
     {
-        // Arrange
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
         var assignRoleRequest = new AssignRoleRequest("Administrator");
 
         // Act
@@ -61,8 +67,11 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task AssignRole_ShouldReturnBadRequest_WhenRoleNotFound()
     {
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
         var email = $"roleassign+{Guid.NewGuid():N}@test.com";
-        // Arrange - Create a test user first
+        // Create a test user first
         var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -80,8 +89,11 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task RemoveRole_ShouldRemoveRoleFromUser_WhenValidRequest()
     {
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
         var email = $"roleassign+{Guid.NewGuid():N}@test.com";
-        // Arrange - Create a test user and assign a role first
+        // Create a test user and assign a role first
         var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -118,7 +130,9 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task RemoveRole_ShouldReturnBadRequest_WhenUserNotFound()
     {
-        // Arrange
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
         var removeRoleRequest = new RemoveRoleRequest("Administrator");
 
         // Act
@@ -131,8 +145,11 @@ public class AssignRemoveRoleApiTest : BaseFunctionalTest
     [Fact]
     public async Task RemoveRole_ShouldReturnBadRequest_WhenRoleNotFound()
     {
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
         var email = $"roleassign+{Guid.NewGuid():N}@test.com";
-        // Arrange - Create a test user first
+        // Create a test user first
         var registerRequest = new RegisterUserRequest(email, "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);

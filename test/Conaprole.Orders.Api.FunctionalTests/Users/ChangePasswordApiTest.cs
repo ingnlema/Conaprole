@@ -187,7 +187,7 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         string userToken = loginResult!.AccessToken;
 
         // Create admin and delete the user
-        await CreateAndAuthenticateAdminUserAsync();
+        await SetAdminAuthorizationHeaderAsync();
         var deleteResponse = await HttpClient.DeleteAsync($"/api/users/{userId}");
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
@@ -202,29 +202,5 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         // Assert - Should return 400 BadRequest (user not found in database)
         // The JWT token is still valid but user doesn't exist in the database anymore
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-    }
-
-    private async Task CreateAndAuthenticateAdminUserAsync()
-    {
-        // Create an admin user
-        var adminEmail = $"admin+{Guid.NewGuid():N}@test.com";
-        var registerRequest = new RegisterUserRequest(adminEmail, "Admin", "User", "12345");
-        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        
-        var adminUserId = await registerResponse.Content.ReadFromJsonAsync<Guid>();
-
-        // Assign Administrator role
-        var assignRoleRequest = new AssignRoleRequest("Administrator");
-        var assignResponse = await HttpClient.PostAsJsonAsync($"/api/users/{adminUserId}/assign-role", assignRoleRequest);
-        assignResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-
-        // Login to get access token
-        var loginRequest = new LogInUserRequest(adminEmail, "12345");
-        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
-        
-        HttpClient.DefaultRequestHeaders.Authorization = 
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult!.AccessToken);
     }
 }

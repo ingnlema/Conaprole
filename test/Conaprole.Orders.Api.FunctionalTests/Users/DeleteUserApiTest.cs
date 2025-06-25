@@ -20,8 +20,8 @@ public class DeleteUserApiTest : BaseFunctionalTest
     [Fact]
     public async Task DeleteUser_ShouldDeleteUser_WhenUserExistsAndCallerIsAdmin()
     {
-        // Arrange - Create an admin user
-        await CreateAndAuthenticateAdminUserAsync();
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
         
         // Create a test user to delete
         var email = $"deleteuser+{Guid.NewGuid():N}@test.com";
@@ -45,8 +45,8 @@ public class DeleteUserApiTest : BaseFunctionalTest
     [Fact]
     public async Task DeleteUser_ShouldReturnBadRequest_WhenUserNotFoundAndCallerIsAdmin()
     {
-        // Arrange - Create an admin user
-        await CreateAndAuthenticateAdminUserAsync();
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
 
         // Act
         var response = await HttpClient.DeleteAsync($"/api/users/{Guid.NewGuid()}");
@@ -76,7 +76,7 @@ public class DeleteUserApiTest : BaseFunctionalTest
     [Fact]
     public async Task DeleteUser_ShouldReturnForbidden_WhenCallerIsNotAdmin()
     {
-        // Arrange - Create and authenticate as a regular user (not admin)
+        // Arrange - Authenticate as regular user (not admin)
         await CreateAndAuthenticateRegularUserAsync();
         
         // Create a test user to try to delete
@@ -97,8 +97,8 @@ public class DeleteUserApiTest : BaseFunctionalTest
     [Fact]
     public async Task DeleteUser_ShouldDeleteUserWithAssignedRoles_WhenUserHasMultipleRoles()
     {
-        // Arrange - Create an admin user
-        await CreateAndAuthenticateAdminUserAsync();
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
         
         // Create a test user and assign additional roles
         var email = $"deleteuserroles+{Guid.NewGuid():N}@test.com";
@@ -126,30 +126,6 @@ public class DeleteUserApiTest : BaseFunctionalTest
         // Verify the user was completely deleted
         var verifyRolesResponse = await HttpClient.GetAsync($"/api/users/{userId}/roles");
         verifyRolesResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-    }
-
-    private async Task CreateAndAuthenticateAdminUserAsync()
-    {
-        // Create an admin user
-        var adminEmail = $"admin+{Guid.NewGuid():N}@test.com";
-        var registerRequest = new RegisterUserRequest(adminEmail, "Admin", "User", "12345");
-        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        
-        var adminUserId = await registerResponse.Content.ReadFromJsonAsync<Guid>();
-
-        // Assign Administrator role
-        var assignRoleRequest = new AssignRoleRequest("Administrator");
-        var assignResponse = await HttpClient.PostAsJsonAsync($"/api/users/{adminUserId}/assign-role", assignRoleRequest);
-        assignResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-
-        // Login to get access token
-        var loginRequest = new LogInUserRequest(adminEmail, "12345");
-        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
-        
-        HttpClient.DefaultRequestHeaders.Authorization = 
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult!.AccessToken);
     }
 
     private async Task CreateAndAuthenticateRegularUserAsync()
