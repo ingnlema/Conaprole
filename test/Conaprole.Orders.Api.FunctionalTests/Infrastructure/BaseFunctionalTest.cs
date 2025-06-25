@@ -48,6 +48,9 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
             var error = await registerResponse.Content.ReadAsStringAsync();
             throw new InvalidOperationException($"Failed to register test user: {error}");
         }
+        
+        // Assign API role to test user for functional tests to have necessary permissions
+        await AssignApiRoleToTestUserAsync();
     }
     
     protected async Task CleanDatabaseAsync()
@@ -216,5 +219,45 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         return count > 0;
     }
     
-    
+    private async Task AssignApiRoleToTestUserAsync()
+    {
+        // Get the test user's ID from the database
+        const string getUserIdSql = "SELECT id FROM users WHERE email = @Email";
+        
+        using var connection = SqlConnectionFactory.CreateConnection();
+        var userId = await connection.QuerySingleOrDefaultAsync<Guid?>(getUserIdSql, new 
+        { 
+            Email = UserData.RegisterTestUserRequest.Email 
+        });
+        
+        if (!userId.HasValue)
+        {
+            throw new InvalidOperationException("Test user not found in database");
+        }
+        
+        // Check if user already has the API role
+        const string checkRoleSql = @"
+            SELECT COUNT(1) FROM role_user 
+            WHERE roles_id = @RoleId AND users_id = @UserId";
+        
+        var hasRole = await connection.QuerySingleAsync<int>(checkRoleSql, new 
+        { 
+            RoleId = 2, // API role ID
+            UserId = userId.Value 
+        });
+        
+        if (hasRole == 0)
+        {
+            // Assign API role (ID = 2) to the test user
+            const string assignRoleSql = @"
+                INSERT INTO role_user (roles_id, users_id) 
+                VALUES (@RoleId, @UserId)";
+            
+            await connection.ExecuteAsync(assignRoleSql, new 
+            { 
+                RoleId = 2, // API role ID
+                UserId = userId.Value 
+            });
+        }
+    }
 }
