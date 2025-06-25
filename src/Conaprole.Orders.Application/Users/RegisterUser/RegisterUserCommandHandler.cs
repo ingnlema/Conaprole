@@ -1,4 +1,5 @@
 using Conaprole.Orders.Application.Abstractions.Authentication;
+using Conaprole.Orders.Application.Abstractions.Clock;
 using Conaprole.Orders.Application.Abstractions.Messaging;
 using Conaprole.Orders.Domain.Abstractions;
 using Conaprole.Orders.Domain.Distributors;
@@ -13,19 +14,22 @@ internal sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserC
     private readonly IDistributorRepository _distributorRepository;
     private readonly IRoleRepository _roleRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
     public RegisterUserCommandHandler(
         IAuthenticationService authenticationService,
         IUserRepository userRepository,
         IDistributorRepository distributorRepository,
         IRoleRepository roleRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IDateTimeProvider dateTimeProvider)
     {
         _authenticationService = authenticationService;
         _userRepository = userRepository;
         _distributorRepository = distributorRepository;
         _roleRepository = roleRepository;
         _unitOfWork = unitOfWork;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<Result<Guid>> Handle(
@@ -35,7 +39,8 @@ internal sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserC
         var user = User.Create(
             new FirstName(request.FirstName),
             new LastName(request.LastName),
-            new Email(request.Email));
+            new Email(request.Email),
+            _dateTimeProvider.UtcNow);
 
         // Assign the default Registered role to all users
         var registeredRole = await _roleRepository.GetByNameAsync("Registered", cancellationToken);

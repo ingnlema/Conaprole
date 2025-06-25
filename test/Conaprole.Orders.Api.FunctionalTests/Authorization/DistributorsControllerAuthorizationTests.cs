@@ -292,7 +292,7 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
         
         // Assign role to user
         await connection.ExecuteAsync(@"
-            INSERT INTO role_user (user_id, role_id)
+            INSERT INTO role_user (users_id, roles_id)
             VALUES (@UserId, @RoleId)",
             new
             {

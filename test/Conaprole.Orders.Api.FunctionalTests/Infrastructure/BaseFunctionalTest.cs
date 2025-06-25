@@ -110,7 +110,7 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
 
         // Assign Administrator role
         await connection.ExecuteAsync(@"
-            INSERT INTO role_user (user_id, role_id)
+            INSERT INTO role_user (users_id, roles_id)
             VALUES (@UserId, @RoleId)",
             new
             {
@@ -120,7 +120,7 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
 
         // Also assign Registered role (default)
         await connection.ExecuteAsync(@"
-            INSERT INTO role_user (user_id, role_id)
+            INSERT INTO role_user (users_id, roles_id)
             VALUES (@UserId, @RoleId)",
             new
             {

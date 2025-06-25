@@ -8,12 +8,13 @@ public sealed class User : Entity
 {
     private readonly List<Role> _roles = new();
 
-    private User(Guid id, FirstName firstName, LastName lastName, Email email)
+    private User(Guid id, FirstName firstName, LastName lastName, Email email, DateTime createdAt)
         : base(id)
     {
         FirstName = firstName;
         LastName = lastName;
         Email = email;
+        CreatedAt = createdAt;
     }
 
     private User()
@@ -26,6 +27,8 @@ public sealed class User : Entity
 
     public Email Email { get; private set; }
 
+    public DateTime CreatedAt { get; private set; }
+
     public string IdentityId { get; private set; } = string.Empty;
 
     public Guid? DistributorId { get; private set; }
@@ -35,9 +38,9 @@ public sealed class User : Entity
     // EF Core needs access to the actual collection for change tracking
     public ICollection<Role> Roles => _roles;
 
-    public static User Create(FirstName firstName, LastName lastName, Email email)
+    public static User Create(FirstName firstName, LastName lastName, Email email, DateTime createdAt)
     {
-        var user = new User(Guid.NewGuid(), firstName, lastName, email);
+        var user = new User(Guid.NewGuid(), firstName, lastName, email, createdAt);
 
         user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
 
