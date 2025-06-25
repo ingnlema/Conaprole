@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using Conaprole.Orders.Api.Controllers.Users;
+using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Application.Users.GetAllUsers;
 using Conaprole.Orders.Application.Users.GetUserRoles;
 using Conaprole.Orders.Application.Users.GetUserPermissions;
+using Conaprole.Orders.Application.Users.LoginUser;
 using FluentAssertions;
 
 namespace Conaprole.Orders.Api.FunctionalTests.Users;
@@ -20,7 +22,10 @@ public class AdminUserEndpointsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetAllUsers_ShouldReturnUsers_WhenCalled()
     {
-        // Arrange - Create a test user first
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
+        // Create a test user first
         var registerRequest = new RegisterUserRequest("admintest@test.com", "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -42,7 +47,10 @@ public class AdminUserEndpointsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetAllUsers_ShouldReturnFilteredUsers_WhenRoleFilterProvided()
     {
-        // Arrange - Create a test user first
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
+        // Create a test user first
         var registerRequest = new RegisterUserRequest("rolefilter@test.com", "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -64,7 +72,10 @@ public class AdminUserEndpointsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetUserRoles_ShouldReturnUserRoles_WhenValidUserId()
     {
-        // Arrange - Create a test user first
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
+        // Create a test user first
         var registerRequest = new RegisterUserRequest("userroles@test.com", "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -86,7 +97,10 @@ public class AdminUserEndpointsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetUserPermissions_ShouldReturnUserPermissions_WhenValidUserId()
     {
-        // Arrange - Create a test user first
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
+        // Create a test user first
         var registerRequest = new RegisterUserRequest("userpermissions@test.com", "Test", "User", "12345");
         var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -107,6 +121,9 @@ public class AdminUserEndpointsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetUserRoles_ShouldReturnBadRequest_WhenInvalidUserId()
     {
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
         // Act
         var response = await HttpClient.GetAsync($"/api/users/{Guid.NewGuid()}/roles");
 
@@ -117,6 +134,9 @@ public class AdminUserEndpointsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetUserPermissions_ShouldReturnBadRequest_WhenInvalidUserId()
     {
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
+        
         // Act
         var response = await HttpClient.GetAsync($"/api/users/{Guid.NewGuid()}/permissions");
 

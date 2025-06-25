@@ -1,7 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using Conaprole.Orders.Api.Controllers.Users;
+using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Application.Users.GetAllPermissions;
+using Conaprole.Orders.Application.Users.LoginUser;
 using FluentAssertions;
 
 namespace Conaprole.Orders.Api.FunctionalTests.Users;
@@ -17,8 +20,8 @@ public class GetAllPermissionsApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetPermissions_ShouldReturnAllPermissions_WhenCalled()
     {
-        // Set authorization header for protected endpoints
-        await SetAuthorizationHeaderAsync();
+        // Arrange - Authenticate as admin
+        await SetAdminAuthorizationHeaderAsync();
 
         // Act
         var response = await HttpClient.GetAsync("/api/permissions");
@@ -35,4 +38,5 @@ public class GetAllPermissionsApiTest : BaseFunctionalTest
         permissions.Should().Contain(p => p.Name == "users:write");
         permissions.Should().Contain(p => p.Name == "admin:access");
     }
+}
 }

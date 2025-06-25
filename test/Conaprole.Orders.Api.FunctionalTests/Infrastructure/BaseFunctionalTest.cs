@@ -84,6 +84,80 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         var token = await GetAccessToken();
         HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
+
+    protected async Task<string> CreateAndGetAdminAccessTokenAsync()
+    {
+        // Create admin user directly in database to avoid circular dependency
+        var adminEmail = $"admin+{Guid.NewGuid():N}@test.com";
+        var adminPassword = "admin123";
+        var adminUserId = Guid.NewGuid();
+        var identityId = Guid.NewGuid().ToString();
+
+        using var connection = SqlConnectionFactory.CreateConnection();
+
+        // Insert admin user
+        await connection.ExecuteAsync(@"
+            INSERT INTO users (id, identity_id, first_name, last_name, email, created_at)
+            VALUES (@Id, @IdentityId, @FirstName, @LastName, @Email, now())",
+            new
+            {
+                Id = adminUserId,
+                IdentityId = identityId,
+                FirstName = "Admin",
+                LastName = "User",
+                Email = adminEmail
+            });
+
+        // Assign Administrator role
+        await connection.ExecuteAsync(@"
+            INSERT INTO role_user (user_id, role_id)
+            VALUES (@UserId, @RoleId)",
+            new
+            {
+                UserId = adminUserId,
+                RoleId = 3 // Administrator role ID
+            });
+
+        // Also assign Registered role (default)
+        await connection.ExecuteAsync(@"
+            INSERT INTO role_user (user_id, role_id)
+            VALUES (@UserId, @RoleId)",
+            new
+            {
+                UserId = adminUserId,
+                RoleId = 1 // Registered role ID
+            });
+
+        // Register admin user with authentication service
+        var registerRequest = new RegisterUserRequest(adminEmail, "Admin", "User", adminPassword);
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+        
+        // If user already exists in Keycloak, that's fine
+        if (registerResponse.StatusCode != HttpStatusCode.OK && registerResponse.StatusCode != HttpStatusCode.Conflict)
+        {
+            var error = await registerResponse.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Failed to register admin user: {error}");
+        }
+
+        // Login to get access token
+        var loginRequest = new LogInUserRequest(adminEmail, adminPassword);
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
+        
+        if (!loginResponse.IsSuccessStatusCode)
+        {
+            var error = await loginResponse.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Failed to login admin user: {error}");
+        }
+
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
+        return loginResult!.AccessToken;
+    }
+
+    protected async Task SetAdminAuthorizationHeaderAsync()
+    {
+        var token = await CreateAndGetAdminAccessTokenAsync();
+        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
     
     protected async Task<Guid> CreatePointOfSaleAsync(string phoneNumber = "+59891234567")
     {
