@@ -39,4 +39,3 @@ public class GetAllPermissionsApiTest : BaseFunctionalTest
         permissions.Should().Contain(p => p.Name == "admin:access");
     }
 }
-}

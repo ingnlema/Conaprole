@@ -91,6 +91,4 @@ public class LoginUserTest : BaseFunctionalTest
         // Use the base class method to create admin user
         await SetAdminAuthorizationHeaderAsync();
     }
-    }
-
 }
