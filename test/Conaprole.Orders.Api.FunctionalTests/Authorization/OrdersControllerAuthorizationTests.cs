@@ -95,7 +95,7 @@ public class OrdersControllerAuthorizationTests : BaseFunctionalTest
             "Test Street 123",
             "11000",
             "UYU",
-            new[] { new OrderLineRequest("TEST-001", 5) });
+            new List<OrderLineRequest> { new OrderLineRequest("TEST-001", 5) });
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/Orders", request);
@@ -120,7 +120,7 @@ public class OrdersControllerAuthorizationTests : BaseFunctionalTest
             "Test Street 123",
             "11000",
             "UYU",
-            new[] { new OrderLineRequest("TEST-001", 5) });
+            new List<OrderLineRequest> { new OrderLineRequest("TEST-001", 5) });
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/Orders", request);
@@ -145,7 +145,7 @@ public class OrdersControllerAuthorizationTests : BaseFunctionalTest
             "Test Street 123",
             "11000",
             "UYU",
-            new[] { new OrderLineRequest("TEST-001", 3) });
+            new List<OrderLineRequest> { new OrderLineRequest("TEST-001", 3) });
 
         var request = new BulkCreateOrdersRequest { Orders = new[] { order }.ToList() };
 
@@ -172,7 +172,7 @@ public class OrdersControllerAuthorizationTests : BaseFunctionalTest
             "Test Street 123",
             "11000",
             "UYU",
-            new[] { new OrderLineRequest("TEST-001", 3) });
+            new List<OrderLineRequest> { new OrderLineRequest("TEST-001", 3) });
 
         var request = new BulkCreateOrdersRequest { Orders = new[] { order }.ToList() };
 
