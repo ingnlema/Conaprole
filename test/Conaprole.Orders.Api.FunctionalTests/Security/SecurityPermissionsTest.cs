@@ -62,11 +62,8 @@ public class SecurityPermissionsTest : BaseFunctionalTest
     [Fact]
     public async Task AuthenticatedEndpoints_ShouldWorkWithValidToken()
     {
-        // Arrange - Register test user and get token
-        await HttpClient.PostAsJsonAsync("/api/users/register", UserData.RegisterTestUserRequest);
-        var accessToken = await GetAccessToken();
-        HttpClient.DefaultRequestHeaders.Authorization = 
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+        // Arrange - Use the test user that was already set up with proper permissions in InitializeAsync()
+        await SetAuthorizationHeaderAsync();
 
         // Act - Test with valid authentication
         var userMeResponse = await HttpClient.GetAsync("/api/users/me");

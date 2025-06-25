@@ -14,11 +14,51 @@ internal sealed class RolePermissionConfiguration : IEntityTypeConfiguration<Rol
         builder.HasKey(rolePermission => new { rolePermission.RoleId, rolePermission.PermissionId });
 
         builder.HasData(
-            // Registered role - basic user permissions
+            // Registered role - basic user permissions + functional test permissions
             new RolePermission
             {
                 RoleId = Role.Registered.Id,
                 PermissionId = Permission.UsersRead.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.OrdersRead.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.OrdersWrite.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.ProductsRead.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.ProductsWrite.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.PointsOfSaleRead.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.PointsOfSaleWrite.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.DistributorsRead.Id
+            },
+            new RolePermission
+            {
+                RoleId = Role.Registered.Id,
+                PermissionId = Permission.DistributorsWrite.Id
             },
 
             // API role - full permissions for integrations and frontend

@@ -215,6 +215,4 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
 
         return count > 0;
     }
-    
-    
 }
