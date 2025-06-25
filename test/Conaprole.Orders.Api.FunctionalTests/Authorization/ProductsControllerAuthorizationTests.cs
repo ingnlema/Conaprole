@@ -124,30 +124,31 @@ public class ProductsControllerAuthorizationTests : BaseFunctionalTest
 
     private async Task CreateUserWithPermissionAndSetAuthAsync(string permission)
     {
-        // Create user with specific permission directly in database
-        var userId = Guid.NewGuid();
+        // Create user with specific permission through proper registration then update roles
         var email = $"authuser+{Guid.NewGuid():N}@test.com";
-        var identityId = Guid.NewGuid().ToString();
+        var password = "TestPassword123";
+
+        // Register user normally first
+        var registerRequest = new RegisterUserRequest(email, "Auth", "User", password);
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+        registerResponse.EnsureSuccessStatusCode();
 
         using var connection = SqlConnectionFactory.CreateConnection();
 
-        // Insert user
+        // Get the created user ID
+        var userId = await connection.QuerySingleAsync<Guid>(@"
+            SELECT id FROM users WHERE email = @Email", 
+            new { Email = email });
+
+        // Remove default roles
         await connection.ExecuteAsync(@"
-            INSERT INTO users (id, identity_id, first_name, last_name, email, created_at)
-            VALUES (@Id, @IdentityId, @FirstName, @LastName, @Email, now())",
-            new
-            {
-                Id = userId,
-                IdentityId = identityId,
-                FirstName = "Auth",
-                LastName = "User",
-                Email = email
-            });
+            DELETE FROM role_user WHERE users_id = @UserId", 
+            new { UserId = userId });
 
         // Find role that has this permission
         var roleId = await GetRoleIdForPermissionAsync(permission);
         
-        // Assign role to user
+        // Assign the specific role to user
         await connection.ExecuteAsync(@"
             INSERT INTO role_user (users_id, roles_id)
             VALUES (@UserId, @RoleId)",
@@ -157,11 +158,7 @@ public class ProductsControllerAuthorizationTests : BaseFunctionalTest
                 RoleId = roleId
             });
 
-        // Register user with authentication service and login
-        var password = "TestPassword123";
-        var registerRequest = new RegisterUserRequest(email, "Auth", "User", password);
-        await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
-
+        // Login to get access token
         var loginRequest = new LogInUserRequest(email, password);
         var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
         var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
