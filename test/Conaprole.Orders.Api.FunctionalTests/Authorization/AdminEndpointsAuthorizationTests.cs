@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Conaprole.Orders.Api.Controllers.Users;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Application.Users.LoginUser;

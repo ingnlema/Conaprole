@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Conaprole.Orders.Api.Controllers.Distributors.Dtos;
+using Conaprole.Orders.Api.Controllers.Users;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Application.Users.LoginUser;
@@ -142,7 +143,7 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
             "Test Distributor",
             "+59899999999",
             "Test Address",
-            new[] { "LACTEOS" });
+            new[] { "LACTEOS" }.ToList());
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/distributors", request);
@@ -160,7 +161,7 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
             "Test Distributor",
             "+59899999999",
             "Test Address",
-            new[] { "LACTEOS" });
+            new[] { "LACTEOS" }.ToList());
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/distributors", request);

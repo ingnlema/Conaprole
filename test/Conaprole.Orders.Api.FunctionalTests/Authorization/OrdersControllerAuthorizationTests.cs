@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
+using Conaprole.Orders.Api.Controllers.Users;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Application.Users.LoginUser;
 using Conaprole.Orders.Domain.Orders;
@@ -146,7 +147,7 @@ public class OrdersControllerAuthorizationTests : BaseFunctionalTest
             "UYU",
             new[] { new OrderLineRequest("TEST-001", 3) });
 
-        var request = new BulkCreateOrdersRequest { Orders = new[] { order } };
+        var request = new BulkCreateOrdersRequest { Orders = new[] { order }.ToList() };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/Orders/bulk", request);
@@ -173,7 +174,7 @@ public class OrdersControllerAuthorizationTests : BaseFunctionalTest
             "UYU",
             new[] { new OrderLineRequest("TEST-001", 3) });
 
-        var request = new BulkCreateOrdersRequest { Orders = new[] { order } };
+        var request = new BulkCreateOrdersRequest { Orders = new[] { order }.ToList() };
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/Orders/bulk", request);
