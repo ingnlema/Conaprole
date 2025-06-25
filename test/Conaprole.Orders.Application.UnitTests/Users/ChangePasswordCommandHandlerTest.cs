@@ -139,7 +139,8 @@ public class ChangePasswordCommandHandlerTest
         var user = User.Create(
             new FirstName("Test"),
             new LastName("User"),
-            new Email("test@example.com"));
+            new Email("test@example.com"),
+            DateTime.UtcNow);
         
         user.SetIdentityId(IdentityId);
         
