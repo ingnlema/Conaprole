@@ -1,3 +1,4 @@
+using System.Data;
 using System.Net;
 using System.Net.Http.Json;
 using Conaprole.Orders.Api.Controllers.Users.Dtos;
@@ -250,68 +251,8 @@ public class UsersControllerAuthorizationTests : BaseFunctionalTest
 
     private async Task CreateUserWithPermissionAndSetAuthAsync(string permission)
     {
-        // Create user with specific permission through proper registration then update roles
-        var email = $"authuser+{Guid.NewGuid():N}@test.com";
-        var password = "TestPassword123";
-
-        // Register user normally first
-        var registerRequest = new RegisterUserRequest(email, "Auth", "User", password);
-        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
-        registerResponse.EnsureSuccessStatusCode();
-
-        using var connection = SqlConnectionFactory.CreateConnection();
-
-        // Get the created user ID
-        var userId = await connection.QuerySingleAsync<Guid>(@"
-            SELECT id FROM users WHERE email = @Email", 
-            new { Email = email });
-
-        // Remove default roles
-        await connection.ExecuteAsync(@"
-            DELETE FROM role_user WHERE users_id = @UserId", 
-            new { UserId = userId });
-
-        // Find role that has this permission
-        var roleId = await GetRoleIdForPermissionAsync(permission);
-        
-        // Assign the specific role to user
-        await connection.ExecuteAsync(@"
-            INSERT INTO role_user (users_id, roles_id)
-            VALUES (@UserId, @RoleId)",
-            new
-            {
-                UserId = userId,
-                RoleId = roleId
-            });
-
-        // Login to get access token
-        var loginRequest = new LogInUserRequest(email, password);
-        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
-        
-        HttpClient.DefaultRequestHeaders.Authorization = 
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult!.AccessToken);
-    }
-
-    private async Task<int> GetRoleIdForPermissionAsync(string permission)
-    {
-        // Map permissions to roles based on typical role-permission assignments
-        // This is a simplified mapping - in reality you'd query the role_permissions table
-        return permission switch
-        {
-            "users:read" => 1, // Registered role typically has basic read permissions
-            "users:write" => 3, // Administrator role has write permissions  
-            "admin:access" => 3, // Administrator role
-            "distributors:read" => 4, // Distributor role
-            "distributors:write" => 3, // Administrator role
-            "pointsofsale:read" => 1, // Registered role
-            "pointsofsale:write" => 3, // Administrator role
-            "products:read" => 1, // Registered role
-            "products:write" => 3, // Administrator role
-            "orders:read" => 1, // Registered role
-            "orders:write" => 3, // Administrator role
-            _ => 3 // Default to Administrator role
-        };
+        await AuthorizationTestHelper.CreateUserWithPermissionAndSetAuthAsync(
+            HttpClient, SqlConnectionFactory, permission);
     }
 
     #endregion
