@@ -15,6 +15,15 @@ public static class AuthorizationTestHelper
         ISqlConnectionFactory sqlConnectionFactory,
         string permission)
     {
+        await CreateUserWithPermissionAndSetAuthAsync(httpClient, sqlConnectionFactory, permission, useExistingRole: false);
+    }
+    
+    public static async Task CreateUserWithPermissionAndSetAuthAsync(
+        HttpClient httpClient, 
+        ISqlConnectionFactory sqlConnectionFactory,
+        string permission,
+        bool useExistingRole)
+    {
         // Create user with specific permission through proper registration then update roles
         var email = $"authuser+{Guid.NewGuid():N}@test.com";
         var password = "TestPassword123";
@@ -36,8 +45,16 @@ public static class AuthorizationTestHelper
             DELETE FROM role_user WHERE users_id = @UserId", 
             new { UserId = userId });
 
-        // Create a test-specific role with only the required permission
-        var roleId = await CreateTestRoleWithPermissionAsync(connection, permission);
+        // Create or find a role with the required permission
+        int roleId;
+        if (useExistingRole)
+        {
+            roleId = await GetExistingRoleWithPermissionAsync(connection, permission);
+        }
+        else
+        {
+            roleId = await CreateTestRoleWithPermissionAsync(connection, permission);
+        }
         
         // Assign the specific role to user
         await connection.ExecuteAsync(@"
@@ -56,6 +73,21 @@ public static class AuthorizationTestHelper
         
         httpClient.DefaultRequestHeaders.Authorization = 
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult!.AccessToken);
+    }
+
+    private static async Task<int> GetExistingRoleWithPermissionAsync(IDbConnection connection, string permission)
+    {
+        // Find an existing role that has the required permission
+        var roleId = await connection.QuerySingleAsync<int>(@"
+            SELECT rp.role_id 
+            FROM role_permissions rp
+            INNER JOIN permissions p ON rp.permission_id = p.id
+            WHERE p.name = @Permission
+            ORDER BY rp.role_id
+            LIMIT 1",
+            new { Permission = permission });
+
+        return roleId;
     }
 
     private static async Task<int> CreateTestRoleWithPermissionAsync(IDbConnection connection, string permission)

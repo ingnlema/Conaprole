@@ -113,8 +113,8 @@ public class UsersControllerAuthorizationTests : BaseFunctionalTest
     [Fact]
     public async Task DeleteUser_WithUsersWritePermission_ShouldReturn204()
     {
-        // Arrange
-        await CreateUserWithPermissionAndSetAuthAsync("users:write");
+        // Arrange - use existing role since DeleteUser requires both permission AND role membership
+        await CreateUserWithPermissionAndSetAuthAsync("users:write", useExistingRole: true);
         var targetUser = await CreateTestUserAsync();
 
         // Act
@@ -249,10 +249,10 @@ public class UsersControllerAuthorizationTests : BaseFunctionalTest
         return (userId, email);
     }
 
-    private async Task CreateUserWithPermissionAndSetAuthAsync(string permission)
+    private async Task CreateUserWithPermissionAndSetAuthAsync(string permission, bool useExistingRole = false)
     {
         await AuthorizationTestHelper.CreateUserWithPermissionAndSetAuthAsync(
-            HttpClient, SqlConnectionFactory, permission);
+            HttpClient, SqlConnectionFactory, permission, useExistingRole);
     }
 
     #endregion
