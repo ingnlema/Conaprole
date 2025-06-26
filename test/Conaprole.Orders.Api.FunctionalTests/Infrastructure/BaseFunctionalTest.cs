@@ -67,38 +67,28 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
 
     private async Task CreateTestUserManuallyAsync()
     {
+        // Since the user exists in Keycloak but not in our DB, let's try to login
+        // to get the real IdentityId from the JWT token, then create the DB user with that ID
+        
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", new LogInUserRequest(
+            UserData.RegisterTestUserRequest.Email,
+            UserData.RegisterTestUserRequest.Password));
+
+        if (!loginResponse.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Could not login to existing Keycloak user: {loginResponse.StatusCode}");
+        }
+
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
+        var accessToken = loginResult!.AccessToken;
+        
+        // Extract the subject (sub) claim from the JWT token - this is the IdentityId
+        var identityId = ExtractSubjectFromJwt(accessToken);
+        
         using var connection = SqlConnectionFactory.CreateConnection();
-        
-        // First, try to get the IdentityId by logging in with the existing Keycloak user
-        string identityId;
-        try
-        {
-            var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", new LogInUserRequest(
-                UserData.RegisterTestUserRequest.Email,
-                UserData.RegisterTestUserRequest.Password));
-            
-            if (loginResponse.IsSuccessStatusCode)
-            {
-                var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
-                // Extract the identity ID from the JWT token - we'll need to decode it
-                // For now, let's use a simplified approach and generate a consistent ID
-                identityId = GetConsistentIdentityId(UserData.RegisterTestUserRequest.Email);
-            }
-            else
-            {
-                // If login fails, generate a consistent ID based on email
-                identityId = GetConsistentIdentityId(UserData.RegisterTestUserRequest.Email);
-            }
-        }
-        catch
-        {
-            // If anything fails, use a consistent ID based on email
-            identityId = GetConsistentIdentityId(UserData.RegisterTestUserRequest.Email);
-        }
-        
         var userId = Guid.NewGuid();
         
-        // Insert user
+        // Insert user with the real IdentityId from Keycloak
         await connection.ExecuteAsync(@"
             INSERT INTO users (id, identity_id, first_name, last_name, email, created_at)
             VALUES (@Id, @IdentityId, @FirstName, @LastName, @Email, now())",
@@ -122,15 +112,33 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
             });
     }
 
-    private static string GetConsistentIdentityId(string email)
+    private static string ExtractSubjectFromJwt(string jwt)
     {
-        // Generate a consistent GUID based on the email
-        // This is a simple approach for testing - in real scenarios we'd extract from JWT
-        var bytes = System.Text.Encoding.UTF8.GetBytes($"test-identity-{email}");
-        var hash = System.Security.Cryptography.SHA256.HashData(bytes);
-        var guidBytes = new byte[16];
-        Array.Copy(hash, guidBytes, 16);
-        return new Guid(guidBytes).ToString();
+        // Simple JWT parsing to extract the subject claim
+        var parts = jwt.Split('.');
+        if (parts.Length != 3)
+        {
+            throw new ArgumentException("Invalid JWT format");
+        }
+
+        var payload = parts[1];
+        // Add padding if needed
+        while (payload.Length % 4 != 0)
+        {
+            payload += "=";
+        }
+
+        var payloadBytes = Convert.FromBase64String(payload);
+        var payloadJson = System.Text.Encoding.UTF8.GetString(payloadBytes);
+        
+        // Parse the JSON to extract the "sub" claim
+        using var doc = System.Text.Json.JsonDocument.Parse(payloadJson);
+        if (doc.RootElement.TryGetProperty("sub", out var subElement))
+        {
+            return subElement.GetString()!;
+        }
+
+        throw new InvalidOperationException("Could not extract subject from JWT token");
     }
     
     protected async Task CleanDatabaseAsync()
@@ -170,15 +178,62 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
 
     protected async Task<string> CreateAndGetAdminAccessTokenAsync()
     {
-        // Create admin user directly in database to avoid circular dependency
+        // Generate unique admin user credentials
         var adminEmail = $"admin+{Guid.NewGuid():N}@test.com";
         var adminPassword = "admin123";
-        var adminUserId = Guid.NewGuid();
-        var identityId = Guid.NewGuid().ToString();
 
+        // Try to register admin user normally first
+        var registerRequest = new RegisterUserRequest(adminEmail, "Admin", "User", adminPassword);
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+        
+        if (registerResponse.StatusCode == HttpStatusCode.Conflict)
+        {
+            // Handle Keycloak conflict like we do for test users
+            await CreateAdminUserManuallyAsync(adminEmail, adminPassword);
+        }
+        else if (!registerResponse.IsSuccessStatusCode)
+        {
+            var error = await registerResponse.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Failed to register admin user: {error}");
+        }
+        else
+        {
+            // User was created successfully, now assign additional admin roles
+            await AssignAdminRolesToUserAsync(adminEmail);
+        }
+
+        // Login to get access token
+        var loginRequest = new LogInUserRequest(adminEmail, adminPassword);
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
+        
+        if (!loginResponse.IsSuccessStatusCode)
+        {
+            var error = await loginResponse.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Failed to login admin user: {error}");
+        }
+
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
+        return loginResult!.AccessToken;
+    }
+
+    private async Task CreateAdminUserManuallyAsync(string adminEmail, string adminPassword)
+    {
+        // Login to get the real IdentityId from Keycloak
+        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", new LogInUserRequest(
+            adminEmail, adminPassword));
+
+        if (!loginResponse.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Could not login to existing Keycloak admin user: {loginResponse.StatusCode}");
+        }
+
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
+        var identityId = ExtractSubjectFromJwt(loginResult!.AccessToken);
+        
         using var connection = SqlConnectionFactory.CreateConnection();
-
-        // Insert admin user
+        var adminUserId = Guid.NewGuid();
+        
+        // Insert admin user with real IdentityId
         await connection.ExecuteAsync(@"
             INSERT INTO users (id, identity_id, first_name, last_name, email, created_at)
             VALUES (@Id, @IdentityId, @FirstName, @LastName, @Email, now())",
@@ -210,30 +265,35 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
                 UserId = adminUserId,
                 RoleId = 1 // Registered role ID
             });
+    }
 
-        // Register admin user with authentication service
-        var registerRequest = new RegisterUserRequest(adminEmail, "Admin", "User", adminPassword);
-        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
+    private async Task AssignAdminRolesToUserAsync(string adminEmail)
+    {
+        using var connection = SqlConnectionFactory.CreateConnection();
         
-        // If user already exists in Keycloak, that's fine
-        if (registerResponse.StatusCode != HttpStatusCode.OK && registerResponse.StatusCode != HttpStatusCode.Conflict)
-        {
-            var error = await registerResponse.Content.ReadAsStringAsync();
-            throw new InvalidOperationException($"Failed to register admin user: {error}");
-        }
+        // Get the user ID
+        var userId = await connection.QuerySingleAsync<Guid>(@"
+            SELECT id FROM users WHERE email = @Email", 
+            new { Email = adminEmail });
 
-        // Login to get access token
-        var loginRequest = new LogInUserRequest(adminEmail, adminPassword);
-        var loginResponse = await HttpClient.PostAsJsonAsync("/api/users/login", loginRequest);
-        
-        if (!loginResponse.IsSuccessStatusCode)
-        {
-            var error = await loginResponse.Content.ReadAsStringAsync();
-            throw new InvalidOperationException($"Failed to login admin user: {error}");
-        }
+        // Check if user already has Administrator role
+        var hasAdminRole = await connection.QuerySingleAsync<bool>(@"
+            SELECT COUNT(1) > 0 FROM role_user 
+            WHERE users_id = @UserId AND roles_id = @RoleId",
+            new { UserId = userId, RoleId = 3 });
 
-        var loginResult = await loginResponse.Content.ReadFromJsonAsync<AccessTokenResponse>();
-        return loginResult!.AccessToken;
+        if (!hasAdminRole)
+        {
+            // Assign Administrator role
+            await connection.ExecuteAsync(@"
+                INSERT INTO role_user (users_id, roles_id)
+                VALUES (@UserId, @RoleId)",
+                new
+                {
+                    UserId = userId,
+                    RoleId = 3 // Administrator role ID
+                });
+        }
     }
 
     protected async Task SetAdminAuthorizationHeaderAsync()
