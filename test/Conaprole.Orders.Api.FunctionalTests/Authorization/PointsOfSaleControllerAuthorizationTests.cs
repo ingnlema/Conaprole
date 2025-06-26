@@ -36,7 +36,7 @@ public class PointsOfSaleControllerAuthorizationTests : BaseFunctionalTest
     public async Task GetPointsOfSale_WithoutPointsOfSaleReadPermission_ShouldReturn403()
     {
         // Arrange
-        await CreateUserWithPermissionAndSetAuthAsync("users:read"); // Different permission
+        await CreateUserWithoutPermissionAndSetAuthAsync("pointsofsale:read");
 
         // Act
         var response = await HttpClient.GetAsync("/api/pos");
@@ -62,7 +62,7 @@ public class PointsOfSaleControllerAuthorizationTests : BaseFunctionalTest
     public async Task GetPointOfSaleByPhoneNumber_WithoutPointsOfSaleReadPermission_ShouldReturn403()
     {
         // Arrange
-        await CreateUserWithPermissionAndSetAuthAsync("users:read"); // Different permission
+        await CreateUserWithoutPermissionAndSetAuthAsync("pointsofsale:read");
 
         // Act
         var response = await HttpClient.GetAsync("/api/pos/by-phone/+59891234567");
@@ -89,7 +89,7 @@ public class PointsOfSaleControllerAuthorizationTests : BaseFunctionalTest
     public async Task GetDistributorsByPOS_WithoutPointsOfSaleReadPermission_ShouldReturn403()
     {
         // Arrange
-        await CreateUserWithPermissionAndSetAuthAsync("users:read"); // Different permission
+        await CreateUserWithoutPermissionAndSetAuthAsync("pointsofsale:read");
         await CreatePointOfSaleAsync("+59891234567");
 
         // Act
@@ -265,7 +265,26 @@ public class PointsOfSaleControllerAuthorizationTests : BaseFunctionalTest
 
     private async Task CreateUserWithPermissionAndSetAuthAsync(string permission)
     {
-        // Create user with specific permission through proper registration then update roles
+        await CreateUserWithRoleAndSetAuthAsync(GetRoleIdWithPermission(permission));
+    }
+    
+    private async Task CreateUserWithoutPermissionAndSetAuthAsync(string permission)
+    {
+        // For read permissions where all major roles have them, create a minimal test role
+        if (permission.EndsWith(":read"))
+        {
+            var emptyRoleId = await CreateEmptyTestRoleAsync();
+            await CreateUserWithRoleAndSetAuthAsync(emptyRoleId);
+        }
+        else
+        {
+            await CreateUserWithRoleAndSetAuthAsync(GetRoleIdWithoutPermission(permission));
+        }
+    }
+
+    private async Task CreateUserWithRoleAndSetAuthAsync(int roleId)
+    {
+        // Create user with specific role through proper registration then update roles
         var email = $"authuser+{Guid.NewGuid():N}@test.com";
         var password = "TestPassword123";
 
@@ -286,9 +305,6 @@ public class PointsOfSaleControllerAuthorizationTests : BaseFunctionalTest
             DELETE FROM role_user WHERE users_id = @UserId", 
             new { UserId = userId });
 
-        // Find role that has this permission
-        var roleId = await GetRoleIdForPermissionAsync(permission);
-        
         // Assign the specific role to user
         await connection.ExecuteAsync(@"
             INSERT INTO role_user (users_id, roles_id)
@@ -308,22 +324,73 @@ public class PointsOfSaleControllerAuthorizationTests : BaseFunctionalTest
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginResult!.AccessToken);
     }
 
-    private async Task<int> GetRoleIdForPermissionAsync(string permission)
+    private int GetRoleIdWithPermission(string permission)
     {
-        // Map permissions to roles based on typical role-permission assignments
+        // Return role ID that HAS the specified permission
         return permission switch
         {
-            "users:read" => 1, // Registered role typically has basic read permissions
-            "users:write" => 3, // Administrator role has write permissions  
-            "admin:access" => 3, // Administrator role
-            "distributors:read" => 4, // Distributor role
-            "distributors:write" => 3, // Administrator role
-            "pointsofsale:read" => 1, // Registered role
-            "pointsofsale:write" => 3, // Administrator role
-            "products:read" => 1, // Registered role
-            "products:write" => 3, // Administrator role
-            "orders:read" => 1, // Registered role
-            "orders:write" => 3, // Administrator role
+            "users:read" => 1, // Registered role has users:read
+            "users:write" => 3, // Administrator role has users:write  
+            "admin:access" => 3, // Administrator role has admin:access
+            "distributors:read" => 1, // Registered role has distributors:read
+            "distributors:write" => 4, // Distributor role has distributors:write
+            "pointsofsale:read" => 1, // Registered role has pointsofsale:read
+            "pointsofsale:write" => 4, // Distributor role has pointsofsale:write
+            "products:read" => 1, // Registered role has products:read
+            "products:write" => 4, // Distributor role has products:write
+            "orders:read" => 1, // Registered role has orders:read
+            "orders:write" => 4, // Distributor role has orders:write
+            _ => 3 // Default to Administrator role
+        };
+    }
+    
+    private int GetRoleIdWithoutPermission(string permission)
+    {
+        // Return role ID that does NOT have the specified permission
+        return permission switch
+        {
+            "users:write" => 1, // Registered role doesn't have users:write
+            "admin:access" => 1, // Registered role doesn't have admin:access
+            "distributors:write" => 1, // Registered role doesn't have distributors:write
+            "pointsofsale:write" => 1, // Registered role doesn't have pointsofsale:write
+            "products:write" => 1, // Registered role doesn't have products:write
+            "orders:write" => 1, // Registered role doesn't have orders:write
+            _ => 1 // Default to Registered role (has fewer permissions)
+        };
+    }
+
+    private async Task<int> CreateEmptyTestRoleAsync()
+    {
+        using var connection = SqlConnectionFactory.CreateConnection();
+        
+        // Create a test role with no permissions
+        var roleId = await connection.QuerySingleAsync<int>(@"
+            INSERT INTO roles (name) 
+            VALUES (@Name) 
+            RETURNING id",
+            new { Name = $"TestRole_{Guid.NewGuid():N}" });
+            
+        return roleId;
+    }
+
+    private async Task<int> GetRoleIdForPermissionAsync(string permission)
+    {
+        // Map permissions to appropriate roles based on actual role-permission assignments
+        // from migrations: Registered(1) has read perms, Administrator(3) has all, Distributor(4) has most except users:write/admin:access
+        return permission switch
+        {
+            // For positive tests - use roles that HAVE the permission
+            "users:read" => 1, // Registered role has users:read
+            "users:write" => 3, // Administrator role has users:write  
+            "admin:access" => 3, // Administrator role has admin:access
+            "distributors:read" => 1, // Registered role has distributors:read
+            "distributors:write" => 4, // Distributor role has distributors:write
+            "pointsofsale:read" => 1, // Registered role has pointsofsale:read
+            "pointsofsale:write" => 4, // Distributor role has pointsofsale:write
+            "products:read" => 1, // Registered role has products:read
+            "products:write" => 4, // Distributor role has products:write
+            "orders:read" => 1, // Registered role has orders:read
+            "orders:write" => 4, // Distributor role has orders:write
             _ => 3 // Default to Administrator role
         };
     }

@@ -6,7 +6,7 @@ using FluentAssertions;
 
 namespace Conaprole.Orders.Api.FunctionalTests.Security;
 
-[Collection("Test Collection")]
+[Collection("ApiCollection")]
 public class SecurityPermissionsTest : BaseFunctionalTest
 {
     public SecurityPermissionsTest(FunctionalTestWebAppFactory factory) : base(factory)
