@@ -7,11 +7,21 @@ internal static class ClaimsPrincipalExtensions
 {
     public static Guid GetUserId(this ClaimsPrincipal? principal)
     {
-        var userId = principal?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        // First try to get the internal user ID from our custom claim
+        var internalUserId = principal?.FindFirstValue("internal_user_id");
+        if (!string.IsNullOrEmpty(internalUserId) && Guid.TryParse(internalUserId, out var parsedInternalUserId))
+        {
+            return parsedInternalUserId;
+        }
 
-        return Guid.TryParse(userId, out var parsedUserId) ?
-            parsedUserId :
-            throw new ApplicationException("User identifier is unavailable");
+        // Fallback to try parsing sub claim as Guid (legacy support)
+        var userId = principal?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var parsedUserId))
+        {
+            return parsedUserId;
+        }
+
+        throw new ApplicationException("User identifier is unavailable");
     }
 
     public static string GetIdentityId(this ClaimsPrincipal? principal)
