@@ -260,21 +260,25 @@ public class UsersControllerAuthorizationTests : BaseFunctionalTest
 
     private async Task<(Guid UserId, string Email)> CreateTestUserAsync()
     {
-        var userId = Guid.NewGuid();
         var email = $"testuser+{Guid.NewGuid():N}@test.com";
+        var password = "TestPassword123";
+
+        // Register user properly with Keycloak using the same method as the working tests
+        var registerRequest = new RegisterUserRequest(email, "Test", "User", password);
+        var registerResponse = await HttpClient.PostAsJsonAsync("/api/users/register", registerRequest);
         
+        if (!registerResponse.IsSuccessStatusCode)
+        {
+            var error = await registerResponse.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"Failed to register test user: {error}");
+        }
+
         using var connection = SqlConnectionFactory.CreateConnection();
-        await connection.ExecuteAsync(@"
-            INSERT INTO users (id, identity_id, first_name, last_name, email, created_at)
-            VALUES (@Id, @IdentityId, @FirstName, @LastName, @Email, now())",
-            new
-            {
-                Id = userId,
-                IdentityId = Guid.NewGuid().ToString(),
-                FirstName = "Test",
-                LastName = "User",
-                Email = email
-            });
+        
+        // Get the created user ID from the database
+        var userId = await connection.QuerySingleAsync<Guid>(@"
+            SELECT id FROM users WHERE email = @Email", 
+            new { Email = email });
 
         return (userId, email);
     }

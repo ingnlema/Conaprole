@@ -19,8 +19,7 @@ internal sealed class CustomClaimsTransformation : IClaimsTransformation
     public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
     {
         if (principal.Identity is not { IsAuthenticated: true } ||
-            principal.HasClaim(claim => claim.Type == ClaimTypes.Role) &&
-            principal.HasClaim(claim => claim.Type == JwtRegisteredClaimNames.Sub))
+            principal.HasClaim("claims_transformed", "true"))
         {
             return principal;
         }
@@ -35,16 +34,19 @@ internal sealed class CustomClaimsTransformation : IClaimsTransformation
         {
             var userRoles = await authorizationService.GetRolesForUserAsync(identityId);
 
-            var claimsIdentity = new ClaimsIdentity();
-
-            claimsIdentity.AddClaim(new Claim(JwtRegisteredClaimNames.Sub, userRoles.UserId.ToString()));
+            var claimsToAdd = new List<Claim>
+            {
+                new("internal_user_id", userRoles.UserId.ToString()),
+                new("claims_transformed", "true")
+            };
 
             foreach (var role in userRoles.Roles)
             {
-                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
+                claimsToAdd.Add(new Claim(ClaimTypes.Role, role.Name));
             }
 
-            principal.AddIdentity(claimsIdentity);
+            // Add claims to the existing identity instead of creating a new one
+            ((ClaimsIdentity)principal.Identity!).AddClaims(claimsToAdd);
         }
         catch (UnauthorizedAccessException)
         {
