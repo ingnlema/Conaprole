@@ -210,11 +210,11 @@ public class UsersController : ControllerBase
     /// Cambia la contraseña de un usuario.
     /// </summary>
     [HttpPut("{userId}/change-password")]
-    [Authorize] // Just require authentication, custom authorization logic below
-    [SwaggerOperation(Summary = "Cambiar contraseña de usuario", Description = "Permite cambiar la contraseña de un usuario. Los usuarios solo pueden cambiar su propia contraseña.")]
+    [HasPermission(Permissions.UsersWrite)]
+    [SwaggerOperation(Summary = "Cambiar contraseña de usuario", Description = "Permite cambiar la contraseña de un usuario. Requiere permisos de escritura de usuarios.")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ChangePassword(
         Guid userId, 
         [FromBody] ChangePasswordRequest request, 
@@ -232,8 +232,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{userId}")]
-    [HasPermission(Permissions.UsersWrite)]
-    [Authorize(Roles = $"{Roles.Administrator},{Roles.API}")]
+    [HasPermission(Permissions.AdminAccess)]
     public async Task<IActionResult> DeleteUser(
         Guid userId,
         CancellationToken cancellationToken)
