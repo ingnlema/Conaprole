@@ -111,10 +111,40 @@ public class UsersControllerAuthorizationTests : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task DeleteUser_WithUsersWritePermission_ShouldReturn204()
+    public async Task ChangePassword_WithUsersWritePermission_ShouldReturn204OrBadRequest()
     {
-        // Arrange - use existing role since DeleteUser requires both permission AND role membership
-        await CreateUserWithPermissionAndSetAuthAsync("users:write", useExistingRole: true);
+        // Arrange
+        await CreateUserWithPermissionAndSetAuthAsync("users:write");
+        var targetUser = await CreateTestUserAsync();
+        var request = new ChangePasswordRequest("newpassword123");
+
+        // Act
+        var response = await HttpClient.PutAsJsonAsync($"/api/users/{targetUser.UserId}/change-password", request);
+
+        // Assert
+        response.StatusCode.Should().BeOneOf(HttpStatusCode.NoContent, HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task ChangePassword_WithoutUsersWritePermission_ShouldReturn403()
+    {
+        // Arrange
+        await CreateUserWithPermissionAndSetAuthAsync("users:read"); // Different permission
+        var targetUser = await CreateTestUserAsync();
+        var request = new ChangePasswordRequest("newpassword123");
+
+        // Act
+        var response = await HttpClient.PutAsJsonAsync($"/api/users/{targetUser.UserId}/change-password", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task DeleteUser_WithAdminAccessPermission_ShouldReturn204()
+    {
+        // Arrange
+        await CreateUserWithPermissionAndSetAuthAsync("admin:access");
         var targetUser = await CreateTestUserAsync();
 
         // Act
@@ -125,7 +155,7 @@ public class UsersControllerAuthorizationTests : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task DeleteUser_WithoutUsersWritePermission_ShouldReturn403()
+    public async Task DeleteUser_WithoutAdminAccessPermission_ShouldReturn403()
     {
         // Arrange
         await CreateUserWithPermissionAndSetAuthAsync("users:read"); // Different permission
