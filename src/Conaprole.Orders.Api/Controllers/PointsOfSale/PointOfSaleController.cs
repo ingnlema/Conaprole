@@ -100,7 +100,13 @@ public class PointOfSaleController : ControllerBase
     [SwaggerOperation(Summary = "Asignar distribuidor al punto de venta", Description = "Asigna un distribuidor a un punto de venta para una categoría de producto específica.")]
     public async Task<IActionResult> AssignDistributor(string posPhoneNumber, [FromBody] AssignDistributorToPointOfSaleRequest request, CancellationToken cancellationToken)
     {
-        var command = new AssignDistributorToPointOfSaleCommand(posPhoneNumber, request.DistributorPhoneNumber, Enum.Parse<Category>(request.Category, ignoreCase: true));
+        var categoryResult = CategoryHelper.TryParseCategory(request.Category, this);
+        if (categoryResult?.Result != null)
+        {
+            return categoryResult.Result; // Return the error response
+        }
+
+        var command = new AssignDistributorToPointOfSaleCommand(posPhoneNumber, request.DistributorPhoneNumber, categoryResult!.Value);
         var result = await _sender.Send(command, cancellationToken);
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
@@ -111,6 +117,22 @@ public class PointOfSaleController : ControllerBase
     public async Task<IActionResult> UnassignDistributor(string posPhoneNumber, string distributorPhoneNumber, Category category, CancellationToken cancellationToken)
     {
         var command = new UnassignDistributorFromPointOfSaleCommand(posPhoneNumber, distributorPhoneNumber, category);
+        var result = await _sender.Send(command, cancellationToken);
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
+    }
+
+    [HttpDelete("{posPhoneNumber}/distributors")]
+    [HasPermission(Permissions.PointsOfSaleWrite)]
+    [SwaggerOperation(Summary = "Desasignar distribuidor del punto de venta (legacy)", Description = "Remueve la asociación de un distribuidor con un punto de venta usando request body. Mantenido para compatibilidad con clientes externos.")]
+    public async Task<IActionResult> UnassignDistributorLegacy(string posPhoneNumber, [FromBody] UnassignDistributorFromPointOfSaleRequest request, CancellationToken cancellationToken)
+    {
+        var categoryResult = CategoryHelper.TryParseCategory(request.Category, this);
+        if (categoryResult?.Result != null)
+        {
+            return categoryResult.Result; // Return the error response
+        }
+
+        var command = new UnassignDistributorFromPointOfSaleCommand(posPhoneNumber, request.DistributorPhoneNumber, categoryResult!.Value);
         var result = await _sender.Send(command, cancellationToken);
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
