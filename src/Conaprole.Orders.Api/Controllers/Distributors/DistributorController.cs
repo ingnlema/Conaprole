@@ -44,11 +44,17 @@ public class DistributorController : ControllerBase
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateDistributor([FromBody] CreateDistributorRequest request, CancellationToken cancellationToken)
     {
+        var categoriesResult = CategoryHelper.TryParseCategories(request.Categories, this);
+        if (categoriesResult?.Result != null)
+        {
+            return categoriesResult.Result; // Return the error response
+        }
+
         var command = new CreateDistributorCommand(
             request.Name,
             request.PhoneNumber,
             request.Address,
-            request.Categories.Select(c => Enum.Parse<Category>(c, ignoreCase: true)).ToList());
+            categoriesResult!.Value!);
         var result = await _sender.Send(command, cancellationToken);
         return result.IsSuccess ? Created(string.Empty, result.Value) : BadRequest(result.Error);
     }
@@ -98,7 +104,13 @@ public class DistributorController : ControllerBase
     [SwaggerOperation(Summary = "Agregar categoría al distribuidor", Description = "Asigna una nueva categoría de producto soportada al distribuidor.")]
     public async Task<IActionResult> AddCategory(string distPhoneNumber, [FromBody] AddDistributorCategoryRequest request, CancellationToken cancellationToken)
     {
-        var command = new AddDistributorCategoryCommand(distPhoneNumber, Enum.Parse<Category>(request.Category, ignoreCase: true));
+        var categoryResult = CategoryHelper.TryParseCategory(request.Category, this);
+        if (categoryResult?.Result != null)
+        {
+            return categoryResult.Result; // Return the error response
+        }
+
+        var command = new AddDistributorCategoryCommand(distPhoneNumber, categoryResult!.Value);
         var result = await _sender.Send(command, cancellationToken);
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
@@ -108,7 +120,13 @@ public class DistributorController : ControllerBase
     [SwaggerOperation(Summary = "Remover categoría del distribuidor", Description = "Revoca una categoría de producto previamente asignada al distribuidor.")]
     public async Task<IActionResult> RemoveCategory(string distPhoneNumber, [FromBody] RemoveDistributorCategoryRequest request, CancellationToken cancellationToken)
     {
-        var command = new RemoveDistributorCategoryCommand(distPhoneNumber, Enum.Parse<Category>(request.Category, ignoreCase: true));
+        var categoryResult = CategoryHelper.TryParseCategory(request.Category, this);
+        if (categoryResult?.Result != null)
+        {
+            return categoryResult.Result; // Return the error response
+        }
+
+        var command = new RemoveDistributorCategoryCommand(distPhoneNumber, categoryResult!.Value);
         var result = await _sender.Send(command, cancellationToken);
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }

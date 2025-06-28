@@ -23,17 +23,40 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
             return;
         }
 
+        // Check if user has permission claim in JWT token
+        if (context.User.HasClaim("permissions", requirement.Permission))
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
+        // Fallback for Administrator role (legacy support)
+        if (context.User.IsInRole("Administrator"))
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
+        // Fallback to database lookup for users without permission claims in JWT
         using var scope = _serviceProvider.CreateScope();
 
         var authorizationService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.Authentication.IAuthorizationService>();
 
         var identityId = context.User.GetIdentityId();
 
-        var permissions = await authorizationService.GetPermissionsForUserAsync(identityId);
-
-        if (permissions.Contains(requirement.Permission))
+        try
         {
-            context.Succeed(requirement);
+            var permissions = await authorizationService.GetPermissionsForUserAsync(identityId);
+
+            if (permissions.Contains(requirement.Permission))
+            {
+                context.Succeed(requirement);
+            }
+        }
+        catch
+        {
+            // User not found or other error - permission denied
+            // No need to call context.Fail() as the default behavior is to deny
         }
     }
 }

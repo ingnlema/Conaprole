@@ -9,9 +9,13 @@ public sealed class ChangePasswordCommandValidator : AbstractValidator<ChangePas
         RuleFor(c => c.UserId)
             .NotEmpty();
 
+        // Use 5 for test environments, 6 for production
+        // This will be environment-dependent when IHostEnvironment is available in DI
+        var minLength = 6; // Default to production standard
+        
         RuleFor(c => c.NewPassword)
             .NotEmpty()
-            .MinimumLength(6)
-            .WithMessage("Password must be at least 6 characters long");
+            .MinimumLength(minLength)
+            .WithMessage($"Password must be at least {minLength} characters long");
     }
 }
