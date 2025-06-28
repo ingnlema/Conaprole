@@ -115,10 +115,27 @@ public class DistributorController : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
 
-    [HttpDelete("{distPhoneNumber}/categories")]
+    [HttpDelete("{distPhoneNumber}/categories/{category}")]
     [HasPermission(Permissions.DistributorsWrite)]
     [SwaggerOperation(Summary = "Remover categoría del distribuidor", Description = "Revoca una categoría de producto previamente asignada al distribuidor.")]
-    public async Task<IActionResult> RemoveCategory(string distPhoneNumber, [FromBody] RemoveDistributorCategoryRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveCategory(string distPhoneNumber, string category, CancellationToken cancellationToken)
+    {
+        var categoryResult = CategoryHelper.TryParseCategory(category, this);
+        if (categoryResult?.Result != null)
+        {
+            return categoryResult.Result; // Return the error response
+        }
+
+        var command = new RemoveDistributorCategoryCommand(distPhoneNumber, categoryResult!.Value);
+        var result = await _sender.Send(command, cancellationToken);
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
+    }
+
+    [HttpDelete("{distPhoneNumber}/categories")]
+    [HasPermission(Permissions.DistributorsWrite)]
+    [SwaggerOperation(Summary = "Remover categoría del distribuidor (legacy)", Description = "Revoca una categoría de producto previamente asignada al distribuidor. Versión legacy con body.")]
+    [Obsolete("Use DELETE /api/distributors/{distPhoneNumber}/categories/{category} instead")]
+    public async Task<IActionResult> RemoveCategoryLegacy(string distPhoneNumber, [FromBody] RemoveDistributorCategoryRequest request, CancellationToken cancellationToken)
     {
         var categoryResult = CategoryHelper.TryParseCategory(request.Category, this);
         if (categoryResult?.Result != null)
