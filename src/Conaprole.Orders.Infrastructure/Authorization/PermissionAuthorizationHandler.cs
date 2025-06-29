@@ -30,6 +30,20 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
             return;
         }
 
+        // Check for client roles in resource_access claim (Keycloak format)
+        if (HasClientRole(context.User, requirement.Permission))
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
+        // Check for roles claim (alternative format)
+        if (context.User.HasClaim("roles", requirement.Permission))
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
         // Fallback for Administrator role (legacy support)
         if (context.User.IsInRole("Administrator"))
         {
@@ -58,5 +72,35 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
             // User not found or other error - permission denied
             // No need to call context.Fail() as the default behavior is to deny
         }
+    }
+
+    private static bool HasClientRole(System.Security.Claims.ClaimsPrincipal user, string permission)
+    {
+        // Check resource_access claim for client roles (Keycloak format)
+        var resourceAccessClaim = user.Claims.FirstOrDefault(c => c.Type == "resource_access");
+        if (resourceAccessClaim != null)
+        {
+            try
+            {
+                var resourceAccess = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(resourceAccessClaim.Value);
+                
+                // Check orders-api client roles
+                if (resourceAccess.TryGetValue("orders-api", out var clientData))
+                {
+                    var clientObj = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(clientData.ToString());
+                    if (clientObj.TryGetValue("roles", out var rolesData))
+                    {
+                        var roles = System.Text.Json.JsonSerializer.Deserialize<string[]>(rolesData.ToString());
+                        return roles.Contains(permission);
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore JSON parsing errors
+            }
+        }
+
+        return false;
     }
 }

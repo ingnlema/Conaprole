@@ -32,7 +32,7 @@ internal sealed class JwtService : IJwtService
             {
                 new("client_id", _keycloakOptions.AuthClientId),
                 new("client_secret", _keycloakOptions.AuthClientSecret),
-                new("scope", "openid email"),
+                new("scope", "openid email profile roles"),
                 new("grant_type", "password"),
                 new("username", email),
                 new("password", password)

@@ -69,12 +69,18 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
             {
                 o.AdminUrl = $"{keycloakAddress}admin/realms/Conaprole/";
                 o.TokenUrl = $"{keycloakAddress}realms/Conaprole/protocol/openid-connect/token";
+                o.AdminClientId = "conaprole-admin-client";
+                o.AdminClientSecret = "MdyBcICzOkfdxLeDcbcyhi5Im3EtVOb9";
+                o.AuthClientId = "orders-api";
+                o.AuthClientSecret = "orders-api-client-secret";
             });
 
             services.Configure<AuthenticationOptions>(o =>
             {
+                o.Audience = "orders-api";
                 o.Issuer = $"{keycloakAddress}realms/Conaprole/";
                 o.MetadataUrl = $"{keycloakAddress}realms/Conaprole/.well-known/openid-configuration";
+                o.RequireHttpsMetadata = false;
             });
 
         });
