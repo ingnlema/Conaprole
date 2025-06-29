@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Conaprole.Orders.Application\Conaprole.Orders.Application.csproj" />
+      <ProjectReference Include="..\..\src\Conaprole.Orders.Infrastructure\Conaprole.Orders.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
