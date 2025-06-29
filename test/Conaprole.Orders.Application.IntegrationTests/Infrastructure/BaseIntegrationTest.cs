@@ -22,6 +22,11 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
         SqlConnectionFactory = _scope.ServiceProvider.GetRequiredService<ISqlConnectionFactory>();
         TestUserContext = factory.TestUserContext;
     }
+
+    protected T GetService<T>() where T : notnull
+    {
+        return _scope.ServiceProvider.GetRequiredService<T>();
+    }
     
     public async Task InitializeAsync()
     {

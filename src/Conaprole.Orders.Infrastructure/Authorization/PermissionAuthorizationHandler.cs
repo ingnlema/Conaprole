@@ -23,21 +23,7 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
             return;
         }
 
-        // Check if user has permission claim in JWT token
-        if (context.User.HasClaim("permissions", requirement.Permission))
-        {
-            context.Succeed(requirement);
-            return;
-        }
-
-        // Fallback for Administrator role (legacy support)
-        if (context.User.IsInRole("Administrator"))
-        {
-            context.Succeed(requirement);
-            return;
-        }
-
-        // Fallback to database lookup for users without permission claims in JWT
+        // Use database as the single source of truth for authorization
         using var scope = _serviceProvider.CreateScope();
 
         var authorizationService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.Authentication.IAuthorizationService>();

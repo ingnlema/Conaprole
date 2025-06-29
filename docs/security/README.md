@@ -38,14 +38,14 @@ El sistema **Conaprole Orders** implementa un esquema de seguridad robusto basad
 ### 🛂 Autorización  
 - **Sistema basado en permisos** granulares con 11 permisos específicos
 - **4 roles diferenciados**: Registered, API, Administrator, Distributor
-- **Roles dinámicos** almacenados en base de datos
+- **Base de datos como única fuente de verdad** - sin dependencia en tokens JWT para permisos
 - **Políticas de autorización** generadas dinámicamente
 - **Middleware de autorización** personalizado con HasPermission attribute
 
 ### 🔗 Keycloak
 - **Gestión centralizada** de usuarios e identidades
-- **Integración completa** con la API
-- **Separación de responsabilidades** entre administración y autenticación
+- **Separación de responsabilidades**: Keycloak para autenticación, PostgreSQL para autorización
+- **Solo para identidad**: No transporta roles/permisos en tokens JWT
 
 ## Beneficios del Enfoque
 
