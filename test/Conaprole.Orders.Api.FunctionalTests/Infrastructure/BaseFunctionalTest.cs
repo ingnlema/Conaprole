@@ -6,6 +6,7 @@ using Conaprole.Orders.Api.FunctionalTests.Users;
 using Conaprole.Orders.Application.Abstractions.Data;
 using Conaprole.Orders.Application.Users.LoginUser;
 using Conaprole.Orders.Domain.Shared;
+using Conaprole.Orders.Infrastructure.Authentication;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,9 +16,11 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
 {
     protected readonly HttpClient HttpClient;
     protected readonly ISqlConnectionFactory SqlConnectionFactory;
+    protected readonly FunctionalTestWebAppFactory Factory;
 
     protected BaseFunctionalTest(FunctionalTestWebAppFactory factory)
     {
+        Factory = factory;
         HttpClient = factory.CreateClient();
         SqlConnectionFactory = factory.Services.GetRequiredService<ISqlConnectionFactory>();
     }
@@ -431,5 +434,28 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
         });
 
         return count > 0;
+    }
+
+    /// <summary>
+    /// Gets an access token with the specified roles using the Keycloak realm seeder.
+    /// This method ensures the roles exist in Keycloak and assigns them to a test user before generating the token.
+    /// </summary>
+    /// <param name="roles">The roles to assign to the token</param>
+    /// <returns>JWT access token with the specified roles</returns>
+    protected async Task<string> GetTokenWithRolesAsync(params string[] roles)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<IKeycloakRealmSeeder>();
+        return await seeder.GetTokenAsync(roles);
+    }
+
+    /// <summary>
+    /// Sets the authorization header with a token that has the specified roles.
+    /// </summary>
+    /// <param name="roles">The roles to assign to the token</param>
+    protected async Task SetAuthorizationHeaderWithRolesAsync(params string[] roles)
+    {
+        var token = await GetTokenWithRolesAsync(roles);
+        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 }

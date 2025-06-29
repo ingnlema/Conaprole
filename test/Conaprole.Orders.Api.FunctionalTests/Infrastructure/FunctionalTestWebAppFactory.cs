@@ -78,6 +78,17 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
             });
 
         });
+
+        builder.ConfigureTestServices(services =>
+        {
+            // Remove existing seeding hosted service to prevent conflicts in tests
+            var hostedServiceDescriptor = services.FirstOrDefault(
+                d => d.ImplementationType == typeof(KeycloakRealmSeederHostedService));
+            if (hostedServiceDescriptor != null)
+            {
+                services.Remove(hostedServiceDescriptor);
+            }
+        });
     }
 
     public async Task InitializeAsync()
@@ -88,8 +99,10 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
         // Espera a que Keycloak esté listo
         await WaitForKeycloakReadyAsync(CancellationToken.None);
         
+        // Seed Keycloak realm for testing
+        await SeedKeycloakRealmAsync();
+        
         await InitializeTestUserAsync();
-
     }
 
     public new async Task DisposeAsync()
@@ -131,6 +144,21 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
         }
 
         throw new TimeoutException($"Keycloak did not become ready at {endpoint} after {timeout.TotalSeconds} seconds.");
+    }
+
+    private async Task SeedKeycloakRealmAsync()
+    {
+        try
+        {
+            using var scope = Services.CreateScope();
+            var seeder = scope.ServiceProvider.GetRequiredService<IKeycloakRealmSeeder>();
+            await seeder.SeedRealmAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to seed Keycloak realm: {ex.Message}");
+            // Don't throw - allow tests to continue with basic setup
+        }
     }
 
     private async Task InitializeTestUserAsync()

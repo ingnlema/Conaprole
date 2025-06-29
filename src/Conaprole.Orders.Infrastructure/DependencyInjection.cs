@@ -105,6 +105,10 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         services.AddScoped<IUserContext, UserContext>();
+
+        // Add Keycloak realm seeder
+        services.AddScoped<IKeycloakRealmSeeder, KeycloakRealmSeeder>();
+        services.AddHostedService<KeycloakRealmSeederHostedService>();
     }
     
     private static void AddAuthorization(IServiceCollection services)
