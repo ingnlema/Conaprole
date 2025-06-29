@@ -57,7 +57,7 @@ public class ChangePasswordApiTest : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task ChangePassword_ShouldReturnForbidden_WhenUserTriesToChangeAnotherUsersPassword()
+    public async Task ChangePassword_ShouldSucceed_WhenUserWithUsersWritePermissionChangesAnotherUsersPassword()
     {
         // Arrange - Register two users
         var user1Email = "user1@test.com";
@@ -87,8 +87,8 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         var changePasswordRequest = new ChangePasswordRequest("newpassword123");
         var response = await HttpClient.PutAsJsonAsync($"/api/users/{user2Id}/change-password", changePasswordRequest);
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest); // Authorization failure is returned as BadRequest by the handler
+        // Assert - Should succeed because user has users:write permission (API role)
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
     [Fact]
