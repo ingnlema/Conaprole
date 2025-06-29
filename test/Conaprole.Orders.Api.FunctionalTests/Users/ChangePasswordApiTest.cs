@@ -199,8 +199,9 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         var changePasswordRequest = new ChangePasswordRequest("newpassword123");
         var response = await HttpClient.PutAsJsonAsync($"/api/users/{userId}/change-password", changePasswordRequest);
 
-        // Assert - Should return 400 BadRequest (user not found in database)
+        // Assert - Should return 403 Forbidden (authorization fails for deleted user)
         // The JWT token is still valid but user doesn't exist in the database anymore
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        // so the authorization system correctly denies access
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }
