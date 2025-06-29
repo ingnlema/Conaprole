@@ -1,5 +1,15 @@
 # 🛂 Autorización
 
+## Fuente Única de Verdad: Base de Datos
+
+> **🔑 Principio Fundamental**: La **base de datos PostgreSQL** es la única fuente de verdad para autorización. Los tokens JWT se utilizan **únicamente para autenticación** (verificar identidad), **no** para transportar roles o permisos.
+
+### Arquitectura de Autorización
+- **Autenticación**: JWT tokens de Keycloak (solo `sub` y `preferred_username`)
+- **Autorización**: Consulta directa a la base de datos PostgreSQL
+- **Sin dependencias**: No usa `realm_access` ni `resource_access` del token
+- **Tiempo real**: Los cambios de permisos en BD se aplican inmediatamente
+
 ## Sistema de Autorización Basado en Permisos
 
 La aplicación **Conaprole Orders** implementa un sistema de autorización granular basado en **permisos específicos** en lugar de roles estáticos. Esto permite mayor flexibilidad y control de acceso.
@@ -156,6 +166,7 @@ protected override async Task HandleRequirementAsync(
         return; // Usuario no autenticado
     }
 
+    // Use database as the single source of truth for authorization
     using var scope = _serviceProvider.CreateScope();
     var authorizationService = scope.ServiceProvider.GetRequiredService<AuthorizationService>();
 
@@ -169,6 +180,8 @@ protected override async Task HandleRequirementAsync(
     // Si no tiene el permiso, no se llama context.Succeed() = ❌ No autorizado
 }
 ```
+
+> **🔑 Principio Clave**: La autorización consulta **únicamente la base de datos PostgreSQL** para obtener permisos. Los tokens JWT se utilizan **solo para autenticación** (identidad), no para transportar roles o permisos.
 
 ### 4. Dynamic Policy Provider
 ```csharp

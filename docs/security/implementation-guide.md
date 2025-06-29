@@ -2,6 +2,8 @@
 
 Esta guía proporciona instrucciones paso a paso para desarrolladores que necesiten **agregar nuevos permisos, roles o funcionalidades de seguridad** al sistema Conaprole Orders.
 
+> **🔑 Importante**: El sistema utiliza la **base de datos** como única fuente de verdad para autorización. Los cambios en permisos y roles requieren **solo** modificaciones en BD - **no en Keycloak**.
+
 ## Agregar un Nuevo Permiso
 
 ### 1. Definir la Constante del Permiso
