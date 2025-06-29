@@ -176,7 +176,7 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
         // Arrange
         await CreateUserWithPermissionAndSetAuthAsync("distributors:write");
         await CreateDistributorAsync("+59899887766");
-        var request = new AddDistributorCategoryRequest("BEBIDAS");
+        var request = new AddDistributorCategoryRequest("CONGELADOS"); // Use non-deprecated category
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/distributors/+59899887766/categories", request);
@@ -191,7 +191,7 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
         // Arrange
         await CreateUserWithPermissionAndSetAuthAsync("distributors:read"); // Different permission
         await CreateDistributorAsync("+59899887766");
-        var request = new AddDistributorCategoryRequest("BEBIDAS");
+        var request = new AddDistributorCategoryRequest("CONGELADOS"); // Use non-deprecated category
 
         // Act
         var response = await HttpClient.PostAsJsonAsync("/api/distributors/+59899887766/categories", request);
@@ -206,10 +206,9 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
         // Arrange
         await CreateUserWithPermissionAndSetAuthAsync("distributors:write");
         await CreateDistributorAsync("+59899887766");
-        var request = new RemoveDistributorCategoryRequest("LACTEOS");
 
-        // Act
-        var response = await HttpClient.DeleteAsync("/api/distributors/+59899887766/categories");
+        // Act - Use new endpoint without body
+        var response = await HttpClient.DeleteAsync("/api/distributors/+59899887766/categories/LACTEOS");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -222,8 +221,8 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
         await CreateUserWithPermissionAndSetAuthAsync("distributors:read"); // Different permission
         await CreateDistributorAsync("+59899887766");
 
-        // Act
-        var response = await HttpClient.DeleteAsync("/api/distributors/+59899887766/categories");
+        // Act - Use new endpoint without body
+        var response = await HttpClient.DeleteAsync("/api/distributors/+59899887766/categories/LACTEOS");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -285,7 +284,7 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
             PhoneNumber = phoneNumber,
             Name = "Test Distributor",
             Address = "Test Address",
-            Categories = "0,1,2" // Categories as comma-separated string
+            Categories = "LACTEOS" // Only LACTEOS category, so we can add others
         });
     }
 

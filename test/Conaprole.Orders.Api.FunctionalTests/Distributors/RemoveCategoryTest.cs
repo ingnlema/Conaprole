@@ -24,17 +24,11 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             // Create distributor with multiple categories
             await CreateDistributorWithCategoriesAsync(distributorPhone, Category.LACTEOS, Category.CONGELADOS);
             
-            var request = new RemoveDistributorCategoryRequest("LACTEOS");
-
-            // Act
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/distributors/{distributorPhone}/categories")
-            {
-                Content = JsonContent.Create(request)
-            };
             // Set authorization header for protected endpoints
             await SetAuthorizationHeaderAsync();
 
-            var response = await HttpClient.SendAsync(httpRequest);
+            // Act - Use new endpoint without body
+            var response = await HttpClient.DeleteAsync($"api/distributors/{distributorPhone}/categories/LACTEOS");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -54,17 +48,11 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             // Create distributor with only LACTEOS category
             await CreateDistributorWithCategoriesAsync(distributorPhone, Category.LACTEOS);
             
-            var request = new RemoveDistributorCategoryRequest("CONGELADOS");
-
-            // Act
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/distributors/{distributorPhone}/categories")
-            {
-                Content = JsonContent.Create(request)
-            };
             // Set authorization header for protected endpoints
             await SetAuthorizationHeaderAsync();
 
-            var response = await HttpClient.SendAsync(httpRequest);
+            // Act - Use new endpoint without body
+            var response = await HttpClient.DeleteAsync($"api/distributors/{distributorPhone}/categories/CONGELADOS");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -75,17 +63,12 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
         {
             // Arrange
             var nonExistingPhone = "+59890000999";
-            var request = new RemoveDistributorCategoryRequest("LACTEOS");
-
-            // Act
-            var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/distributors/{nonExistingPhone}/categories")
-            {
-                Content = JsonContent.Create(request)
-            };
+            
             // Set authorization header for protected endpoints
             await SetAuthorizationHeaderAsync();
 
-            var response = await HttpClient.SendAsync(httpRequest);
+            // Act - Use new endpoint without body
+            var response = await HttpClient.DeleteAsync($"api/distributors/{nonExistingPhone}/categories/LACTEOS");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

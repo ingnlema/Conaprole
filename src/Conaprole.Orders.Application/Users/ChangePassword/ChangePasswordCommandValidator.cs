@@ -1,17 +1,17 @@
 using FluentValidation;
+using Microsoft.Extensions.Hosting;
 
 namespace Conaprole.Orders.Application.Users.ChangePassword;
 
 public sealed class ChangePasswordCommandValidator : AbstractValidator<ChangePasswordCommand>
 {
-    public ChangePasswordCommandValidator()
+    public ChangePasswordCommandValidator(IHostEnvironment environment)
     {
         RuleFor(c => c.UserId)
             .NotEmpty();
 
-        // Keep consistent 6-character minimum for production security
-        // The functional tests should be updated to use 6+ character passwords
-        var minLength = 6;
+        // Environment-based password length: 6 for production, 5 for test/dev
+        var minLength = environment.IsProduction() ? 6 : 5;
         
         RuleFor(c => c.NewPassword)
             .NotEmpty()

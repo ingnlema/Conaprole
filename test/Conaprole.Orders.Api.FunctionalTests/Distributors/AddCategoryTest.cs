@@ -76,11 +76,14 @@ public class AddCategoryTest : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task AddCategory_WithInvalidCategory_ShouldReturnInternalServerError()
+    public async Task AddCategory_WithInvalidCategory_ShouldReturnBadRequest()
     {
         // Arrange
         var distributorPhone = "+59899887766";
         await CreateDistributorAsync(distributorPhone);
+
+        // Set authorization header for protected endpoints
+        await SetAuthorizationHeaderAsync();
         
         var request = new AddDistributorCategoryRequest("INVALID_CATEGORY");
 
@@ -88,7 +91,7 @@ public class AddCategoryTest : BaseFunctionalTest
         var response = await HttpClient.PostAsJsonAsync($"api/distributors/{distributorPhone}/categories", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     private async Task VerifyDistributorHasCategory(string phoneNumber, Category expectedCategory)
