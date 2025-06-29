@@ -49,9 +49,12 @@ public class ProductsControllerAuthorizationTests : BaseFunctionalTest
     [Fact]
     public async Task GetProduct_WithProductsReadPermission_ShouldReturn200()
     {
-        // Arrange
-        await CreateUserWithPermissionAndSetAuthAsync("products:read");
+        // Arrange - First create a product with write permissions
+        await CreateUserWithPermissionAndSetAuthAsync("products:write");
         var productId = await CreateProductAsync();
+
+        // Switch to user with only read permissions
+        await CreateUserWithPermissionAndSetAuthAsync("products:read");
 
         // Act
         var response = await HttpClient.GetAsync($"/api/Products/{productId}");

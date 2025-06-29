@@ -30,37 +30,11 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                 SELECT 7, 1
                 WHERE NOT EXISTS (SELECT 1 FROM role_permissions WHERE permission_id = 7 AND role_id = 1);
             ");
-
-            // Update foreign key constraint for orders.user_id to ON DELETE SET NULL
-            migrationBuilder.DropForeignKey(
-                name: "fk_orders_users_user_id",
-                table: "orders");
-
-            migrationBuilder.AddForeignKey(
-                name: "fk_orders_users_user_id",
-                table: "orders",
-                column: "user_id",
-                principalTable: "users",
-                principalColumn: "id",
-                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // Revert foreign key constraint
-            migrationBuilder.DropForeignKey(
-                name: "fk_orders_users_user_id",
-                table: "orders");
-
-            migrationBuilder.AddForeignKey(
-                name: "fk_orders_users_user_id",
-                table: "orders",
-                column: "user_id",
-                principalTable: "users",
-                principalColumn: "id",
-                onDelete: ReferentialAction.Restrict);
-
             // Remove role permissions if they exist
             migrationBuilder.Sql(@"
                 DELETE FROM role_permissions 

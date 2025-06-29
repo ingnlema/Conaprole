@@ -284,7 +284,7 @@ public class DistributorsControllerAuthorizationTests : BaseFunctionalTest
             PhoneNumber = phoneNumber,
             Name = "Test Distributor",
             Address = "Test Address",
-            Categories = "0,1,2" // Categories as comma-separated string
+            Categories = "LACTEOS" // Only LACTEOS category, so we can add others
         });
     }
 
