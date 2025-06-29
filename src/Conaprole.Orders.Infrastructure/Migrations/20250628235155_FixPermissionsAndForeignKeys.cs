@@ -17,12 +17,18 @@ namespace Conaprole.Orders.Infrastructure.Migrations
                 WHERE NOT EXISTS (SELECT 1 FROM permissions WHERE id = 1);
             ");
 
-            // Ensure Registered role (ID 1) has users:read and products:read permissions
+            // Ensure Registered role (ID 1) has users:read, users:write, and products:read permissions
             // Insert only if they don't already exist
             migrationBuilder.Sql(@"
                 INSERT INTO role_permissions (permission_id, role_id)
                 SELECT 1, 1
                 WHERE NOT EXISTS (SELECT 1 FROM role_permissions WHERE permission_id = 1 AND role_id = 1);
+            ");
+
+            migrationBuilder.Sql(@"
+                INSERT INTO role_permissions (permission_id, role_id)
+                SELECT 2, 1
+                WHERE NOT EXISTS (SELECT 1 FROM role_permissions WHERE permission_id = 2 AND role_id = 1);
             ");
 
             migrationBuilder.Sql(@"
@@ -39,6 +45,11 @@ namespace Conaprole.Orders.Infrastructure.Migrations
             migrationBuilder.Sql(@"
                 DELETE FROM role_permissions 
                 WHERE permission_id = 1 AND role_id = 1;
+            ");
+
+            migrationBuilder.Sql(@"
+                DELETE FROM role_permissions 
+                WHERE permission_id = 2 AND role_id = 1;
             ");
 
             migrationBuilder.Sql(@"

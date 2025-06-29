@@ -245,12 +245,7 @@ public class UsersController : ControllerBase
         var command = new DeleteUserCommand(userId);
         var result = await _sender.Send(command, cancellationToken);
         
-        if (result.IsFailure)
-        {
-            return BadRequest(result.Error);
-        }
-        
-        return NoContent();
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
 
 }
