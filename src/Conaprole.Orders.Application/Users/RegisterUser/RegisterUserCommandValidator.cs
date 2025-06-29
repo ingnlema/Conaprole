@@ -1,11 +1,12 @@
 using FluentValidation;
-using Microsoft.Extensions.Hosting;
 
 namespace Conaprole.Orders.Application.Users.RegisterUser;
 
 internal sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
-    public RegisterUserCommandValidator(IHostEnvironment environment)
+    private const int MinPasswordLength = 5;
+
+    public RegisterUserCommandValidator()
     {
         RuleFor(c => c.FirstName).NotEmpty();
 
@@ -13,9 +14,7 @@ internal sealed class RegisterUserCommandValidator : AbstractValidator<RegisterU
 
         RuleFor(c => c.Email).EmailAddress();
 
-        // Environment-based password length: 6 for production, 5 for test/dev
-        var minLength = environment.IsProduction() ? 6 : 5;
-        RuleFor(c => c.Password).NotEmpty().MinimumLength(minLength);
+        RuleFor(c => c.Password).NotEmpty().MinimumLength(MinPasswordLength);
 
         RuleFor(c => c.DistributorPhoneNumber)
             .MaximumLength(20)
