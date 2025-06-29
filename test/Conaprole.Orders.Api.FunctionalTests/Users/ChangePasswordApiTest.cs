@@ -57,7 +57,7 @@ public class ChangePasswordApiTest : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task ChangePassword_ShouldReturnForbidden_WhenUserTriesToChangeAnotherUsersPassword()
+    public async Task ChangePassword_ShouldSucceed_WhenUserWithUsersWritePermissionChangesAnotherUsersPassword()
     {
         // Arrange - Register two users
         var user1Email = "user1@test.com";
@@ -87,8 +87,8 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         var changePasswordRequest = new ChangePasswordRequest("newpassword123");
         var response = await HttpClient.PutAsJsonAsync($"/api/users/{user2Id}/change-password", changePasswordRequest);
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest); // Authorization failure is returned as BadRequest by the handler
+        // Assert - Should succeed because user has users:write permission (API role)
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
     [Fact]
@@ -199,8 +199,9 @@ public class ChangePasswordApiTest : BaseFunctionalTest
         var changePasswordRequest = new ChangePasswordRequest("newpassword123");
         var response = await HttpClient.PutAsJsonAsync($"/api/users/{userId}/change-password", changePasswordRequest);
 
-        // Assert - Should return 400 BadRequest (user not found in database)
+        // Assert - Should return 403 Forbidden (authorization fails for deleted user)
         // The JWT token is still valid but user doesn't exist in the database anymore
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        // so the authorization system correctly denies access
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

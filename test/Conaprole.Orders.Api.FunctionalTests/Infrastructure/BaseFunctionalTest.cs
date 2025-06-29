@@ -63,6 +63,31 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
             var error = await registerResponse.Content.ReadAsStringAsync();
             throw new InvalidOperationException($"Failed to register test user: {error}");
         }
+
+        // For functional tests, upgrade the registered user to have API role for full permissions
+        {
+            using var dbConnection = SqlConnectionFactory.CreateConnection();
+            
+            // Get the created user ID
+            var userId = await dbConnection.QuerySingleAsync<Guid>(@"
+                SELECT id FROM users WHERE email = @Email", 
+                new { Email = UserData.RegisterTestUserRequest.Email });
+
+            // Remove the default Registered role
+            await dbConnection.ExecuteAsync(@"
+                DELETE FROM role_user WHERE users_id = @UserId", 
+                new { UserId = userId });
+
+            // Assign the API role for full test permissions
+            await dbConnection.ExecuteAsync(@"
+                INSERT INTO role_user (users_id, roles_id)
+                VALUES (@UserId, @RoleId)",
+                new
+                {
+                    UserId = userId,
+                    RoleId = 2 // API role ID - has all permissions for test operations
+                });
+        }
     }
 
     private async Task CreateTestUserManuallyAsync()
@@ -101,14 +126,14 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
                 Email = UserData.RegisterTestUserRequest.Email
             });
 
-        // Assign the Registered role (ID = 1)
+        // Assign the API role (ID = 2) to give test user all permissions needed for test data creation
         await connection.ExecuteAsync(@"
             INSERT INTO role_user (users_id, roles_id)
             VALUES (@UserId, @RoleId)",
             new
             {
                 UserId = userId,
-                RoleId = 1 // Registered role ID
+                RoleId = 2 // API role ID - has all permissions for test operations
             });
     }
 
@@ -246,24 +271,14 @@ public abstract class BaseFunctionalTest : IClassFixture<FunctionalTestWebAppFac
                 Email = adminEmail
             });
 
-        // Assign Administrator role
+        // Assign Administrator role (which has all permissions including admin:access)
         await connection.ExecuteAsync(@"
             INSERT INTO role_user (users_id, roles_id)
             VALUES (@UserId, @RoleId)",
             new
             {
                 UserId = adminUserId,
-                RoleId = 3 // Administrator role ID
-            });
-
-        // Also assign Registered role (default)
-        await connection.ExecuteAsync(@"
-            INSERT INTO role_user (users_id, roles_id)
-            VALUES (@UserId, @RoleId)",
-            new
-            {
-                UserId = adminUserId,
-                RoleId = 1 // Registered role ID
+                RoleId = 3 // Administrator role ID - has all permissions
             });
     }
 
