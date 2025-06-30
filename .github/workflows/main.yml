@@ -1,12 +1,72 @@
-name: Dummy CI
+name: Deploy to Azure Container Apps
 
 on:
-  push:
   workflow_dispatch:
 
+env:
+  AZURE_CONTAINER_REGISTRY: conaproleapi
+  CONTAINER_APP_NAME: container-conaprole-api
+  RESOURCE_GROUP: conaprole
+
 jobs:
-  noop:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 100
+    
     steps:
-      - name: Simulación de CI
-        run: echo "✅ CI simulado para permitir merge"
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Restaura TODA la solución (incluye proyectos de test)
+      - name: Restore
+        run: dotnet restore ./Conaprole.Orders.sln
+
+      # Build únicamente la API (sigue siendo útil para validar compila)
+      - name: Build API (Release)
+        run: dotnet build ./src/Conaprole.Orders.Api/Conaprole.Orders.Api.csproj --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test ./Conaprole.Orders.sln --configuration Release --logger "trx"
+
+      # (opcional) publica resultados
+      - name: Upload test results
+        if: always()                   # se suben aunque fallen
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/*.trx'
+
+      # Log in to Azure Container Registry
+      - name: Log in to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+      
+      # Build and push image to ACR
+      - name: Build and push container image to ACR
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+          file: src/Conaprole.Orders.Api/Dockerfile
+      
+      # Azure Login
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      # Deploy
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_APP_NAME }}:${{ github.sha }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: ${{ env.CONTAINER_APP_NAME }}
