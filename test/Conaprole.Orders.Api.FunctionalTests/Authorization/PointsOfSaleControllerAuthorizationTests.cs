@@ -5,6 +5,7 @@ using Conaprole.Orders.Api.Controllers.Users.Dtos;
 using Conaprole.Orders.Api.Controllers.Users;
 using Conaprole.Orders.Api.FunctionalTests.Infrastructure;
 using Conaprole.Orders.Application.Users.LoginUser;
+using Conaprole.Orders.Domain.Shared;
 using Dapper;
 using FluentAssertions;
 
@@ -234,8 +235,11 @@ public class PointsOfSaleControllerAuthorizationTests : BaseFunctionalTest
     {
         // Arrange
         await CreateUserWithPermissionAndSetAuthAsync("pointsofsale:write");
-        await CreatePointOfSaleAsync("+59891234567");
-        await CreateDistributorAsync("+59899887766");
+        var posId = await CreatePointOfSaleAsync("+59891234567");
+        var distributorId = await CreateDistributorAsync("+59899887766");
+        
+        // Create the assignment first
+        await AssignDistributorToPointOfSaleAsync(posId, distributorId, Category.LACTEOS);
 
         // Act
         var response = await HttpClient.DeleteAsync("/api/pos/+59891234567/distributors/+59899887766/categories/LACTEOS");

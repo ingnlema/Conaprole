@@ -80,6 +80,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Orders
         [Fact]
         public async Task RemoveLastLine_ShouldReturnBadRequest_And_OrderStillHasOneLine()
         {
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
+            
             var sku = $"SKU-{Guid.NewGuid():N}";
             await ProductData.CreateAsync(HttpClient, sku);
 

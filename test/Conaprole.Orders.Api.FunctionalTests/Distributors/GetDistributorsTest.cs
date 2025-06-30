@@ -75,6 +75,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
         [Fact]
         public async Task GetDistributors_WithNoDistributors_ShouldReturnEmptyList()
         {
+            // Arrange
+            await SetAuthorizationHeaderAsync();
+            
             // Act
             var response = await HttpClient.GetAsync("api/distributors");
 
@@ -92,6 +95,9 @@ namespace Conaprole.Orders.Api.FunctionalTests.Distributors
             // Arrange - Create a distributor without any point of sale assignments
             var distributorPhone = "+59890000003";
             var distributorId = await CreateDistributorAsync(distributorPhone);
+
+            // Set authorization header for protected endpoints
+            await SetAuthorizationHeaderAsync();
 
             // Act
             var response = await HttpClient.GetAsync("api/distributors");

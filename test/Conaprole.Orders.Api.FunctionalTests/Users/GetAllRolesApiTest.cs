@@ -17,6 +17,9 @@ public class GetAllRolesApiTest : BaseFunctionalTest
     [Fact]
     public async Task GetRoles_ShouldReturnAllRoles_WhenCalled()
     {
+        // Arrange
+        await SetAuthorizationHeaderAsync();
+        
         // Act
         var response = await HttpClient.GetAsync("/api/roles");
 
