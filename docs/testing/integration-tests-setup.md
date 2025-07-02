@@ -2,17 +2,19 @@
 
 ## Overview
 
-The integration tests use **Testcontainers** to set up PostgreSQL and Keycloak instances for testing. This document provides guidance on troubleshooting and configuring the test environment.
+The integration tests use **TestContainers** to set up PostgreSQL and Keycloak instances for testing. This document provides guidance on troubleshooting and configuring the test environment.
 
 ## Container Configuration
 
 ### PostgreSQL Container
+
 - **Image**: `postgres:15-alpine` (specific version for stability)
 - **Database**: `conaprole.orders`
 - **Credentials**: `postgres/postgres`
 - **Startup time**: ~3-5 seconds
 
 ### Keycloak Container
+
 - **Image**: `quay.io/keycloak/keycloak:21.1.1` (specific version for stability)
 - **Configuration**: Imports realm from `.files/conaprole-realm-export.json`
 - **Startup time**: ~15-30 seconds (variable based on environment)
@@ -48,6 +50,7 @@ foreach (var email in testEmails)
 ```
 
 **Key Points:**
+
 - Create Value Object instances for comparison: `new Domain.Users.Email(email)`
 - Use direct equality: `u.Email == emailValueObject` instead of `u.Email.Value == email`
 - This leverages EF Core's HasConversion configuration for proper SQL translation
@@ -64,6 +67,7 @@ foreach (var email in testEmails)
 - **Container conflicts**: Clean up existing containers
 
 **Recovery strategies**:
+
 - Automatic retry logic (implemented for Keycloak)
 - Gradual timeout increases
 - Container cleanup on failure
@@ -73,6 +77,7 @@ foreach (var email in testEmails)
 **Problem**: Tests fail due to container startup timeouts.
 
 **Configuration**:
+
 - Container startup timeout: 5 minutes
 - PostgreSQL readiness check: 2 seconds delay
 - Keycloak readiness check: 5 seconds delay + retry logic
@@ -80,11 +85,13 @@ foreach (var email in testEmails)
 ### 4. CI/CD Environment Issues
 
 **Common CI issues**:
+
 - Limited Docker resources
 - Network restrictions (blocked registries)
 - Longer startup times
 
 **Recommendations**:
+
 - Use specific container versions (not `latest`)
 - Implement retry logic for critical containers
 - Add appropriate timeouts for CI environments
@@ -105,16 +112,19 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ## Testing in Different Environments
 
 ### Local Development
+
 - Usually works out of the box
 - Docker Desktop should be running
 - Sufficient system resources required
 
 ### CI/CD
+
 - May require additional Docker configuration
 - Consider using pre-built container images
 - Monitor for network/registry access issues
 
 ### Docker-in-Docker
+
 - May require privileged containers
 - Socket mounting considerations
 - Additional security constraints

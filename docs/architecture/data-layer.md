@@ -7,6 +7,7 @@ La capa de datos de la API Core de Conaprole Orders implementa el **Repository P
 ## Tecnologías y Patrones
 
 ### 🛠️ Stack Tecnológico
+
 - **Entity Framework Core 8.0**: ORM principal
 - **PostgreSQL**: Base de datos relacional
 - **Npgsql**: Provider para PostgreSQL
@@ -14,6 +15,7 @@ La capa de datos de la API Core de Conaprole Orders implementa el **Repository P
 - **Snake Case Naming**: Convención de nomenclatura de BD
 
 ### 📐 Patrones Implementados
+
 - **Repository Pattern**: Abstracción de acceso a datos
 - **Unit of Work**: Manejo de transacciones
 - **Specification Pattern**: Consultas complejas reutilizables
@@ -22,6 +24,7 @@ La capa de datos de la API Core de Conaprole Orders implementa el **Repository P
 ## DbContext y Configuración
 
 ### 🏛️ ApplicationDbContext
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/ApplicationDbContext.cs
 public sealed class ApplicationDbContext : DbContext, IUnitOfWork
@@ -105,6 +108,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 ```
 
 ### ⚙️ Configuración de Servicios
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/DependencyInjection.cs
 private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
@@ -144,6 +148,7 @@ private static void AddPersistence(IServiceCollection services, IConfiguration c
 ### 🏗️ Configuraciones de Entidades
 
 #### Order Configuration
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Configuration/OrderConfiguration.cs
 internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
@@ -218,6 +223,7 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 ```
 
 #### OrderLine Configuration
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Configuration/OrderLineConfiguration.cs
 internal sealed class OrderLineConfiguration : IEntityTypeConfiguration<OrderLine>
@@ -272,6 +278,7 @@ internal sealed class OrderLineConfiguration : IEntityTypeConfiguration<OrderLin
 ```
 
 #### User Configuration
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Configuration/UserConfiguration.cs
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
@@ -327,6 +334,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 ```
 
 #### Product Configuration
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Configuration/ProductConfiguration.cs
 internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
@@ -379,6 +387,7 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 ## Repository Pattern Implementation
 
 ### 🏛️ Base Repository
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Repositories/Repository.cs
 internal abstract class Repository<T>
@@ -432,6 +441,7 @@ internal abstract class Repository<T>
 ### 📦 Implementaciones Específicas
 
 #### Order Repository
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Repositories/OrderRepository.cs
 internal sealed class OrderRepository : Repository<Order>, IOrderRepository
@@ -492,6 +502,7 @@ internal sealed class OrderRepository : Repository<Order>, IOrderRepository
 ```
 
 #### User Repository
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Repositories/UserRepository.cs
 internal sealed class UserRepository : Repository<User>, IUserRepository
@@ -541,6 +552,7 @@ internal sealed class UserRepository : Repository<User>, IUserRepository
 ```
 
 #### Product Repository
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Repositories/ProductRepository.cs
 internal sealed class ProductRepository : Repository<Product>, IProductRepository
@@ -580,6 +592,7 @@ internal sealed class ProductRepository : Repository<Product>, IProductRepositor
 ## Unit of Work Pattern
 
 ### 🔄 IUnitOfWork Implementation
+
 ```csharp
 // src/Conaprole.Orders.Domain/Abstractions/IUnitOfWork.cs
 public interface IUnitOfWork
@@ -595,6 +608,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 ```
 
 ### 🎯 Uso en Command Handlers
+
 ```csharp
 // Ejemplo de uso en CreateOrderCommandHandler
 public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -615,6 +629,7 @@ public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationT
 ## Query Optimization con Dapper
 
 ### ⚡ SQL Connection Factory
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Data/SqlConnectionFactory.cs
 internal sealed class SqlConnectionFactory : ISqlConnectionFactory
@@ -636,6 +651,7 @@ internal sealed class SqlConnectionFactory : ISqlConnectionFactory
 ```
 
 ### 📊 Queries Optimizadas
+
 ```csharp
 // Ejemplo en GetOrdersQueryHandler
 public async Task<Result<PagedResult<OrderSummaryResponse>>> Handle(
@@ -677,6 +693,7 @@ public async Task<Result<PagedResult<OrderSummaryResponse>>> Handle(
 ## Migrations y Schema
 
 ### 🔧 Migration Strategy
+
 ```csharp
 // Configuración en Program.cs
 var applyMigrations = builder.Configuration.GetValue<bool>("APPLY_MIGRATIONS");
@@ -696,6 +713,7 @@ public static void ApplyMigrations(this IApplicationBuilder app)
 ```
 
 ### 📋 Schema Example (PostgreSQL)
+
 ```sql
 -- Tabla orders generada por EF Core
 CREATE TABLE orders (
@@ -724,6 +742,7 @@ CREATE INDEX ix_orders_status ON orders (status);
 ## Type Handlers y Conversions
 
 ### 🔄 Custom Type Handlers
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Data/DateOnlyTypeHandler.cs
 internal sealed class DateOnlyTypeHandler : SqlMapper.TypeHandler<DateOnly>
@@ -741,6 +760,7 @@ internal sealed class DateOnlyTypeHandler : SqlMapper.TypeHandler<DateOnly>
 ```
 
 ### ⚙️ Value Conversions
+
 ```csharp
 // Ejemplo de conversión de Currency en configuración
 builder.Property(order => order.Price)
@@ -763,6 +783,7 @@ builder.Property(order => order.Price)
 5. **Query Splitting**: Para evitar consultas cartesianas
 
 ### 📈 Métricas de Rendimiento
+
 ```csharp
 // Ejemplo de query splitting para evitar cartesian products
 return await DbContext.Set<Order>()

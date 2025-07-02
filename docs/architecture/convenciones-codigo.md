@@ -37,8 +37,10 @@ Cada capa se organiza por **agregados de dominio**:
 ### 1. Clases y Entidades
 
 #### 1.1 Entidades de Dominio
+
 - **Patrón:** PascalCase, nombres singulares
 - **Ejemplos:**
+
   ```csharp
   public class Order : Entity, IAggregateRoot
   public class OrderLine : Entity
@@ -47,8 +49,10 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 1.2 Value Objects
+
 - **Patrón:** PascalCase, representan conceptos de dominio
 - **Ejemplos:**
+
   ```csharp
   public record Money(decimal Amount, Currency Currency)
   public record Address(string City, string Street, string ZipCode)
@@ -56,8 +60,10 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 1.3 Clases Abstractas Base
+
 - **Patrón:** PascalCase, nombre descriptivo
 - **Ejemplos:**
+
   ```csharp
   public abstract class Entity
   public abstract class Result
@@ -66,8 +72,10 @@ Cada capa se organiza por **agregados de dominio**:
 ### 2. Interfaces
 
 #### 2.1 Prefijo "I"
+
 - **Patrón:** Prefijo `I` + PascalCase
 - **Ejemplos:**
+
   ```csharp
   public interface IOrderRepository
   public interface IAuthenticationService
@@ -76,8 +84,10 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 2.2 Interfaces de Agregados
+
 - **Patrón:** `I` + Nombre del agregado + `Repository`
 - **Ejemplos:**
+
   ```csharp
   public interface IOrderRepository
   public interface IProductRepository
@@ -88,8 +98,10 @@ Cada capa se organiza por **agregados de dominio**:
 ### 3. Comandos y Queries (CQRS)
 
 #### 3.1 Comandos
+
 - **Patrón:** Verbo + Entidad + sufijo `Command`
 - **Ejemplos:**
+
   ```csharp
   public record CreateOrderCommand : ICommand<Guid>
   public record UpdateOrderStatusCommand : ICommand
@@ -98,8 +110,10 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 3.2 Queries
+
 - **Patrón:** `Get` + Entidad(es) + sufijo `Query`
 - **Ejemplos:**
+
   ```csharp
   public record GetOrderQuery(Guid OrderId) : IQuery<OrderResponse>
   public record GetOrdersQuery : IQuery<List<OrderResponse>>
@@ -107,16 +121,20 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 3.3 Handlers
+
 - **Patrón:** Nombre del Command/Query + sufijo `Handler`
 - **Ejemplos:**
+
   ```csharp
   internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Guid>
   internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderResponse>
   ```
 
 #### 3.4 Validadores
+
 - **Patrón:** Nombre del Command + sufijo `Validator`
 - **Ejemplos:**
+
   ```csharp
   public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
   public class UpdateOrderStatusCommandValidator : AbstractValidator<UpdateOrderStatusCommand>
@@ -125,9 +143,11 @@ Cada capa se organiza por **agregados de dominio**:
 ### 4. DTOs (Data Transfer Objects)
 
 #### 4.1 Request DTOs (API)
+
 - **Patrón:** Entidad + sufijo `Request`
 - **Ubicación:** `src/Conaprole.Orders.Api/Controllers/{Agregado}/Dtos/`
 - **Ejemplos:**
+
   ```csharp
   public record CreateOrderRequest(...)
   public record OrderLineRequest(...)
@@ -135,9 +155,11 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 4.2 Response DTOs (Application)
+
 - **Patrón:** Entidad + sufijo `Response`
 - **Ubicación:** `src/Conaprole.Orders.Application/{Agregado}/{CasoDeUso}/`
 - **Ejemplos:**
+
   ```csharp
   public record OrderResponse(...)
   public record OrderLineResponse(...)
@@ -149,8 +171,10 @@ Cada capa se organiza por **agregados de dominio**:
 ### 5. Controladores
 
 #### 5.1 Nombres de Controladores
+
 - **Patrón:** Nombre plural del agregado + sufijo `Controller`
 - **Ejemplos:**
+
   ```csharp
   [Route("api/Orders")]
   public class OrdersController : ControllerBase
@@ -163,8 +187,10 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 5.2 Métodos de Controladores
+
 - **Patrón:** Verbos HTTP estándar + nombres descriptivos
 - **Ejemplos:**
+
   ```csharp
   [HttpPost]
   public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
@@ -179,18 +205,22 @@ Cada capa se organiza por **agregados de dominio**:
 ### 6. Repositorios e Infraestructura
 
 #### 6.1 Implementaciones de Repositorios
+
 - **Patrón:** Nombre del agregado + sufijo `Repository`
 - **Ubicación:** `src/Conaprole.Orders.Infrastructure/Repositories/`
 - **Ejemplos:**
+
   ```csharp
   internal sealed class OrderRepository : Repository<Order>, IOrderRepository
   internal sealed class ProductRepository : Repository<Product>, IProductRepository
   ```
 
 #### 6.2 Configuraciones de Entity Framework
+
 - **Patrón:** Nombre de la entidad + sufijo `Configuration`
 - **Ubicación:** `src/Conaprole.Orders.Infrastructure/Configuration/`
 - **Ejemplos:**
+
   ```csharp
   internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
   internal sealed class OrderLineConfiguration : IEntityTypeConfiguration<OrderLine>
@@ -199,8 +229,10 @@ Cada capa se organiza por **agregados de dominio**:
 ### 7. Excepciones y Errores
 
 #### 7.1 Excepciones de Dominio
+
 - **Patrón:** Nombre descriptivo + sufijo `Exception`
 - **Ejemplos:**
+
   ```csharp
   public sealed class ConflictException : Exception
   public sealed class NotFoundException : Exception
@@ -208,8 +240,10 @@ Cada capa se organiza por **agregados de dominio**:
   ```
 
 #### 7.2 Errores de Dominio
+
 - **Patrón:** Nombre del agregado + sufijo `Errors`
 - **Ejemplos:**
+
   ```csharp
   public static class OrderErrors
   public static class UserErrors
@@ -332,6 +366,7 @@ Conaprole.Orders.Api/
 ### 1. Patrones de Archivos por Caso de Uso
 
 **Para Comandos (operaciones de escritura):**
+
 ```
 CreateOrder/
 ├── CreateOrderCommand.cs          # El comando
@@ -341,6 +376,7 @@ CreateOrder/
 ```
 
 **Para Queries (operaciones de lectura):**
+
 ```
 GetOrder/
 ├── GetOrderQuery.cs              # La query
@@ -386,6 +422,7 @@ namespace Conaprole.Orders.Api.Controllers.Orders;
 ### Ejemplo 1: Flujo Completo de Creación de Orden
 
 **1. Request DTO (API Layer):**
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Orders/Dtos/CreateOrderRequest.cs
 namespace Conaprole.Orders.Api.Controllers.Orders;
@@ -401,6 +438,7 @@ public record CreateOrderRequest(
 ```
 
 **2. Command (Application Layer):**
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/CreateOrder/CreateOrderCommand.cs
 namespace Conaprole.Orders.Application.Orders.CreateOrder;
@@ -416,6 +454,7 @@ public record CreateOrderCommand(
 ```
 
 **3. Handler (Application Layer):**
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/CreateOrder/CreateOrderCommandHandler.cs
 namespace Conaprole.Orders.Application.Orders.CreateOrder;
@@ -430,6 +469,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 ```
 
 **4. Entity (Domain Layer):**
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/Order.cs
 namespace Conaprole.Orders.Domain.Orders;
@@ -443,18 +483,21 @@ public class Order : Entity, IAggregateRoot
 ### Ejemplo 2: Consulta de Orden
 
 **1. Query:**
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/GetOrder/GetOrderQuery.cs
 public sealed record GetOrderQuery(Guid OrderId) : IQuery<OrderResponse>;
 ```
 
 **2. Handler:**
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/GetOrder/GetOrderQueryHandler.cs
 internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderResponse>
 ```
 
 **3. Response DTO:**
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/GetOrder/OrderResponse.cs
 public sealed record OrderResponse(
@@ -473,31 +516,37 @@ public sealed record OrderResponse(
 ## ✅ Buenas Prácticas y Recomendaciones
 
 ### 1. Consistencia en Nombres
+
 - **Usar siempre el mismo patrón** para elementos similares
 - **Evitar abreviaciones** no estándar
 - **Mantener nombres descriptivos** pero concisos
 
 ### 2. Organización de Archivos
+
 - **Un archivo por clase/record** público
 - **Agrupar archivos relacionados** en carpetas específicas
 - **Mantener la separación por capas** estrictamente
 
 ### 3. Interfaces y Abstracciones
+
 - **Definir interfaces en la capa más interna** que las necesite
 - **Usar segregación de interfaces** (ISP)
 - **Prefijo "I" consistente** para todas las interfaces
 
 ### 4. Commands y Queries
+
 - **Separar claramente** operaciones de lectura y escritura
 - **Una responsabilidad por comando/query**
 - **Validadores específicos** para cada comando
 
 ### 5. DTOs y Mapping
+
 - **DTOs inmutables** usando records
 - **Mapping explícito** entre capas
 - **Validación en los DTOs** de entrada
 
 ### 6. Manejo de Errores
+
 - **Patrón Result** para operaciones que pueden fallar
 - **Errores específicos** por dominio
 - **Excepciones solo para casos excepcionales**
@@ -507,12 +556,14 @@ public sealed record OrderResponse(
 ## 🔍 Referencias Útiles
 
 ### Archivos Clave para Referencia
+
 - **Estructura general:** `docs/architecture/clean-architecture.md`
 - **Implementación CQRS:** `docs/architecture/cqrs-mediator.md`
 - **Principios SOLID:** `docs/architecture/solid-y-dip.md`
 - **Diseño de API:** `docs/architecture/api-design.md`
 
 ### Ejemplos de Implementación
+
 - **Entidad completa:** `src/Conaprole.Orders.Domain/Orders/Order.cs`
 - **Caso de uso completo:** `src/Conaprole.Orders.Application/Orders/CreateOrder/`
 - **Controlador completo:** `src/Conaprole.Orders.Api/Controllers/Orders/OrdersController.cs`

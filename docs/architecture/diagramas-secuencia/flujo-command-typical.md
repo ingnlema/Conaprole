@@ -104,32 +104,38 @@ sequenceDiagram
 ## 🔍 Puntos Clave del Flujo
 
 ### 1. **Recepción y Mapeo**
+
 - El controller recibe el HTTP Request
 - Se mapea el DTO a un Command específico
 - Se invoca MediatR para procesar el comando
 
 ### 2. **Pipeline de Behaviors**
+
 - **Logging Behavior**: Registra inicio y fin de la operación
 - **Validation Behavior**: Ejecuta reglas de FluentValidation
 - Solo si la validación pasa, se ejecuta el handler
 
 ### 3. **Ejecución del Command Handler**
+
 - Carga entidades necesarias desde repositorios
 - Aplica lógica de dominio y business rules
 - Crea y configura el agregado correspondiente
 
 ### 4. **Persistencia Transaccional**
+
 - Usa Unit of Work para transacciones
 - Persiste cambios de forma atómica
 - Maneja rollback automático en caso de error
 
 ### 5. **Respuesta Exitosa**
+
 - Retorna 201 Created con el ID del recurso creado
 - Incluye Location header para acceso al recurso
 
 ## 📚 Casos de Uso Representados
 
 Este flujo es representativo de comandos como:
+
 - `CreateOrderCommand`
 - `UpdateOrderStatusCommand`
 - `AddOrderLineCommand`

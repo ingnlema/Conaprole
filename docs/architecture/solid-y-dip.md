@@ -15,11 +15,13 @@ Los principios SOLID representan cinco principios fundamentales del diseño de s
 > **"Una clase debe tener una sola razón para cambiar"**
 
 #### Definición Técnica
+
 El SRP establece que cada clase debe tener una única responsabilidad bien definida y, por tanto, una sola razón para ser modificada. Esto reduce el acoplamiento y aumenta la cohesión del código.
 
 #### Implementación en el Proyecto
 
 **Ejemplo 1: Separación de Entidades de Dominio**
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/Order.cs
 public class Order : Entity, IAggregateRoot
@@ -34,6 +36,7 @@ public class Order : Entity, IAggregateRoot
 ```
 
 **Ejemplo 2: Responsabilidades específicas en Repositorios**
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/IOrderRepository.cs
 public interface IOrderRepository
@@ -46,6 +49,7 @@ public interface IOrderRepository
 ```
 
 **Ejemplo 3: Separación de Comandos y Queries**
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/CreateOrder/CreateOrderCommand.cs
 public record CreateOrderCommand(
@@ -63,11 +67,13 @@ public record CreateOrderCommand(
 > **"Las entidades de software deben estar abiertas para extensión, pero cerradas para modificación"**
 
 #### Definición Técnica
+
 El OCP permite añadir nuevas funcionalidades sin modificar el código existente, utilizando abstracciones, herencia y polimorfismo.
 
 #### Implementación en el Proyecto
 
 **Ejemplo 1: Extensibilidad a través de Interfaces**
+
 ```csharp
 // Interfaz base para repositorios - cerrada para modificación
 public interface IRepository<TEntity> where TEntity : Entity
@@ -86,6 +92,7 @@ public interface IOrderRepository : IRepository<Order>
 ```
 
 **Ejemplo 2: Patrón Strategy con MediatR**
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Messaging/ICommandHandler.cs
 public interface ICommandHandler<TCommand> : IRequestHandler<TCommand, Result>
@@ -105,11 +112,13 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 > **"Los objetos de una superclase deben ser reemplazables por objetos de sus subclases sin alterar el funcionamiento del programa"**
 
 #### Definición Técnica
+
 El LSP garantiza que las implementaciones concretas pueden sustituir a sus abstracciones sin romper la funcionalidad del sistema.
 
 #### Implementación en el Proyecto
 
 **Ejemplo 1: Sustitución de Repositorios**
+
 ```csharp
 // Cualquier implementación de IOrderRepository puede ser sustituida
 public class OrderRepository : Repository<Order>, IOrderRepository
@@ -131,6 +140,7 @@ public class InMemoryOrderRepository : IOrderRepository
 ```
 
 **Ejemplo 2: Value Objects intercambiables**
+
 ```csharp
 // src/Conaprole.Orders.Domain/Shared/Money.cs
 public record Money(decimal Amount, Currency Currency)
@@ -150,11 +160,13 @@ public record Money(decimal Amount, Currency Currency)
 > **"Los clientes no deben verse obligados a depender de interfaces que no utilizan"**
 
 #### Definición Técnica
+
 El ISP promueve la creación de interfaces específicas y cohesivas en lugar de interfaces grandes y monolíticas.
 
 #### Implementación en el Proyecto
 
 **Ejemplo 1: Interfaces específicas por dominio**
+
 ```csharp
 // En lugar de una interfaz monolítica IGenericRepository
 // Se crean interfaces específicas:
@@ -166,6 +178,7 @@ public interface IPointOfSaleRepository { /* métodos específicos de puntos de 
 ```
 
 **Ejemplo 2: Separación de interfaces de autenticación**
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Authentication/
 public interface IAuthenticationService
@@ -189,6 +202,7 @@ public interface IUserContext
 ```
 
 **Ejemplo 3: Segregación en Abstracciones de Mensajería**
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Messaging/
 public interface ICommand : IRequest<Result>, IBaseCommand { }
@@ -233,6 +247,7 @@ graph TD
 ```
 
 **Análisis del Flujo:**
+
 - **API Layer** (alto nivel) → depende de → **Application Layer** (abstracciones)
 - **Application Layer** (alto nivel) → depende de → **Domain Abstractions** (interfaces)
 - **Infrastructure Layer** (bajo nivel) → implementa → **Domain Abstractions**
@@ -352,6 +367,7 @@ public static class DependencyInjection
 #### 4. Separación entre Abstracciones y Detalles Concretos
 
 **Abstracciones en Application Layer:**
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Data/ISqlConnectionFactory.cs
 namespace Conaprole.Orders.Application.Abstractions.Data
@@ -373,6 +389,7 @@ namespace Conaprole.Orders.Application.Abstractions.Clock
 ```
 
 **Implementaciones Concretas en Infrastructure Layer:**
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Clock/DateTimeProvider.cs
 namespace Conaprole.Orders.Infrastructure.Clock
@@ -435,6 +452,7 @@ private static void AddAuthentication(IServiceCollection services, IConfiguratio
 ### 1. Desacoplamiento Arquitectural
 
 **Antes del DIP (acoplamiento directo):**
+
 ```csharp
 // ❌ Violación del DIP - dependencia directa de implementación concreta
 public class CreateOrderService
@@ -451,6 +469,7 @@ public class CreateOrderService
 ```
 
 **Después del DIP (desacoplamiento):**
+
 ```csharp  
 // ✅ Aplicación correcta del DIP - dependencia de abstracciones
 public class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Guid>
@@ -497,6 +516,7 @@ public class CreateOrderCommandHandlerTests
 ### 3. Flexibilidad de Implementaciones
 
 **Cambio de Base de Datos sin impacto:**
+
 ```csharp
 // Configuración para PostgreSQL
 services.AddScoped<IOrderRepository, PostgreSQLOrderRepository>();

@@ -1,0 +1,64 @@
+{
+  "extends": "markdownlint/style/prettier",
+  "line-length": {
+    "line_length": 120,
+    "code_blocks": false,
+    "tables": false,
+    "headings": false
+  },
+  "no-hard-tabs": true,
+  "no-trailing-spaces": true,
+  "no-trailing-punctuation": {
+    "punctuation": ".,;:"
+  },
+  "heading-style": {
+    "style": "atx"
+  },
+  "ul-style": {
+    "style": "dash"
+  },
+  "ol-prefix": {
+    "style": "ordered"
+  },
+  "blanks-around-headings": {
+    "lines_above": 1,
+    "lines_below": 1
+  },
+  "blanks-around-fences": true,
+  "blanks-around-lists": true,
+  "fenced-code-language": true,
+  "single-trailing-newline": true,
+  "no-emphasis-as-heading": true,
+  "first-line-heading": {
+    "level": 1
+  },
+  "heading-increment": true,
+  "no-duplicate-heading": {
+    "siblings_only": true
+  },
+  "proper-names": {
+    "names": [
+      "API",
+      "APIs",
+      "ASP.NET",
+      "C#",
+      "CI/CD",
+      "Conaprole",
+      "Docker",
+      "Entity Framework",
+      "GitHub",
+      "HTTP",
+      "HTTPS",
+      "JSON",
+      "JWT",
+      "Keycloak",
+      "Mermaid",
+      "NuGet",
+      "PostgreSQL",
+      "SQL",
+      "TestContainers",
+      "YAML"
+    ],
+    "code_blocks": false
+  }
+}

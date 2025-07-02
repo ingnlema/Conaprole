@@ -73,11 +73,13 @@ graph TB
 ## Descripción de Casos de Uso
 
 ### Autenticación y Perfil
+
 - **UC1 - Iniciar Sesión**: Autenticarse en el sistema con credenciales
 - **UC2 - Cambiar Contraseña**: Modificar contraseña de acceso
 - **UC3 - Consultar Perfil Propio**: Ver información personal y configuración
 
 ### Gestión de Pedidos
+
 - **UC4 - Consultar Pedidos Asignados**: Listar pedidos que debe atender el distribuidor
 - **UC5 - Actualizar Estado de Pedido**: Cambiar estado del pedido durante el proceso
 - **UC6 - Consultar Detalle de Pedido**: Ver información completa de un pedido específico
@@ -85,15 +87,18 @@ graph TB
 - **UC8 - Marcar Pedido como Entregado**: Finalizar el proceso de entrega
 
 ### Gestión de Puntos de Venta
+
 - **UC9 - Consultar Puntos de Venta Asignados**: Ver PdV bajo su responsabilidad
 - **UC10 - Consultar Detalle de Punto de Venta**: Ver información específica de un PdV
 - **UC11 - Ver Historial de Pedidos por PdV**: Consultar pedidos anteriores de un PdV
 
 ### Gestión de Categorías
+
 - **UC12 - Consultar Categorías Asignadas**: Ver categorías de productos que puede distribuir
 - **UC13 - Solicitar Nuevas Categorías**: Pedir autorización para nuevas categorías
 
 ### Gestión de Productos
+
 - **UC14 - Consultar Productos por Categoría**: Ver productos disponibles en sus categorías
 - **UC15 - Verificar Disponibilidad de Producto**: Comprobar stock y disponibilidad
 
@@ -113,11 +118,13 @@ stateDiagram-v2
 ```
 
 ## Categorías de Productos
+
 - **LACTEOS**: Productos lácteos (leche, quesos, yogurt)
 - **CONGELADOS**: Productos congelados (helados, comidas preparadas)
 - **SUBPRODUCTOS**: Derivados y subproductos lácteos
 
 ## Permisos Requeridos
+
 - `DistributorAccess`: Acceso básico como distribuidor
 - `OrdersRead`: Consulta de pedidos
 - `OrdersWrite`: Modificación de estados de pedidos
@@ -125,6 +132,7 @@ stateDiagram-v2
 - `ProductsRead`: Consulta de productos
 
 ## Reglas de Negocio
+
 1. Un distribuidor solo puede ver pedidos de sus PdV asignados
 2. Un distribuidor solo puede manejar productos de sus categorías autorizadas
 3. Los cambios de estado de pedidos siguen un flujo específico

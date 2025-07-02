@@ -7,19 +7,24 @@ La API Core de Conaprole Orders implementa **Clean Architecture** (Arquitectura 
 ## Principios Fundamentales
 
 ### 1. Dependency Inversion Principle (DIP)
+
 Las dependencias fluyen hacia adentro, desde las capas externas hacia el núcleo del dominio:
+
 ```
 API → Application → Domain
 Infrastructure → Application → Domain
 ```
 
 ### 2. Independence of Frameworks
+
 El dominio no depende de Entity Framework, ASP.NET Core, o cualquier framework específico.
 
 ### 3. Testability
+
 Cada capa puede ser probada independientemente mediante mocking de dependencias.
 
 ### 4. Independence of Database
+
 El dominio no conoce detalles de persistencia (PostgreSQL, Entity Framework).
 
 ## Estructura de Capas
@@ -56,6 +61,7 @@ src/
 ## 🔵 Capa de Dominio (Domain Layer)
 
 ### Responsabilidades
+
 - **Entidades de dominio** y agregados
 - **Value Objects** para conceptos del negocio
 - **Domain Events** para comunicación entre agregados
@@ -65,6 +71,7 @@ src/
 ### Componentes Principales
 
 #### Entidades Principales
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/Order.cs
 public class Order : Entity, IAggregateRoot
@@ -81,6 +88,7 @@ public class Order : Entity, IAggregateRoot
 ```
 
 #### Value Objects
+
 ```csharp
 // src/Conaprole.Orders.Domain/Shared/Money.cs
 public record Money(decimal Amount, Currency Currency)
@@ -96,12 +104,14 @@ public record Money(decimal Amount, Currency Currency)
 ```
 
 #### Domain Events
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/Events/OrderCreatedDomainEvent.cs
 public sealed record OrderCreatedDomainEvent(Guid OrderId) : IDomainEvent;
 ```
 
 ### Abstracciones Clave
+
 ```csharp
 // src/Conaprole.Orders.Domain/Abstractions/Entity.cs
 public abstract class Entity
@@ -118,6 +128,7 @@ public abstract class Entity
 ## 🟢 Capa de Aplicación (Application Layer)
 
 ### Responsabilidades
+
 - **Casos de uso** del sistema (Commands y Queries)
 - **Orquestación** de la lógica de dominio
 - **Validación** de entrada
@@ -127,6 +138,7 @@ public abstract class Entity
 ### Patrones Implementados
 
 #### CQRS con MediatR
+
 ```csharp
 // Command
 public sealed record CreateOrderCommand(
@@ -152,6 +164,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 ```
 
 #### Pipeline Behaviors
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Behaviors/ValidationBehavior.cs
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
@@ -174,6 +187,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 ```
 
 ### Configuración de Servicios
+
 ```csharp
 // src/Conaprole.Orders.Application/DependencyInjection.cs
 public static IServiceCollection AddApplication(this IServiceCollection services)
@@ -193,6 +207,7 @@ public static IServiceCollection AddApplication(this IServiceCollection services
 ## 🟡 Capa de Infraestructura (Infrastructure Layer)
 
 ### Responsabilidades
+
 - **Implementación de repositorios** definidos en el dominio
 - **Configuración de persistencia** (Entity Framework Core)
 - **Servicios externos** (Keycloak, APIs)
@@ -201,6 +216,7 @@ public static IServiceCollection AddApplication(this IServiceCollection services
 ### Componentes Principales
 
 #### Entity Framework Configuration
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/ApplicationDbContext.cs
 public sealed class ApplicationDbContext : DbContext, IUnitOfWork
@@ -222,6 +238,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 ```
 
 #### Repository Implementations
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Repositories/OrderRepository.cs
 internal sealed class OrderRepository : Repository<Order>, IOrderRepository
@@ -241,6 +258,7 @@ internal sealed class OrderRepository : Repository<Order>, IOrderRepository
 ## 🔴 Capa de Presentación (API Layer)
 
 ### Responsabilidades
+
 - **Endpoints HTTP** REST
 - **Serialización/Deserialización** JSON
 - **Autenticación y Autorización** HTTP
@@ -248,6 +266,7 @@ internal sealed class OrderRepository : Repository<Order>, IOrderRepository
 - **Manejo de errores** HTTP
 
 ### Controladores REST
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Orders/OrdersController.cs
 [ApiController]
@@ -270,6 +289,7 @@ public class OrdersController : ControllerBase
 ## Flujo de Dependencias
 
 ### Diagrama de Dependencias
+
 ```mermaid
 graph TD
     A[API Controllers] --> B[Application Handlers]
@@ -285,6 +305,7 @@ graph TD
 ```
 
 ### Inyección de Dependencias
+
 ```csharp
 // src/Conaprole.Orders.Api/Program.cs
 var builder = WebApplication.CreateBuilder(args);

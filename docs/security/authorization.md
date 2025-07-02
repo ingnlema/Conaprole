@@ -5,6 +5,7 @@
 > **🔑 Principio Fundamental**: La **base de datos PostgreSQL** es la única fuente de verdad para autorización. Los tokens JWT se utilizan **únicamente para autenticación** (verificar identidad), **no** para transportar roles o permisos.
 
 ### Arquitectura de Autorización
+
 - **Autenticación**: JWT tokens de Keycloak (solo `sub` y `preferred_username`)
 - **Autorización**: Consulta directa a la base de datos PostgreSQL
 - **Sin dependencias**: No usa `realm_access` ni `resource_access` del token
@@ -17,6 +18,7 @@ La aplicación **Conaprole Orders** implementa un sistema de autorización granu
 ## Modelo de Dominio
 
 ### Permission (Permisos)
+
 ```csharp
 // src/Conaprole.Orders.Domain/Users/Permission.cs
 public sealed class Permission
@@ -50,6 +52,7 @@ public sealed class Permission
 ```
 
 ### Role (Roles)
+
 ```csharp
 // src/Conaprole.Orders.Domain/Users/Role.cs
 public sealed class Role
@@ -69,26 +72,31 @@ public sealed class Role
 #### Descripción de Roles
 
 **Registered (Usuario Registrado)**
+
 - Rol básico asignado a todos los usuarios al registrarse
 - Permisos: Lectura básica de su propia información
 - Uso: Usuarios finales del sistema
 
 **API (Acceso Programático)**
+
 - Rol para sistemas externos que consumen la API
 - Permisos: Acceso específico según integración
 - Uso: Servicios, aplicaciones externas, integraciones
 
 **Distributor (Distribuidor)**
+
 - Rol para usuarios distribuidores
 - Permisos: Gestión de órdenes, productos, puntos de venta
 - Uso: Socios comerciales, distribuidores autorizados
 
 **Administrator (Administrador)**
+
 - Rol con acceso completo al sistema
 - Permisos: Todos los permisos disponibles
 - Uso: Personal administrativo, gestión del sistema
 
 ### User (Usuario)
+
 ```csharp
 // src/Conaprole.Orders.Domain/Users/User.cs
 public sealed class User : Entity
@@ -107,6 +115,7 @@ public sealed class User : Entity
 ```
 
 ### RolePermission (Relación)
+
 ```csharp
 // src/Conaprole.Orders.Domain/Users/RolePermission.cs
 public sealed class RolePermission
@@ -119,6 +128,7 @@ public sealed class RolePermission
 ## Implementación de Autorización
 
 ### 1. HasPermissionAttribute
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/HasPermissionAttribute.cs
 public sealed class HasPermissionAttribute : AuthorizeAttribute
@@ -130,6 +140,7 @@ public sealed class HasPermissionAttribute : AuthorizeAttribute
 ```
 
 **Uso en Controladores:**
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Users/UsersController.cs
 [HttpGet("me")]
@@ -141,6 +152,7 @@ public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationT
 ```
 
 ### 2. Permission Requirement
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/PermissionRequirement.cs
 public sealed class PermissionRequirement : IAuthorizationRequirement
@@ -155,6 +167,7 @@ public sealed class PermissionRequirement : IAuthorizationRequirement
 ```
 
 ### 3. Permission Authorization Handler
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/PermissionAuthorizationHandler.cs
 protected override async Task HandleRequirementAsync(
@@ -184,6 +197,7 @@ protected override async Task HandleRequirementAsync(
 > **🔑 Principio Clave**: La autorización consulta **únicamente la base de datos PostgreSQL** para obtener permisos. Los tokens JWT se utilizan **solo para autenticación** (identidad), no para transportar roles o permisos.
 
 ### 4. Dynamic Policy Provider
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/PermissionAuthorizationPolicyProvider.cs
 public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
@@ -209,6 +223,7 @@ public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyNam
 ## Authorization Service
 
 ### Obtener Roles de Usuario
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/AuthorizationService.cs
 public async Task<UserRolesResponse> GetRolesForUserAsync(string identityId)
@@ -227,6 +242,7 @@ public async Task<UserRolesResponse> GetRolesForUserAsync(string identityId)
 ```
 
 ### Obtener Permisos de Usuario
+
 ```csharp
 public async Task<HashSet<string>> GetPermissionsForUserAsync(string identityId)
 {
@@ -242,6 +258,7 @@ public async Task<HashSet<string>> GetPermissionsForUserAsync(string identityId)
 ## Custom Claims Transformation
 
 ### Enriquecimiento de Claims
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/CustomClaimsTransformation.cs
 public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
@@ -277,6 +294,7 @@ public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
 ## Definición de Permisos y Roles
 
 ### Constantes de Permisos
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Users/Security/Permissions.cs
 internal static class Permissions
@@ -307,6 +325,7 @@ internal static class Permissions
 ```
 
 ### Constantes de Roles
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Users/Security/Roles.cs
 public static class Roles
@@ -340,6 +359,7 @@ private static void AddAuthorization(IServiceCollection services)
 ## Flujo de Autorización
 
 ### Verificación de Permisos
+
 ```mermaid
 sequenceDiagram
     participant Controller
@@ -378,6 +398,7 @@ sequenceDiagram
 ```
 
 ### Transformación de Claims
+
 ```mermaid
 sequenceDiagram
     participant JWT_Token
@@ -406,21 +427,25 @@ sequenceDiagram
 ## Ventajas del Sistema
 
 ### Granularidad
+
 - ✅ **Permisos específicos** por funcionalidad
 - ✅ **Control fino** de acceso a recursos
 - ✅ **Separación clara** entre autenticación y autorización
 
 ### Flexibilidad
+
 - ✅ **Roles dinámicos** almacenados en base de datos
 - ✅ **Permisos configurables** sin cambios de código
 - ✅ **Políticas generadas** automáticamente
 
 ### Escalabilidad
+
 - ✅ **Reutilizable** entre múltiples servicios
 - ✅ **Extensible** para nuevos recursos
 - ✅ **Mantenible** con separación de responsabilidades
 
 ### Auditoría
+
 - ✅ **Trazabilidad** de decisiones de autorización
 - ✅ **Logging** de accesos y permisos
 - ✅ **Configuración** centralizada en base de datos
@@ -430,6 +455,7 @@ sequenceDiagram
 ### Endpoints Actualmente Protegidos
 
 #### Información del Usuario Autenticado
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Users/UsersController.cs
 [HttpGet("me")]
@@ -446,6 +472,7 @@ public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationT
 ### Endpoints Públicos (Sin Autenticación)
 
 #### Registro de Usuario
+
 ```csharp
 [AllowAnonymous]
 [HttpPost("register")]
@@ -459,6 +486,7 @@ public async Task<IActionResult> Register(RegisterUserRequest request, Cancellat
 ```
 
 #### Login de Usuario
+
 ```csharp
 [AllowAnonymous]
 [HttpPost("login")]
@@ -471,6 +499,7 @@ public async Task<IActionResult> LogIn(LogInUserRequest request, CancellationTok
 ```
 
 #### Refresh Token
+
 ```csharp
 [AllowAnonymous]
 [HttpPost("refresh")]
@@ -487,6 +516,7 @@ public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, Cance
 **Nota**: El sistema tiene la infraestructura completa de autorización implementada. Los siguientes endpoints tienen los permisos definidos pero comentados, listos para ser activados:
 
 #### Gestión de Productos
+
 ```csharp
 [HttpGet("{id}")]
 // [HasPermission(Permissions.ProductsRead)]  // ⚠️ Listo para activar
@@ -498,6 +528,7 @@ public async Task<IActionResult> CreateProduct(CreateProductRequest request, Can
 ```
 
 #### Gestión de Roles
+
 ```csharp
 [HttpPost("{userId}/assign-role")]
 // [HasPermission(Permissions.UsersWrite)]  // ⚠️ Listo para activar

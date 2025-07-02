@@ -630,6 +630,7 @@ Los patrones de infraestructura implementados en la API Core de Conaprole propor
 - **Configuración por ambiente** para flexibilidad de despliegue
 
 Esta infraestructura robusta asegura que la aplicación sea:
+
 - **Observable**: Logs estructurados y health checks
 - **Resiliente**: Manejo de errores y reintentos
 - **Segura**: Headers de seguridad y validaciones

@@ -120,6 +120,7 @@ private static ExceptionDetails GetExceptionDetails(Exception exception)
 **Mecanismo**: `ValidationBehavior` + `ValidationException`
 
 **Implementación**:
+
 ```csharp
 // src/Conaprole.Orders.Application/Exceptions/ValidationException.cs
 public sealed class ValidationException : Exception
@@ -143,10 +144,12 @@ public record ValidationError(string PropertyName, string ErrorMessage);
 **Contexto**: Control de acceso y permisos de usuario
 
 **Tipos Manejados**:
+
 - `UnauthorizedAccessException` → `401 Unauthorized`
 - `ForbiddenAccessException` → `403 Forbidden`
 
 **Patrón de Uso**:
+
 ```csharp
 // En controllers con autorización
 [HasPermission(Permissions.OrdersRead)]
@@ -161,6 +164,7 @@ public async Task<IActionResult> GetOrder(Guid id)
 #### 3.1 Result Pattern para Errores de Dominio
 
 **Implementación Base**:
+
 ```csharp
 // src/Conaprole.Orders.Domain/Abstractions/Result.cs
 public class Result<TValue> : Result
@@ -238,11 +242,13 @@ public sealed class ConcurrencyException : Exception
 ### 1. Patrón Result<T>
 
 **Ventajas**:
+
 - ✅ **Type Safety**: Errores tipados sin excepciones
 - ✅ **Performance**: Eliminación de overhead de excepciones
 - ✅ **Explícito**: Manejo de errores visible en las firmas de métodos
 
 **Uso en Handlers**:
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/GetOrder/GetOrderQueryHandler.cs
 public async Task<Result<OrderResponse>> Handle(GetOrderQuery request, CancellationToken cancellationToken)
@@ -259,6 +265,7 @@ public async Task<Result<OrderResponse>> Handle(GetOrderQuery request, Cancellat
 ```
 
 **Uso en Controllers**:
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Orders/OrdersController.cs
 public async Task<IActionResult> GetOrder(Guid id, CancellationToken cancellationToken)
@@ -275,6 +282,7 @@ public async Task<IActionResult> GetOrder(Guid id, CancellationToken cancellatio
 **Implementación**: `ExceptionHandlingMiddleware` intercepta todas las excepciones no manejadas
 
 **Beneficios**:
+
 - 🔄 **Consistencia**: Respuestas uniformes
 - 📊 **Observabilidad**: Logging centralizado
 - 🛡️ **Seguridad**: Previene exposición de información sensible
@@ -284,6 +292,7 @@ public async Task<IActionResult> GetOrder(Guid id, CancellationToken cancellatio
 **Característica**: Intercepta comandos antes de la ejecución para validación temprana
 
 **Flujo**:
+
 1. **Request** → ValidationBehavior
 2. **FluentValidation** → Reglas de negocio
 3. **ValidationException** → Si hay errores
@@ -339,6 +348,7 @@ _logger.LogError(exception, "Exception occurred: {ExceptionType} - {ExceptionMes
 ```
 
 **Información Capturada**:
+
 - 🔍 **Tipo de excepción**
 - 📄 **Mensaje de error**
 - ⏱️ **Timestamp**

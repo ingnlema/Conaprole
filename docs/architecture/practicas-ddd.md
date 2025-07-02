@@ -9,6 +9,7 @@ Domain-Driven Design (DDD) es un enfoque de desarrollo de software que se centra
 ### ¿Por qué se aplicó DDD en este proyecto?
 
 El sistema de gestión de pedidos lácteos de Conaprole presenta una complejidad de dominio significativa:
+
 - **Reglas de negocio complejas**: Validaciones de productos, cálculos de precios, estados de pedidos
 - **Múltiples agregados**: Pedidos, usuarios, productos, distribuidores, puntos de venta
 - **Lógica de dominio rica**: Operaciones monetarias, validaciones de cantidades, gestión de direcciones
@@ -80,6 +81,7 @@ public class Order : Entity, IAggregateRoot
 ```
 
 **Características de las Entidades:**
+
 - ✅ **Identidad única**: Cada entidad tiene un `Guid Id` único
 - ✅ **Comportamiento encapsulado**: Métodos que modifican el estado internamente
 - ✅ **Invariantes protegidas**: Validaciones que mantienen la consistencia
@@ -126,6 +128,7 @@ public record Money(decimal Amount, Currency Currency)
 ```
 
 **Controles de Validación y Comportamiento:**
+
 - ✅ **Validación de monedas**: No se pueden sumar monedas de diferentes divisas
 - ✅ **Validación de operaciones**: No se pueden realizar restas que resulten en valores negativos
 - ✅ **Operadores sobrecargados**: Sintaxis natural para operaciones matemáticas
@@ -253,6 +256,7 @@ public class Order : Entity, IAggregateRoot
 ```
 
 **Reglas de Consistencia Implementadas:**
+
 - ✅ **Integridad referencial**: Las `OrderLine` solo existen dentro de un `Order`
 - ✅ **Invariantes de negocio**: No productos duplicados, mínimo una línea por pedido
 - ✅ **Consistencia de precios**: El precio total siempre refleja la suma de las líneas
@@ -263,6 +267,7 @@ public class Order : Entity, IAggregateRoot
 El proyecto implementa una separación estricta entre las capas siguiendo Clean Architecture:
 
 #### Capa de Dominio (Lógica de Negocio Pura)
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/Order.cs
 // Solo lógica de negocio, sin dependencias externas
@@ -286,6 +291,7 @@ public class Order : Entity, IAggregateRoot
 ```
 
 #### Capa de Aplicación (Coordinación de Casos de Uso)
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/Commands/CreateOrderCommandHandler.cs
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Result<Guid>>
@@ -303,6 +309,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
 ```
 
 #### Capa de Infraestructura (Persistencia y Servicios Externos)
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Repositories/OrderRepository.cs
 public class OrderRepository : IOrderRepository
@@ -313,6 +320,7 @@ public class OrderRepository : IOrderRepository
 ```
 
 **Beneficios de la Separación:**
+
 - ✅ **Testabilidad**: Cada capa puede probarse independientemente
 - ✅ **Mantenibilidad**: Cambios en una capa no afectan a las otras
 - ✅ **Flexibilidad**: Se puede cambiar la base de datos sin afectar el dominio
@@ -325,6 +333,7 @@ public class OrderRepository : IOrderRepository
 ### 1. Mayor Cohesión del Modelo
 
 **Antes (Modelo Anémico):**
+
 ```csharp
 // Entidad sin comportamiento
 public class Order
@@ -350,6 +359,7 @@ public class OrderService
 ```
 
 **Después (Modelo Rico con DDD):**
+
 ```csharp
 // Entidad con comportamiento encapsulado
 public class Order : Entity, IAggregateRoot
@@ -370,6 +380,7 @@ public class Order : Entity, IAggregateRoot
 ### 2. Evita Duplicación de Lógica
 
 **Validaciones Centralizadas en Value Objects:**
+
 ```csharp
 // Validación una sola vez en el constructor
 public record Quantity
@@ -390,6 +401,7 @@ var quantity2 = new Quantity(-1); // ❌ Exception automática
 ### 3. Mejora la Testabilidad y Expresividad
 
 **Testabilidad Mejorada:**
+
 ```csharp
 // test/Conaprole.Orders.Domain.UnitTests/Shared/MoneyTests.cs
 [Fact]
@@ -409,6 +421,7 @@ public void Addition_Should_Work_WithSameCurrency()
 ```
 
 **Expresividad Mejorada:**
+
 ```csharp
 // Código expresivo que refleja el lenguaje del dominio
 var order = Order.Create(pointOfSale, distributor, deliveryAddress);
@@ -424,11 +437,13 @@ order.Status = "Confirmed";
 ### 4. Facilita la Evolución del Sistema
 
 **Cambios Localizados:**
+
 - ✅ **Nuevas reglas de negocio**: Se agregan en el agregado correspondiente
 - ✅ **Nuevas validaciones**: Se centralizan en value objects
 - ✅ **Nuevos comportamientos**: Se encapsulan en las entidades
 
 **Ejemplo de Evolución:**
+
 ```csharp
 // Fácil agregar nueva regla de negocio
 public class Order : Entity, IAggregateRoot
@@ -456,27 +471,32 @@ public class Order : Entity, IAggregateRoot
 ### Clases Clave del Dominio
 
 #### Value Objects
+
 - [`Money`](/src/Conaprole.Orders.Domain/Shared/Money.cs) - Operaciones monetarias con validación de divisas
 - [`Quantity`](/src/Conaprole.Orders.Domain/Shared/Quantity.cs) - Cantidades con validación de valores positivos
 - [`Address`](/src/Conaprole.Orders.Domain/Shared/Address.cs) - Direcciones con lógica de parsing
 
 #### Entidades y Agregados
+
 - [`Order`](/src/Conaprole.Orders.Domain/Orders/Order.cs) - Agregado raíz para gestión de pedidos
 - [`OrderLine`](/src/Conaprole.Orders.Domain/Orders/OrderLine.cs) - Entidad hija dentro del agregado Order
 - [`User`](/src/Conaprole.Orders.Domain/Users/User.cs) - Agregado para gestión de usuarios
 - [`Product`](/src/Conaprole.Orders.Domain/Products/Product.cs) - Agregado para gestión de productos
 
 #### Abstracciones Base
+
 - [`Entity`](/src/Conaprole.Orders.Domain/Abstractions/Entity.cs) - Clase base para todas las entidades
 - [`IAggregateRoot`](/src/Conaprole.Orders.Domain/Abstractions/IAggregateRoot.cs) - Marcador para raíces de agregado
 - [`IDomainEvent`](/src/Conaprole.Orders.Domain/Abstractions/IDomainEvent.cs) - Contrato para eventos de dominio
 
 #### Validaciones y Excepciones
+
 - [`DomainException`](/src/Conaprole.Orders.Domain/Exceptions/DomainException.cs) - Excepciones específicas del dominio
 
 ### Fragmentos de Código Destacados
 
 #### DDD en Acción - Operaciones Monetarias
+
 ```csharp
 // Ejemplo de uso natural de value objects
 Money unitPrice = new Money(1500m, Currency.Uyu);
@@ -490,6 +510,7 @@ Money invalid = price1 + price2; // ❌ InvalidOperationException
 ```
 
 #### DDD en Acción - Gestión de Agregados
+
 ```csharp
 // Creación y manipulación de agregados
 var order = new Order(/*...*/);
@@ -502,7 +523,9 @@ order.RemoveOrderLine(orderLine.Id);     // ❌ DomainException: "Cannot remove 
 ```
 
 ### Tests Unitarios de Dominio
+
 Los tests unitarios demuestran el comportamiento esperado del dominio:
+
 - [`MoneyTests`](/test/Conaprole.Orders.Domain.UnitTests/Shared/MoneyTests.cs) - Validación de operaciones monetarias
 - Tests de agregados y entidades en [`/test/Conaprole.Orders.Domain.UnitTests/`](/test/Conaprole.Orders.Domain.UnitTests/)
 

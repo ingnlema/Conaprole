@@ -119,6 +119,7 @@ public class ReportsController : ControllerBase
 ```
 
 **Ejemplo con controlador existente:**
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Products/ProductsController.cs
 [ApiController]
@@ -511,6 +512,7 @@ public class UsersControllerAuthorizationTests : BaseFunctionalTest
 ### Naming Conventions
 
 #### Permisos
+
 ```csharp
 // Formato: "{resource}:{action}"
 public const string UsersRead = "users:read";
@@ -521,6 +523,7 @@ public const string ReportsView = "reports:view";
 ```
 
 #### Roles
+
 ```csharp
 // Usar nombres descriptivos del negocio
 public const string Registered = "Registered";        // Usuario básico
@@ -587,6 +590,7 @@ public async Task InvokeAsync(HttpContext context)
 ## Checklist de Implementación
 
 ### ✅ Agregar Nuevo Permiso
+
 - [ ] Definir constante en `Permissions.cs`
 - [ ] Crear entidad en `Permission.cs`
 - [ ] Generar y aplicar migración
@@ -596,6 +600,7 @@ public async Task InvokeAsync(HttpContext context)
 - [ ] Actualizar documentación
 
 ### ✅ Agregar Nuevo Rol
+
 - [ ] Definir constante en `Roles.cs`
 - [ ] Crear entidad en `Role.cs`
 - [ ] Configurar relaciones rol-permisos
@@ -606,6 +611,7 @@ public async Task InvokeAsync(HttpContext context)
 - [ ] Actualizar documentación
 
 ### ✅ Verificar Configuración
+
 - [ ] URLs de Keycloak correctas por ambiente
 - [ ] Secretos de clientes configurados
 - [ ] HTTPS habilitado en producción

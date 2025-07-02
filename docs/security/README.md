@@ -12,15 +12,18 @@
 ## Documentos por Audiencia
 
 ### 👨‍💼 **Para Managers y Arquitectos**
+
 - [Arquitectura de Seguridad](./architecture.md) - Componentes y principios
 - [Diagramas](./diagrams.md) - Visualización de la arquitectura
 
 ### 👨‍💻 **Para Desarrolladores**  
+
 - [Autenticación](./authentication.md) - Implementación JWT/Keycloak
 - [Autorización](./authorization.md) - Sistema de permisos
 - [Guía de Implementación](./implementation-guide.md) - Tutoriales paso a paso
 
 ### 🔧 **Para DevOps/SysAdmins**
+
 - [Integración Keycloak](./keycloak-integration.md) - Configuración y despliegue
 - [Diagramas](./diagrams.md) - Arquitectura de despliegue
 
@@ -29,6 +32,7 @@
 El sistema **Conaprole Orders** implementa un esquema de seguridad robusto basado en:
 
 ### 🔐 Autenticación
+
 - **JWT Bearer Tokens** gestionados por Keycloak
 - **Refresh Token** support para renovación automática de tokens
 - **Transformación de Claims** para enriquecimiento de roles
@@ -36,6 +40,7 @@ El sistema **Conaprole Orders** implementa un esquema de seguridad robusto basad
 - **Validación robusta** de tokens con verificación de firma, expiración e issuer
 
 ### 🛂 Autorización  
+
 - **Sistema basado en permisos** granulares con 11 permisos específicos
 - **4 roles diferenciados**: Registered, API, Administrator, Distributor
 - **Base de datos como única fuente de verdad** - sin dependencia en tokens JWT para permisos
@@ -43,6 +48,7 @@ El sistema **Conaprole Orders** implementa un esquema de seguridad robusto basad
 - **Middleware de autorización** personalizado con HasPermission attribute
 
 ### 🔗 Keycloak
+
 - **Gestión centralizada** de usuarios e identidades
 - **Separación de responsabilidades**: Keycloak para autenticación, PostgreSQL para autorización
 - **Solo para identidad**: No transporta roles/permisos en tokens JWT
@@ -93,32 +99,40 @@ src/
 ## Permisos y Roles Implementados
 
 ### 🔑 Permisos del Sistema
+
 El sistema cuenta con **11 permisos granulares** organizados por recursos:
 
 **Usuarios:**
+
 - `users:read` - Lectura de información de usuarios
 - `users:write` - Creación y modificación de usuarios
 
 **Distribuidores:**
+
 - `distributors:read` - Consulta de distribuidores
 - `distributors:write` - Gestión de distribuidores
 
 **Puntos de Venta:**
+
 - `pointsofsale:read` - Consulta de puntos de venta
 - `pointsofsale:write` - Gestión de puntos de venta
 
 **Productos:**
+
 - `products:read` - Consulta de productos
 - `products:write` - Gestión de productos
 
 **Órdenes:**
+
 - `orders:read` - Consulta de órdenes
 - `orders:write` - Creación y modificación de órdenes
 
 **Administración:**
+
 - `admin:access` - Acceso completo administrativo
 
 ### 👥 Roles del Sistema
+
 - **Registered** - Usuario registrado básico
 - **API** - Acceso programático de sistemas externos
 - **Distributor** - Distribuidor con acceso a órdenes y productos

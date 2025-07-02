@@ -13,42 +13,49 @@ Este documento describe el **nivel de automatización de las pruebas del sistema
 La estrategia de automatización sigue el patrón de **pirámide de pruebas** con cuatro niveles bien definidos:
 
 #### **🔹 Pruebas Unitarias de Dominio (73 tests)**
+
 - **Cobertura**: Lógica de negocio, invariantes y reglas de dominio
 - **Ejecución**: < 30 segundos
 - **Automatización**: 100% automatizada
 - **Frecuencia**: En cada build y commit
 
 **Tipos de validaciones**:
+
 - Invariantes de entidades de dominio
 - Lógica de negocio crítica
 - Comportamientos de Value Objects
 - Validaciones de reglas de negocio
 
 #### **🔹 Pruebas Unitarias de Aplicación (37 tests)**
+
 - **Cobertura**: Command Handlers, Query Handlers, Pipeline Behaviors
 - **Ejecución**: < 30 segundos
 - **Automatización**: 100% automatizada
 - **Tecnología**: NSubstitute para mocking
 
 **Áreas cubiertas**:
+
 - Orquestación de casos de uso (CQRS)
 - Validaciones transversales
 - Mappers y transformaciones
 - Comportamientos de pipeline
 
 #### **🔹 Pruebas de Integración (TestContainers)**
+
 - **Cobertura**: Interacción entre componentes reales
 - **Ejecución**: 2-3 minutos
 - **Automatización**: 100% automatizada
 - **Infraestructura**: PostgreSQL + Keycloak en contenedores
 
 **Servicios integrados**:
+
 - Base de datos PostgreSQL (postgres:15-alpine)
-- Servicio de autenticación Keycloak (quay.io/keycloak/keycloak:21.1.1)
+- Servicio de autenticación Keycloak (quay.io/Keycloak/Keycloak:21.1.1)
 - Configuración de realm completa
 - Migración de schema automática
 
 #### **🔹 Pruebas Funcionales/API (End-to-End)**
+
 - **Cobertura**: Flujos completos de usuario
 - **Ejecución**: 5-10 minutos
 - **Automatización**: 100% automatizada
@@ -67,12 +74,14 @@ La estrategia de automatización sigue el patrón de **pirámide de pruebas** co
 ### 1.3 Criterios de Ejecución
 
 #### **Por Trigger de Desarrollo**
+
 - **Cada commit**: Pruebas unitarias (Domain + Application)
 - **Pull Request**: Suite completa de pruebas
 - **Merge a main**: Validación completa + deployment checks
 - **Release**: Pruebas de regresión completas
 
 #### **Por Criticidad del Componente**
+
 - **Crítico**: Todas las pruebas (unitarias + integración + funcionales)
 - **Importante**: Unitarias + integración
 - **Estándar**: Unitarias obligatorias
@@ -100,17 +109,20 @@ graph LR
 #### **Configuración por Entorno**
 
 **🟢 Desarrollo Local**
+
 - Ejecución selectiva de pruebas
 - TestContainers con Docker Desktop
 - Feedback inmediato (< 1 minuto para unitarias)
 
 **🟡 Pull Request (CI)**
+
 - Suite completa de pruebas
 - Validación de cobertura de código
 - Bloqueo de merge en caso de fallos
 - Reporte de métricas de calidad
 
 **🔴 Producción (CD)**
+
 - Pruebas de smoke después del despliegue
 - Validación de health checks
 - Rollback automático en caso de fallas
@@ -118,6 +130,7 @@ graph LR
 ### 2.2 Herramientas de CI/CD
 
 #### **GitHub Actions** (Configuración Actual)
+
 ```yaml
 # Estructura del pipeline automatizado
 stages:
@@ -131,6 +144,7 @@ stages:
 ```
 
 #### **Triggers Configurados**
+
 - **Push a feature branches**: Pruebas unitarias únicamente
 - **Pull Request**: Suite completa
 - **Push a main**: Despliegue a staging + pruebas
@@ -140,6 +154,7 @@ stages:
 ### 2.3 Validaciones que Bloquean
 
 #### **Criterios de Bloqueo para Merge**
+
 - ❌ **Fallos en pruebas unitarias**: Bloqueo inmediato
 - ❌ **Fallos en pruebas de integración**: Bloqueo inmediato  
 - ❌ **Cobertura < 80%**: Bloqueo con advertencia
@@ -147,6 +162,7 @@ stages:
 - ⚠️ **Degradación de performance > 20%**: Advertencia
 
 #### **Criterios de Bloqueo para Despliegue**
+
 - ❌ **Cualquier fallo en suite completa**
 - ❌ **Vulnerabilidades de seguridad críticas**
 - ❌ **Fallos en health checks post-despliegue**
@@ -158,6 +174,7 @@ stages:
 ### 3.1 Paralelización y Segmentación
 
 #### **Ejecución Paralela por Categorías**
+
 ```bash
 # Estrategia de paralelización implementada
 parallel --jobs 4 ::: \
@@ -168,6 +185,7 @@ parallel --jobs 4 ::: \
 ```
 
 #### **Segmentación por Módulo Funcional**
+
 - **PointsOfSale**: Tests aislados por funcionalidad
 - **Orders**: Validaciones independientes
 - **Users**: Pruebas de autenticación/autorización
@@ -176,11 +194,13 @@ parallel --jobs 4 ::: \
 ### 3.2 Aislamiento de Dependencias
 
 #### **Estrategia de Mocking (Pruebas Unitarias)**
+
 - **NSubstitute**: Simulación de dependencias externas  
 - **Interfaces bien definidas**: Facilita el mocking efectivo
 - **Inyección de dependencias**: Permite substitución limpia
 
 **Ejemplo de optimización**:
+
 ```csharp
 // Tiempo anterior con dependencias reales: ~500ms por test
 // Tiempo optimizado con mocks: ~10ms por test
@@ -188,11 +208,13 @@ parallel --jobs 4 ::: \
 ```
 
 #### **TestContainers (Pruebas de Integración)**
+
 - **Contenedores específicos**: PostgreSQL 15-alpine (imagen liviana)
 - **Configuración optimizada**: Startup time ~3-5 segundos
 - **Cleanup automático**: Limpieza de recursos post-ejecución
 
 **Optimizaciones aplicadas**:
+
 ```bash
 # Variables de entorno para optimización
 DOCKER_DEFAULT_PLATFORM=linux/amd64
@@ -202,11 +224,13 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ### 3.3 Optimización de Recursos
 
 #### **Caché de Dependencias**
+
 - **Restore cache**: Dependencias NuGet cacheadas
 - **Docker layer cache**: Imágenes de TestContainers reutilizadas
 - **Build artifacts**: Compilación incremental
 
 #### **Configuración de Memoria**
+
 - **Heap size optimizado**: Para pruebas de carga
 - **Connection pooling**: Para pruebas de base de datos
 - **Resource limits**: Evita consumo excesivo en CI
@@ -214,17 +238,20 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ### 3.4 Criterios de Segmentación
 
 #### **Por Frecuencia de Ejecución**
+
 1. **Continuas** (cada commit): Unitarias críticas
 2. **Frecuentes** (cada PR): Suite estándar  
 3. **Periódicas** (nightly): Pruebas exhaustivas
 4. **On-demand**: Pruebas de performance
 
-#### **Por Tiempo de Ejecución** 
+#### **Por Tiempo de Ejecución**
+
 - **Rápidas** (< 30s): Prioritarias en CI
 - **Medias** (< 5min): Ejecutadas en paralelo
 - **Lentas** (> 5min): Ejecutadas en horarios específicos
 
 #### **Por Criticidad de Funcionalidad**
+
 - **Core Business**: Siempre ejecutadas
 - **Features**: Ejecutadas en contexto
 - **Edge Cases**: Ejecutadas en ciclos completos
@@ -236,6 +263,7 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ### 4.1 Métricas de Rendimiento
 
 #### **Tiempo de Feedback**
+
 | Contexto | Tiempo Anterior | Tiempo Actual | Mejora |
 |---|---|---|---|
 | **Desarrollo Local** | ~15 minutos | ~1 minuto | 93% |
@@ -243,6 +271,7 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 | **Despliegue Completo** | ~2 horas | ~15 minutos | 87% |
 
 #### **Eficiencia de Ejecución**
+
 - **Pruebas Unitarias**: 110 tests en < 1 minuto
 - **Pruebas de Integración**: Setup completo en < 3 minutos
 - **Suite Completa**: ~145 tests en < 15 minutos
@@ -251,11 +280,13 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ### 4.2 Confiabilidad en Despliegues
 
 #### **Detección Temprana de Problemas**
+
 - **95%** de bugs detectados antes de QA manual
 - **87%** de regresiones capturadas en PR
 - **0** deployments fallidos por problemas de calidad en últimos 6 meses
 
 #### **Estabilidad del Sistema**
+
 - **99.5%** uptime en producción
 - **< 2 minutos** tiempo promedio de rollback
 - **100%** de tests críticos pasando antes de release
@@ -263,16 +294,19 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ### 4.3 Impacto en Productividad del Equipo
 
 #### **Velocidad de Desarrollo**
+
 - **40%** reducción en tiempo de debugging
 - **60%** menos tiempo en resolución de bugs
 - **3x** mayor confianza para refactoring
 
 #### **Calidad del Código**
+
 - **Cobertura promedio**: 85%+ en código crítico
 - **Deuda técnica**: Reducida en 50% gracias a refactoring seguro
 - **Documentación viva**: Tests actúan como especificación
 
 #### **Satisfacción del Equipo**
+
 - **Menor estrés** en deployments (automatización completa)
 - **Mayor foco** en features nuevas vs debugging
 - **Feedback inmediato** aumenta motivación
@@ -280,11 +314,13 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ### 4.4 Valor de Negocio
 
 #### **Time to Market**
+
 - **Releases más frecuentes**: De quincenal a semanal
 - **Hotfixes más rápidos**: < 2 horas vs días anteriormente
 - **Menor riesgo**: Validación automática reduce incidentes
 
 #### **Costos Operacionales**
+
 - **Reducción de QA manual**: 70% menos horas
 - **Menor tiempo de resolución**: Ahorros significativos
 - **Infraestructura optimizada**: Uso eficiente de recursos CI/CD
@@ -296,6 +332,7 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 ### 5.1 Distribución de Carga
 
 #### **Matrix Strategy para CI**
+
 ```yaml
 strategy:
   matrix:
@@ -305,6 +342,7 @@ strategy:
 ```
 
 #### **Resource Allocation**
+
 - **Unit Tests**: 1 CPU, 512MB RAM
 - **Integration Tests**: 2 CPU, 2GB RAM (TestContainers)
 - **Functional Tests**: 2 CPU, 4GB RAM (full application)
@@ -312,6 +350,7 @@ strategy:
 ### 5.2 Caché y Artefactos
 
 #### **Estrategia de Caché**
+
 ```yaml
 # Dependencias .NET
 - uses: actions/cache@v3
@@ -330,12 +369,14 @@ strategy:
 ### 5.3 Monitoreo y Métricas
 
 #### **Métricas Automáticas Recolectadas**
+
 - Tiempo de ejecución por suite de pruebas
 - Cobertura de código por módulo
 - Tasa de éxito/fallo por categoría de test
 - Uso de recursos durante ejecución
 
 #### **Alertas Configuradas**
+
 - Degradación de performance > 50%
 - Caída de cobertura > 5%
 - Aumento de tiempo de CI > 25%
@@ -348,16 +389,19 @@ strategy:
 ### 6.1 Optimizaciones Planificadas
 
 #### **Corto Plazo (1-3 meses)**
+
 - [ ] Implementación de test sharding automático
 - [ ] Optimización de imágenes Docker para TestContainers
 - [ ] Métricas detalladas de performance por test
 
 #### **Mediano Plazo (3-6 meses)**  
+
 - [ ] Tests de carga automatizados en CI
 - [ ] Integración con herramientas de APM
 - [ ] Tests de seguridad automatizados
 
 #### **Largo Plazo (6+ meses)**
+
 - [ ] AI-powered test generation
 - [ ] Predictive testing basado en cambios de código
 - [ ] Auto-healing de tests flaky
@@ -378,18 +422,21 @@ strategy:
 La implementación actual de automatización de pruebas representa un **estado maduro de DevOps** que proporciona:
 
 ### 🎯 **Valor Estratégico**
+
 - **Confianza total** en despliegues automáticos
 - **Feedback inmediato** que acelera el desarrollo  
 - **Calidad consistente** en todas las entregas
 - **Documentación ejecutable** del comportamiento del sistema
 
 ### 🚀 **Ventaja Competitiva**
+
 - **Time-to-market reducido** significativamente
 - **Costos operacionales optimizados**  
 - **Escalabilidad** para crecimiento del equipo
 - **Base sólida** para evolución continua
 
 ### 📈 **Impacto Cuantificable**
+
 - **93% mejora** en tiempo de feedback local
 - **82% reducción** en tiempo de validación de PR
 - **95% detección** temprana de defectos

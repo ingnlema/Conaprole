@@ -98,26 +98,31 @@ sequenceDiagram
 ## 🔍 Puntos Clave del Flujo
 
 ### 1. **Autenticación Simplificada**
+
 - Validación de JWT token
 - Extracción de claims básicos
 - Sin verificación de permisos específicos (para este ejemplo)
 
 ### 2. **Pipeline Optimizado para Lecturas**
+
 - **Sin Validation Behavior** (queries raramente necesitan validación compleja)
 - **Logging Behavior** para trazabilidad
 - Enfoque en performance y rapidez
 
 ### 3. **Acceso Directo a Datos**
+
 - **SQL Connection Factory** para conexiones eficientes
 - **Dapper** para mapeo rápido de resultados
 - **Consultas SQL optimizadas** específicas para la necesidad
 
 ### 4. **Proyección de Datos**
+
 - Mapeo directo a DTOs de respuesta
 - **Sin entidades de dominio** (no se necesitan)
 - Estructuración de datos para consumo del cliente
 
 ### 5. **Respuesta Optimizada**
+
 - Status code apropiado (200 OK / 404 Not Found)
 - JSON serializado directamente
 - Headers de respuesta mínimos
@@ -125,6 +130,7 @@ sequenceDiagram
 ## 📚 Casos de Uso Representados
 
 Este flujo es representativo de queries como:
+
 - `GetOrderQuery`
 - `GetOrdersQuery`
 - `GetDistributorsQuery`

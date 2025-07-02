@@ -7,6 +7,7 @@ La API Core de Conaprole Orders implementa **Domain-Driven Design (DDD)** como e
 ## Fundamentos DDD Implementados
 
 ### 1. Ubiquitous Language (Lenguaje Ubicuo)
+
 - **Order (Pedido)**: Solicitud de productos realizada por un punto de venta
 - **Distributor (Distribuidor)**: Entidad encargada de entregar productos
 - **Point of Sale (Punto de Venta)**: Cliente que realiza pedidos
@@ -14,6 +15,7 @@ La API Core de Conaprole Orders implementa **Domain-Driven Design (DDD)** como e
 - **Order Line (Línea de Pedido)**: Detalle específico de un producto en un pedido
 
 ### 2. Strategic Design Patterns
+
 - **Bounded Context**: Sistema de Orders como contexto delimitado
 - **Domain Model**: Entidades ricas con comportamiento
 - **Aggregate Pattern**: Consistencia transaccional
@@ -60,6 +62,7 @@ public class Order : Entity, IAggregateRoot
 ```
 
 **Entidades Hijas**:
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/OrderLine.cs
 public class OrderLine : Entity
@@ -193,6 +196,7 @@ public sealed class Product : Entity
 ## Value Objects
 
 ### 💰 Money
+
 ```csharp
 // src/Conaprole.Orders.Domain/Shared/Money.cs
 public record Money(decimal Amount, Currency Currency)
@@ -215,6 +219,7 @@ public record Money(decimal Amount, Currency Currency)
 ```
 
 ### 🏠 Address
+
 ```csharp
 // src/Conaprole.Orders.Domain/Shared/Address.cs
 public record Address(string City, string Street, string ZipCode)
@@ -233,6 +238,7 @@ public record Address(string City, string Street, string ZipCode)
 ```
 
 ### 📊 Quantity
+
 ```csharp
 // src/Conaprole.Orders.Domain/Shared/Quantity.cs
 public record Quantity(int Value)
@@ -251,6 +257,7 @@ public record Quantity(int Value)
 ## Domain Events
 
 ### 📢 Order Events
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/Events/OrderCreatedDomainEvent.cs
 public sealed record OrderCreatedDomainEvent(Guid OrderId) : IDomainEvent;
@@ -263,6 +270,7 @@ public sealed record OrderLineAddedDomainEvent(Guid OrderId, Guid OrderLineId) :
 ```
 
 ### Event Handlers (en Application Layer)
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/Events/OrderCreatedDomainEventHandler.cs
 internal sealed class OrderCreatedDomainEventHandler : IDomainEventHandler<OrderCreatedDomainEvent>
@@ -277,6 +285,7 @@ internal sealed class OrderCreatedDomainEventHandler : IDomainEventHandler<Order
 ## Repository Pattern
 
 ### Interfaces en Domain
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/IOrderRepository.cs
 public interface IOrderRepository
@@ -290,6 +299,7 @@ public interface IOrderRepository
 ```
 
 ### Implementaciones en Infrastructure
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Repositories/OrderRepository.cs
 internal sealed class OrderRepository : Repository<Order>, IOrderRepository
@@ -309,6 +319,7 @@ internal sealed class OrderRepository : Repository<Order>, IOrderRepository
 ## Domain Services
 
 ### Business Logic Compleja
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/OrderDomainService.cs
 public class OrderDomainService
@@ -334,6 +345,7 @@ public class OrderDomainService
 ## Specification Pattern
 
 ### Especificaciones de Dominio
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/Specifications/OrdersByDateRangeSpecification.cs
 public class OrdersByDateRangeSpecification : Specification<Order>
@@ -357,6 +369,7 @@ public class OrdersByDateRangeSpecification : Specification<Order>
 ## Errores de Dominio
 
 ### Domain Errors
+
 ```csharp
 // src/Conaprole.Orders.Domain/Orders/OrderErrors.cs
 public static class OrderErrors

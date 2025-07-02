@@ -7,7 +7,9 @@ Este directorio contiene diagramas de secuencia que representan los flujos típi
 ### ✅ Flujos Exitosos
 
 #### 🔄 [Flujo Típico de Command (Escritura)](flujo-command-typical.md)
+
 Muestra el procesamiento completo de un comando exitoso:
+
 - Recepción de HTTP Request
 - Pipeline de MediatR con Behaviors
 - Validación con FluentValidation
@@ -18,7 +20,9 @@ Muestra el procesamiento completo de un comando exitoso:
 **Casos representados:** CreateOrder, UpdateOrderStatus, AddOrderLine
 
 #### 🔍 [Flujo Típico de Query (Lectura)](flujo-query-typical.md)
+
 Muestra el procesamiento optimizado de una query exitosa:
+
 - Autenticación JWT
 - Pipeline simplificado para lecturas
 - Query Handler con acceso directo a datos
@@ -30,7 +34,9 @@ Muestra el procesamiento optimizado de una query exitosa:
 ### ⚠️ Flujos Alternativos (Errores)
 
 #### ❌ [Flujo de Command con Error de Validación](flujo-command-error-validacion.md)
+
 Muestra el manejo de errores de validación:
+
 - ValidationBehavior intercepta datos inválidos
 - FluentValidation ejecuta reglas de negocio
 - ValidationException con detalles estructurados
@@ -40,7 +46,9 @@ Muestra el manejo de errores de validación:
 **Errores representados:** Campos requeridos, formatos inválidos, reglas de negocio
 
 #### 🔒 [Flujo de Query con Error de Autorización](flujo-query-error-auth.md)
+
 Muestra el manejo de errores de autorización:
+
 - JWT válido pero permisos insuficientes
 - Claims Transformation y enriquecimiento
 - Authorization Handler verifica permisos
@@ -54,21 +62,25 @@ Muestra el manejo de errores de autorización:
 Los diagramas reflejan la implementación de:
 
 ### **Clean Architecture**
+
 - Separación clara de capas y responsabilidades
 - Inversión de dependencias (DIP)
 - Independencia de frameworks y base de datos
 
 ### **CQRS con MediatR**
+
 - Separación de Commands (escritura) y Queries (lectura)
 - Pipeline de Behaviors para cross-cutting concerns
 - Handlers especializados para cada caso de uso
 
 ### **Patterns de Seguridad**
+
 - JWT Authentication con Keycloak
 - Permission-Based Authorization
 - Claims Transformation y enriquecimiento
 
 ### **Manejo de Errores**
+
 - Exception Handling Middleware centralizado
 - Validation con FluentValidation
 - Problem Details (RFC 7807) para respuestas de error
@@ -86,6 +98,7 @@ Los diagramas muestran el flujo a nivel **arquitectónico**, incluyendo:
 ## 📊 Leyenda de Elementos
 
 ### Participantes
+
 - **Cliente**: Aplicación consumidora de la API
 - **API Controller**: Punto de entrada HTTP
 - **Middleware**: Components transversales (Auth, Exception)
@@ -96,6 +109,7 @@ Los diagramas muestran el flujo a nivel **arquitectónico**, incluyendo:
 - **Database**: Capa de persistencia
 
 ### Estilos Visuales
+
 - 🟢 **Verde**: Flujos exitosos y operaciones completadas
 - 🔴 **Rojo**: Errores y excepciones
 - 🟡 **Amarillo**: Procesos de validación y transformación
@@ -105,6 +119,7 @@ Los diagramas muestran el flujo a nivel **arquitectónico**, incluyendo:
 ## 🔄 Mantenimiento
 
 Los diagramas deben actualizarse cuando:
+
 - Se modifiquen los pipelines de MediatR
 - Se agreguen nuevos Behaviors o Middleware
 - Cambien los patrones de autorización

@@ -53,6 +53,7 @@ graph TB
 ### 🔑 Autenticación (Authentication)
 
 #### JWT Token Validation
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/JwtBearerOptionsSetup.cs
 public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
@@ -82,6 +83,7 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
 ```
 
 #### Configuración de Autenticación
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/DependencyInjection.cs
 private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
@@ -105,6 +107,7 @@ private static void AddAuthentication(IServiceCollection services, IConfiguratio
 ```
 
 #### User Context Service
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/UserContext.cs
 internal sealed class UserContext : IUserContext
@@ -129,6 +132,7 @@ internal sealed class UserContext : IUserContext
 ### 🛡️ Autorización (Authorization)
 
 #### Modelo de Permisos
+
 ```csharp
 // src/Conaprole.Orders.Domain/Users/Permission.cs
 public sealed class Permission : Entity
@@ -153,6 +157,7 @@ public sealed class Permission : Entity
 ```
 
 #### Roles y Permisos
+
 ```csharp
 // src/Conaprole.Orders.Domain/Users/Role.cs
 public sealed class Role : Entity
@@ -184,6 +189,7 @@ public sealed class Role : Entity
 ```
 
 #### Claims Transformation
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/CustomClaimsTransformation.cs
 internal sealed class CustomClaimsTransformation : IClaimsTransformation
@@ -237,6 +243,7 @@ internal sealed class CustomClaimsTransformation : IClaimsTransformation
 ```
 
 #### Authorization Service
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/AuthorizationService.cs
 internal sealed class AuthorizationService
@@ -307,6 +314,7 @@ internal sealed class AuthorizationService
 ### 🏷️ Permission-Based Authorization
 
 #### HasPermission Attribute
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/HasPermissionAttribute.cs
 public sealed class HasPermissionAttribute : AuthorizeAttribute
@@ -318,6 +326,7 @@ public sealed class HasPermissionAttribute : AuthorizeAttribute
 ```
 
 #### Permission Authorization Handler
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/PermissionAuthorizationHandler.cs
 internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
@@ -358,6 +367,7 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
 ```
 
 #### Permission Requirement
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/PermissionRequirement.cs
 internal sealed class PermissionRequirement : IAuthorizationRequirement
@@ -372,6 +382,7 @@ internal sealed class PermissionRequirement : IAuthorizationRequirement
 ```
 
 #### Policy Provider
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authorization/PermissionAuthorizationPolicyProvider.cs
 internal sealed class PermissionAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider
@@ -399,6 +410,7 @@ internal sealed class PermissionAuthorizationPolicyProvider : DefaultAuthorizati
 ### 🔧 Configuración de Autorización
 
 #### Dependency Injection Setup
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/DependencyInjection.cs
 private static void AddAuthorization(IServiceCollection services)
@@ -418,6 +430,7 @@ private static void AddAuthorization(IServiceCollection services)
 ### 🎭 Uso en Controllers
 
 #### Protected Endpoints
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Orders/OrdersController.cs
 [ApiController]
@@ -468,6 +481,7 @@ public class OrdersController : ControllerBase
 ```
 
 #### User Management Controller
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Users/UsersController.cs
 [ApiController]
@@ -521,6 +535,7 @@ public class UsersController : ControllerBase
 ### 🔐 Integración con Keycloak
 
 #### Keycloak Configuration
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/Models/KeycloakOptions.cs
 public sealed class KeycloakOptions
@@ -535,6 +550,7 @@ public sealed class KeycloakOptions
 ```
 
 #### Authentication Service
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/AuthenticationService.cs
 internal sealed class AuthenticationService : IAuthenticationService
@@ -594,7 +610,8 @@ internal sealed class AuthenticationService : IAuthenticationService
 
 ### 🔒 Configuración de Seguridad
 
-#### appsettings.json
+#### appsettings.JSON
+
 ```json
 {
   "Authentication": {
@@ -614,6 +631,7 @@ internal sealed class AuthenticationService : IAuthenticationService
 ```
 
 #### Configuración de Producción
+
 ```json
 {
   "Authentication": {
@@ -635,6 +653,7 @@ internal sealed class AuthenticationService : IAuthenticationService
 ### 🛠️ Extensiones y Utilities
 
 #### ClaimsPrincipal Extensions
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/ClaimsPrincipalExtensions.cs
 internal static class ClaimsPrincipalExtensions
@@ -665,6 +684,7 @@ internal static class ClaimsPrincipalExtensions
 ### 📊 Flujo de Autorización
 
 #### Secuencia de Autenticación/Autorización
+
 ```mermaid
 sequenceDiagram
     participant C as Cliente
