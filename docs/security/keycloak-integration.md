@@ -7,11 +7,13 @@
 ## Configuración de Keycloak
 
 ### Realm: Conaprole
+
 El sistema utiliza un realm llamado **"Conaprole"** que contiene toda la configuración de identidades para el ecosistema de aplicaciones.
 
 ### Clientes Configurados
 
 #### 1. Cliente de Autenticación (`conaprole-auth-client`)
+
 ```json
 {
   "clientId": "conaprole-auth-client",
@@ -23,11 +25,13 @@ El sistema utiliza un realm llamado **"Conaprole"** que contiene toda la configu
 ```
 
 **Uso:**
+
 - Login de usuarios a través de credenciales
 - Obtención de tokens JWT para usuarios
 - Refresh de tokens expirados
 
 #### 2. Cliente Administrativo (`conaprole-admin-client`)
+
 ```json
 {
   "clientId": "conaprole-admin-client", 
@@ -39,6 +43,7 @@ El sistema utiliza un realm llamado **"Conaprole"** que contiene toda la configu
 ```
 
 **Uso:**
+
 - Registro de nuevos usuarios
 - Gestión de credenciales
 - Operaciones administrativas
@@ -60,7 +65,8 @@ public sealed class KeycloakOptions
 
 ### Configuración por Ambiente
 
-#### Development (appsettings.Development.json)
+#### Development (appsettings.Development.JSON)
+
 ```json
 {
   "Keycloak": {
@@ -76,6 +82,7 @@ public sealed class KeycloakOptions
 ```
 
 #### Production
+
 ```json
 {
   "Keycloak": {
@@ -93,6 +100,7 @@ public sealed class KeycloakOptions
 ## HttpClient Configuration
 
 ### Admin Client Setup
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/DependencyInjection.cs
 services.AddHttpClient<IAuthenticationService, AuthenticationService>((serviceProvider, httpClient) =>
@@ -104,6 +112,7 @@ services.AddHttpClient<IAuthenticationService, AuthenticationService>((servicePr
 ```
 
 ### Token Client Setup
+
 ```csharp
 services.AddHttpClient<IJwtService, JwtService>((serviceProvider, httpClient) =>
 {
@@ -115,6 +124,7 @@ services.AddHttpClient<IJwtService, JwtService>((serviceProvider, httpClient) =>
 ## Admin Authorization Handler
 
 ### Autenticación Automática para Operaciones Admin
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/AdminAuthorizationDelegatingHandler.cs
 public class AdminAuthorizationDelegatingHandler : DelegatingHandler
@@ -156,6 +166,7 @@ public class AdminAuthorizationDelegatingHandler : DelegatingHandler
 ### 1. Registro de Usuario
 
 #### API Request Flow
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -182,6 +193,7 @@ sequenceDiagram
 ```
 
 #### Implementación
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/AuthenticationService.cs
 public async Task<string> RegisterAsync(User user, string password, CancellationToken cancellationToken = default)
@@ -218,6 +230,7 @@ private static string ExtractIdentityIdFromLocationHeader(HttpResponseMessage ht
 ### 2. Login de Usuario
 
 #### Token Request Flow
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -239,6 +252,7 @@ sequenceDiagram
 ```
 
 #### Implementación
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/JwtService.cs
 public async Task<Result<TokenResult>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default)
@@ -267,6 +281,7 @@ public async Task<Result<TokenResult>> GetAccessTokenAsync(string email, string 
 ### 3. Refresh Token
 
 #### Refresh Token Flow
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -288,6 +303,7 @@ sequenceDiagram
 ```
 
 #### Implementación
+
 ```csharp
 public async Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(
     string refreshToken, 
@@ -315,6 +331,7 @@ public async Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(
 ## Modelos de Keycloak
 
 ### User Representation
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/Models/UserRepresentationModel.cs
 public sealed class UserRepresentationModel
@@ -347,6 +364,7 @@ public sealed class UserRepresentationModel
 ```
 
 ### Credential Representation
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/Models/CredentialRepresentationModel.cs
 public sealed class CredentialRepresentationModel
@@ -368,6 +386,7 @@ public sealed class CredentialRepresentationModel
 ```
 
 ### Authorization Token
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/Models/AuthorizationToken.cs
 public sealed class AuthorizationToken
@@ -393,6 +412,7 @@ public sealed class AuthorizationToken
 ```
 
 ### TokenResult Model
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Authentication/TokenResult.cs
 public sealed record TokenResult(string AccessToken, string RefreshToken);
@@ -401,23 +421,27 @@ public sealed record TokenResult(string AccessToken, string RefreshToken);
 ## Beneficios de la Integración
 
 ### Separación de Responsabilidades
+
 - 🔐 **Keycloak**: Gestión de identidades, credenciales, autenticación
 - 🛠️ **API**: Lógica de negocio, autorización específica del dominio
 - 📊 **Database**: Datos del dominio, relaciones usuario-roles-permisos
 
 ### Escalabilidad
+
 - ✅ **Múltiples aplicaciones** pueden usar el mismo realm
 - ✅ **Gestión centralizada** de usuarios en todo el ecosistema
 - ✅ **Single Sign-On (SSO)** entre aplicaciones
 - ✅ **Federación** con otros proveedores de identidad
 
 ### Seguridad
+
 - 🔒 **Gestión profesional** de credenciales
 - 🔒 **Políticas de contraseñas** configurables
 - 🔒 **2FA/MFA** support nativo
 - 🔒 **Auditoría** completa de eventos de autenticación
 
 ### Mantenibilidad
+
 - 🔧 **Configuración externa** de identidades
 - 🔧 **Sin gestión directa** de contraseñas en la aplicación
 - 🔧 **Actualizaciones independientes** del IdP
@@ -425,7 +449,8 @@ public sealed record TokenResult(string AccessToken, string RefreshToken);
 
 ## Configuración Docker
 
-### docker-compose.yml (Development)
+### Docker-compose.yml (Development)
+
 ```yaml
 version: '3.8'
 services:
@@ -451,6 +476,7 @@ services:
 ### Errores Comunes
 
 #### 1. Token Inválido (401 Unauthorized)
+
 ```bash
 # Verificar configuración de issuer
 curl http://conaprole-idp:8080/realms/Conaprole/.well-known/openid-configuration
@@ -460,12 +486,14 @@ curl http://conaprole-idp:8080/realms/Conaprole/.well-known/openid-configuration
 ```
 
 #### 2. Cliente No Autorizado (403 Forbidden)
+
 ```bash
 # Verificar client_id y client_secret
 # Verificar que el cliente tenga los roles/permisos correctos en Keycloak
 ```
 
 #### 3. Usuario No Encontrado en DB
+
 ```sql
 -- Verificar que el IdentityId coincida
 SELECT * FROM Users WHERE IdentityId = '{keycloak-user-id}';
@@ -478,6 +506,7 @@ JOIN Roles r ON ur.RoleId = r.Id;
 ```
 
 ### Logs Útiles
+
 ```csharp
 // Configurar logging para debug
 "Logging": {

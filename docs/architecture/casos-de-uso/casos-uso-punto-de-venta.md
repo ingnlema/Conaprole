@@ -88,12 +88,14 @@ graph TB
 ## Descripción de Casos de Uso
 
 ### Autenticación y Registro
+
 - **UC1 - Registrarse en el Sistema**: Crear cuenta como punto de venta
 - **UC2 - Iniciar Sesión**: Autenticarse con credenciales
 - **UC3 - Cambiar Contraseña**: Modificar credenciales de acceso
 - **UC4 - Consultar Perfil Propio**: Ver información del establecimiento
 
 ### Gestión de Pedidos
+
 - **UC5 - Crear Pedido**: Realizar nuevo pedido de productos
 - **UC6 - Crear Pedidos en Lote**: Crear múltiples pedidos simultáneamente
 - **UC7 - Consultar Mis Pedidos**: Listar pedidos realizados con filtros
@@ -104,16 +106,19 @@ graph TB
 - **UC12 - Seguir Estado de Pedido**: Monitorear progreso de entrega
 
 ### Gestión de Productos
+
 - **UC13 - Consultar Catálogo de Productos**: Ver productos disponibles
 - **UC14 - Consultar Producto Específico**: Ver detalles de un producto
 - **UC15 - Verificar Precios**: Consultar precios actualizados
 
 ### Gestión de Distribuidores
+
 - **UC16 - Consultar Distribuidores Asignados**: Ver distribuidores disponibles
 - **UC17 - Ver Información de Distribuidor**: Consultar datos de contacto
 - **UC18 - Consultar Categorías por Distribuidor**: Ver productos que maneja cada distribuidor
 
 ### Gestión del Sistema
+
 - **UC19 - Refrescar Token de Acceso**: Renovar sesión automáticamente
 - **UC20 - Ver Historial de Pedidos**: Consultar pedidos anteriores
 
@@ -170,16 +175,19 @@ stateDiagram-v2
 ## Datos Requeridos para Pedidos
 
 ### Información del Pedido
+
 - Distribuidor asignado (automático según categoría)
 - Dirección de entrega
 - Líneas de pedido (producto + cantidad)
 
 ### Información de Línea de Pedido
+
 - Producto (ID externo)
 - Cantidad solicitada
 - Subtotal (calculado automáticamente)
 
 ## Permisos Requeridos
+
 - `Registered`: Acceso básico como usuario registrado
 - `OrdersWrite`: Creación y modificación de pedidos
 - `OrdersRead`: Consulta de pedidos propios

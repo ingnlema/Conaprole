@@ -18,16 +18,19 @@ This section provides a high-level introduction to the Conaprole Orders system f
 ## Contents
 
 ### System Introduction
+
 - [System Overview](./system-overview.md) - What the system does and why
 - [Business Context](./business-context.md) - Business requirements and goals
 - [Technology Stack](./technology-stack.md) - Technologies and frameworks used
 
 ### Key Concepts
+
 - [Domain Model](./domain-model.md) - Core business entities and relationships
 - [User Roles](./user-roles.md) - System actors and permissions
 - [Integration Points](./integration-points.md) - External system connections
 
 ### Getting Started
+
 - [Quick Start Guide](./quick-start.md) - Fast track to understanding the system
 - [Glossary](./glossary.md) - Important terms and definitions
 

@@ -75,6 +75,7 @@ graph TB
 ## Descripción de Casos de Uso
 
 ### Gestión de Usuarios
+
 - **UC1 - Registrar Usuario**: Crear nuevos usuarios en el sistema con roles asignados
 - **UC2 - Gestionar Roles de Usuario**: Asignar y remover roles de usuarios existentes
 - **UC3 - Gestionar Permisos de Usuario**: Configurar permisos específicos por usuario
@@ -84,11 +85,13 @@ graph TB
 - **UC7 - Consultar Permisos de Usuario**: Ver permisos efectivos de un usuario
 
 ### Gestión de Productos
+
 - **UC8 - Crear Producto**: Registrar nuevos productos en el catálogo
 - **UC9 - Consultar Producto**: Ver detalles de un producto específico
 - **UC10 - Listar Productos**: Ver catálogo completo de productos
 
 ### Gestión de Puntos de Venta
+
 - **UC11 - Crear Punto de Venta**: Registrar nuevos puntos de venta
 - **UC12 - Habilitar Punto de Venta**: Activar un punto de venta para recibir pedidos
 - **UC13 - Deshabilitar Punto de Venta**: Desactivar un punto de venta temporalmente
@@ -97,15 +100,18 @@ graph TB
 - **UC16 - Consultar Puntos de Venta**: Listar puntos de venta con filtros de estado
 
 ### Gestión de Distribuidores
+
 - **UC17 - Crear Distribuidor**: Registrar nuevos distribuidores
 - **UC18 - Gestionar Categorías de Distribuidor**: Asignar/remover categorías de productos
 - **UC19 - Consultar Distribuidores**: Listar distribuidores y sus asignaciones
 
 ### Gestión del Sistema
+
 - **UC20 - Consultar Roles del Sistema**: Ver todos los roles disponibles
 - **UC21 - Consultar Permisos del Sistema**: Ver todos los permisos configurados
 
 ## Permisos Requeridos
+
 - `AdminAccess`: Acceso completo de administrador
 - `UsersWrite`: Creación y modificación de usuarios
 - `UsersRead`: Consulta de información de usuarios

@@ -2,13 +2,15 @@
 
 ## Introducción
 
-La API Core de Conaprole Orders implementa una **API REST** siguiendo las mejores prácticas de diseño, con endpoints consistentes, documentación automática con **Swagger**, y patrones de respuesta uniformes. El diseño se basa en los principios **RESTful** y utiliza **ASP.NET Core** como framework web.
+La API Core de Conaprole Orders implementa una **API REST** siguiendo las mejores prácticas de diseño, 
+con endpoints consistentes, documentación automática con **Swagger**, y patrones de respuesta uniformes. 
+El diseño se basa en los principios **RESTful** y utiliza **ASP.NET Core** como framework web.
 
 ## Estructura de Controllers
 
 ### 📁 Organización por Dominio
 
-```
+```text
 src/Conaprole.Orders.Api/Controllers/
 ├── Orders/                    # Gestión de pedidos
 │   ├── OrdersController.cs
@@ -91,6 +93,7 @@ public class OrdersController : ControllerBase
 ### 🔗 Endpoints Implementados
 
 #### Orders Controller
+
 ```csharp
 [Route("api/Orders")]
 public class OrdersController : ControllerBase
@@ -106,6 +109,7 @@ public class OrdersController : ControllerBase
 ```
 
 #### Users Controller
+
 ```csharp
 [Route("api/Users")]
 public class UsersController : ControllerBase
@@ -547,3 +551,4 @@ Esta implementación proporciona una API robusta, documentada y fácil de consum
 ---
 
 *Próximo: [Patrones de Infraestructura](./infrastructure-patterns.md) - Cross-cutting concerns*
+

@@ -1,11 +1,13 @@
 # 📝 Documentation Style Guide
 
 ## Purpose
+
 This guide establishes consistent standards for all documentation under `/docs` to ensure readability, maintainability, and automated validation.
 
 ## Document Structure
 
 ### Standard Header Template
+
 ```markdown
 # [Emoji] Document Title
 
@@ -28,12 +30,14 @@ Who should read this document (developers, architects, operators, etc.).
 ```
 
 ### File Naming Conventions
+
 - Use lowercase with hyphens: `my-document.md`
 - Descriptive names: `integration-testing-setup.md` not `testing.md`
 - Group related files in subdirectories
 - Use README.md for directory index pages
 
 ### Folder Structure
+
 ```
 docs/
 ├── README.md                    # Main documentation index
@@ -49,28 +53,33 @@ docs/
 ## Markdown Standards
 
 ### Headers
+
 - Use ATX-style headers (`#`, `##`, `###`)
 - Include emojis for visual hierarchy: `# 🚀 Getting Started`
 - Ensure proper heading hierarchy (don't skip levels)
 
 ### Code Blocks
-- Always specify language: `````csharp`, `````bash`, `````yaml`
+
+- Always specify language: `````csharp`,`````bash`, `````yaml`
 - Include context comments for complex code
 - Verify all code compiles/executes against current codebase
 - Use line numbers for reference when needed
 
 ### Lists
+
 - Use `-` for unordered lists
 - Use `1.` for ordered lists
 - Add blank lines around lists
 - Use consistent indentation (2 spaces)
 
 ### Links
+
 - Use descriptive link text: `[integration testing guide](./testing/integration-tests.md)`
 - Prefer relative links for internal documents
 - Check all links are valid
 
 ### Diagrams
+
 - Use Mermaid for most diagrams
 - Add alt text for accessibility
 - Include source code for complex diagrams
@@ -79,18 +88,21 @@ docs/
 ## Content Guidelines
 
 ### Writing Style
+
 - Write in clear, concise English
 - Use active voice when possible
 - Define technical terms on first use
 - Include examples for complex concepts
 
 ### Code Examples
+
 - Provide complete, runnable examples
 - Include error handling where appropriate
 - Use realistic data/scenarios
 - Sync with actual implementation
 
 ### Cross-References
+
 - Link to related documents
 - Maintain bidirectional links where helpful
 - Use consistent terminology across documents

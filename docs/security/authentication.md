@@ -7,6 +7,7 @@ La aplicación **Conaprole Orders** utiliza **JWT Bearer Tokens** emitidos por *
 ## Configuración JWT
 
 ### AuthenticationOptions
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/AuthenticationOptions.cs
 public sealed class AuthenticationOptions
@@ -19,6 +20,7 @@ public sealed class AuthenticationOptions
 ```
 
 ### Configuración en Program.cs
+
 ```csharp
 // JWT Bearer Authentication
 services
@@ -31,6 +33,7 @@ services.ConfigureOptions<JwtBearerOptionsSetup>();
 ```
 
 ### JWT Bearer Options Setup
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/JwtBearerOptionsSetup.cs
 public void Configure(JwtBearerOptions options)
@@ -45,6 +48,7 @@ public void Configure(JwtBearerOptions options)
 ## Servicios de Autenticación
 
 ### IAuthenticationService - Gestión de Usuarios
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Authentication/IAuthenticationService.cs
 public interface IAuthenticationService
@@ -55,6 +59,7 @@ public interface IAuthenticationService
 ```
 
 **Implementación:**
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/AuthenticationService.cs
 public async Task<string> RegisterAsync(User user, string password, CancellationToken cancellationToken = default)
@@ -86,6 +91,7 @@ public async Task ChangePasswordAsync(string identityId, string newPassword, Can
 ```
 
 ### IJwtService - Gestión de Tokens
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Authentication/IJwtService.cs
 public interface IJwtService
@@ -96,12 +102,14 @@ public interface IJwtService
 ```
 
 #### Modelo TokenResult
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Authentication/TokenResult.cs
 public sealed record TokenResult(string AccessToken, string RefreshToken);
 ```
 
 **Implementación Login:**
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/JwtService.cs
 public async Task<Result<TokenResult>> GetAccessTokenAsync(string email, string password, CancellationToken cancellationToken = default)
@@ -125,6 +133,7 @@ public async Task<Result<TokenResult>> GetAccessTokenAsync(string email, string 
 ```
 
 **Implementación Refresh Token:**
+
 ```csharp
 public async Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(
     string refreshToken, 
@@ -149,6 +158,7 @@ public async Task<Result<TokenResult>> GetAccessTokenFromRefreshTokenAsync(
 ## User Context
 
 ### IUserContext - Acceso al Usuario Actual
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Authentication/IUserContext.cs
 public interface IUserContext
@@ -159,6 +169,7 @@ public interface IUserContext
 ```
 
 **Implementación:**
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/UserContext.cs
 public Guid UserId =>
@@ -177,6 +188,7 @@ public string IdentityId =>
 ```
 
 ### Claims Extensions
+
 ```csharp
 // src/Conaprole.Orders.Infrastructure/Authentication/ClaimsPrincipalExtensions.cs
 public static string GetIdentityId(this ClaimsPrincipal? principal)
@@ -197,6 +209,7 @@ public static Guid GetUserId(this ClaimsPrincipal? principal)
 ## Flujo de Autenticación
 
 ### 1. Registro de Usuario
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -220,6 +233,7 @@ sequenceDiagram
 ```
 
 ### 2. Login de Usuario
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -240,6 +254,7 @@ sequenceDiagram
 ```
 
 ### 3. Uso del Token
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -262,6 +277,7 @@ sequenceDiagram
 ```
 
 ### 4. Refresh Token
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -285,7 +301,8 @@ sequenceDiagram
 
 ## Configuración de Keycloak
 
-### appsettings.Development.json
+### appsettings.Development.JSON
+
 ```json
 {
   "Authentication": {
@@ -323,7 +340,8 @@ protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage 
 
 ## Endpoints de Autenticación Disponibles
 
-### POST /api/users/login
+### POST /API/users/login
+
 ```csharp
 [AllowAnonymous]
 [HttpPost("login")]
@@ -337,6 +355,7 @@ public async Task<IActionResult> LogIn(LoginUserRequest request, CancellationTok
 ```
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
@@ -345,6 +364,7 @@ public async Task<IActionResult> LogIn(LoginUserRequest request, CancellationTok
 ```
 
 **Response:**
+
 ```json
 {
   "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -352,7 +372,8 @@ public async Task<IActionResult> LogIn(LoginUserRequest request, CancellationTok
 }
 ```
 
-### POST /api/users/refresh
+### POST /API/users/refresh
+
 ```csharp
 [AllowAnonymous]
 [HttpPost("refresh")]
@@ -366,6 +387,7 @@ public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, Cance
 ```
 
 **Request:**
+
 ```json
 {
   "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -373,6 +395,7 @@ public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, Cance
 ```
 
 **Response:**
+
 ```json
 {
   "accessToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -383,18 +406,21 @@ public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, Cance
 ## Características de Seguridad
 
 ### Validación de Token JWT
+
 - ✅ **Firma digital** verificada usando claves públicas de Keycloak
 - ✅ **Expiración** verificada automáticamente
 - ✅ **Audience** debe coincidir con la configuración
 - ✅ **Issuer** debe ser el realm de Keycloak configurado
 
 ### Configuración Flexible
+
 - 🔧 **HTTPS opcional** en desarrollo (`RequireHttpsMetadata: false`)
 - 🔧 **HTTPS obligatorio** en producción
 - 🔧 **URLs configurables** para diferentes entornos
 - 🔧 **Separación de clientes** admin y auth
 
 ### Manejo de Errores
+
 - ❌ **Token inválido**: 401 Unauthorized
 - ❌ **Token expirado**: 401 Unauthorized  
 - ❌ **Usuario no encontrado**: 404 Not Found

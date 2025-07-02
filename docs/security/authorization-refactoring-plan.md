@@ -13,16 +13,19 @@ Este documento presenta los issues específicos que deben crearse para implement
 **Descripción**: Resolver errores de compilación reportados en `test/Conaprole.Orders.Api.FunctionalTests/Authorization/README.md`
 
 **Tareas**:
+
 - [ ] Agregar imports faltantes para `RegisterUserRequest` y `LogInUserRequest`
 - [ ] Convertir arrays a listas en DTOs donde sea necesario  
 - [ ] Corregir signatures de constructores de DTOs
 - [ ] Validar que todos los tests compilen correctamente
 
 **Archivos Afectados**:
+
 - `test/Conaprole.Orders.Api.FunctionalTests/Authorization/*.cs`
 - DTOs en `src/Conaprole.Orders.Api/Controllers/*/Dtos/`
 
 **Criterios de Aceptación**:
+
 - Todos los tests de autorización compilan sin errores
 - No se introducen nuevos warnings de compilación
 - Tests pueden ejecutarse (aunque fallen por infraestructura)
@@ -36,6 +39,7 @@ Este documento presenta los issues específicos que deben crearse para implement
 **Problemas Identificados**:
 
 1. **DeleteUser con decorador mixto**:
+
    ```csharp
    // Actual (problemático)
    [HasPermission(Permissions.UsersWrite)]
@@ -46,6 +50,7 @@ Este documento presenta los issues específicos que deben crearse para implement
    ```
 
 2. **ChangePassword sin permisos específicos**:
+
    ```csharp
    // Actual (insuficiente)
    [Authorize]
@@ -55,16 +60,19 @@ Este documento presenta los issues específicos que deben crearse para implement
    ```
 
 **Tareas**:
+
 - [ ] Reemplazar decorador mixto en `DeleteUser` por `[HasPermission(Permissions.AdminAccess)]`
 - [ ] Agregar `[HasPermission(Permissions.UsersWrite)]` a `ChangePassword`
 - [ ] Actualizar tests correspondientes para reflejar nuevos permisos
 - [ ] Documentar cambios en guía de implementación
 
 **Archivos Afectados**:
+
 - `src/Conaprole.Orders.Api/Controllers/Users/UsersController.cs`
 - `test/Conaprole.Orders.Api.FunctionalTests/Authorization/UsersControllerAuthorizationTests.cs`
 
 **Criterios de Aceptación**:
+
 - Decoradores siguen patrón consistente con resto de controladores
 - Tests de autorización pasan para nuevos permisos
 - Documentación actualizada refleja cambios
@@ -76,6 +84,7 @@ Este documento presenta los issues específicos que deben crearse para implement
 **Descripción**: Crear alternativas de testing que no dependan de containers Docker
 
 **Problema Actual**:
+
 ```
 Docker.DotNet.DockerApiException : Docker API responded with status code=InternalServerError
 ```
@@ -83,6 +92,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 **Solución Propuesta**:
 
 1. **Crear tests unitarios de autorización**:
+
    ```csharp
    public class AuthorizationUnitTests
    {
@@ -95,6 +105,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
    ```
 
 2. **Crear helper mockeado**:
+
    ```csharp
    public static class MockAuthorizationHelper
    {
@@ -106,6 +117,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
    ```
 
 **Tareas**:
+
 - [ ] Crear proyecto de tests unitarios para autorización
 - [ ] Implementar mocks para `AuthorizationService`
 - [ ] Crear helper para JWT tokens mockeados
@@ -113,10 +125,12 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 - [ ] Mantener tests funcionales como opción con Docker
 
 **Archivos a Crear**:
+
 - `test/Conaprole.Orders.Authorization.UnitTests/`
 - `test/Conaprole.Orders.Authorization.UnitTests/Helpers/MockAuthorizationHelper.cs`
 
 **Criterios de Aceptación**:
+
 - Tests unitarios cubren escenarios críticos de autorización
 - Tests ejecutan sin dependencias externas
 - Tests funcionales siguen disponibles para integration testing completo
@@ -130,6 +144,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 **Descripción**: Agregar verificación de permisos a nivel de recurso específico
 
 **Casos de Uso**:
+
 - Usuarios solo pueden ver/editar su propio perfil (excepto admins)
 - Distribuidores solo pueden ver órdenes de sus puntos de venta
 - Puntos de venta solo pueden crear órdenes para sí mismos
@@ -137,12 +152,14 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 **Implementación Propuesta**:
 
 1. **Crear ResourceAuthorizationAttribute**:
+
    ```csharp
    [ResourceAuthorization(Permissions.UsersRead, ResourceType.User)]
    public async Task<IActionResult> GetUser(Guid userId)
    ```
 
 2. **Implementar ResourceAuthorizationHandler**:
+
    ```csharp
    public class ResourceAuthorizationHandler : AuthorizationHandler<ResourceRequirement>
    {
@@ -156,6 +173,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
    ```
 
 **Tareas**:
+
 - [ ] Diseñar interfaz `IResourceAccessValidator`
 - [ ] Implementar `ResourceAuthorizationAttribute`
 - [ ] Crear handlers para cada tipo de recurso
@@ -163,10 +181,12 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 - [ ] Crear tests para nuevos escenarios de autorización
 
 **Archivos a Crear**:
+
 - `src/Conaprole.Orders.Infrastructure/Authorization/ResourceAuthorizationAttribute.cs`
 - `src/Conaprole.Orders.Infrastructure/Authorization/IResourceAccessValidator.cs`
 
 **Criterios de Aceptación**:
+
 - Usuarios no pueden acceder a recursos de otros usuarios
 - Distribuidores tienen acceso limitado a sus recursos
 - Admins mantienen acceso completo
@@ -179,6 +199,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 **Descripción**: Refactorizar `BaseFunctionalTest` para reducir complejidad
 
 **Problemas Actuales**:
+
 - Lógica compleja de sincronización Keycloak-Database
 - Setup manual de usuarios cuando hay conflictos
 - Dependencia fuerte en estado de containers externos
@@ -186,6 +207,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 **Mejoras Propuestas**:
 
 1. **Separar responsabilidades**:
+
    ```csharp
    public class KeycloakTestManager
    {
@@ -201,6 +223,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
    ```
 
 2. **Crear factory de usuarios de test**:
+
    ```csharp
    public class TestUserFactory
    {
@@ -211,6 +234,7 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
    ```
 
 **Tareas**:
+
 - [ ] Extraer lógica de Keycloak a clase dedicada
 - [ ] Extraer lógica de Database a clase dedicada  
 - [ ] Crear factory pattern para usuarios de test
@@ -218,10 +242,12 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 - [ ] Actualizar todos los tests para usar nueva infrastructure
 
 **Archivos Afectados**:
+
 - `test/Conaprole.Orders.Api.FunctionalTests/Infrastructure/BaseFunctionalTest.cs`
 - `test/Conaprole.Orders.Api.FunctionalTests/Authorization/AuthorizationTestHelper.cs`
 
 **Criterios de Aceptación**:
+
 - Setup de tests es más rápido y confiable
 - Lógica de creación de usuarios está centralizada
 - Tests son más fáciles de escribir y mantener
@@ -236,11 +262,13 @@ Docker.DotNet.DockerApiException : Docker API responded with status code=Interna
 **Descripción**: Validar que verificación de permisos no impacte performance significativamente
 
 **Métricas a Medir**:
+
 - Tiempo de verificación de permisos por request
 - Impacto de claims transformation
 - Queries a base de datos para permisos
 
 **Tests Propuestos**:
+
 ```csharp
 [Fact]
 public async Task AuthorizationCheck_Under100Milliseconds()
@@ -256,6 +284,7 @@ public async Task ClaimsTransformation_CacheEffective()
 ```
 
 **Tareas**:
+
 - [ ] Crear benchmarks para verificación de permisos
 - [ ] Implementar métricas de autorización
 - [ ] Agregar tests de carga para endpoints protegidos
@@ -268,12 +297,14 @@ public async Task ClaimsTransformation_CacheEffective()
 **Descripción**: Crear guía completa para desarrolladores sobre autorización
 
 **Contenido Propuesto**:
+
 - Cuándo usar cada tipo de permiso
 - Patrones para nuevos controladores
 - Mejores prácticas para tests de autorización
 - Troubleshooting común
 
 **Tareas**:
+
 - [ ] Crear guía de patrones de autorización
 - [ ] Documentar proceso de agregar nuevos permisos
 - [ ] Crear examples para casos comunes
@@ -284,18 +315,24 @@ public async Task ClaimsTransformation_CacheEffective()
 ## 📈 Implementación Gradual
 
 ### Fase 1: Estabilización (Alta Prioridad)
+
 **Objetivo**: Tests ejecutables y decoradores consistentes
+
 - Issue #1: Corregir errores de compilación
 - Issue #2: Estandarizar decoradores
 - Issue #3: Reducir dependencias de Docker
 
 ### Fase 2: Mejoras (Media Prioridad)  
+
 **Objetivo**: Autorización más robusta y tests mantenibles
+
 - Issue #4: Autorización basada en recursos
 - Issue #5: Simplificar infrastructure de tests
 
 ### Fase 3: Optimización (Baja Prioridad)
+
 **Objetivo**: Performance y documentación
+
 - Issue #6: Tests de performance
 - Issue #7: Documentación completa
 

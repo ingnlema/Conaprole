@@ -82,6 +82,7 @@ public interface IQueryHandler<TQuery, TResponse> : IRequestHandler<TQuery, Resu
 ### Estructura de Commands
 
 #### CreateOrder Command
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/CreateOrder/CreateOrderCommand.cs
 public sealed record CreateOrderCommand(
@@ -99,6 +100,7 @@ public sealed record CreateOrderLineCommand(
 ```
 
 #### CreateOrder Command Handler
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/CreateOrder/CreateOrderCommandHandler.cs
 internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, Guid>
@@ -190,6 +192,7 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 ```
 
 #### Command Validation
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/CreateOrder/CreateOrderCommandValidator.cs
 internal sealed class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
@@ -244,6 +247,7 @@ internal sealed class CreateOrderLineCommandValidator : AbstractValidator<Create
 ### Otros Commands Implementados
 
 #### UpdateOrderStatus Command
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/UpdateOrderStatus/UpdateOrderStatusCommand.cs
 public sealed record UpdateOrderStatusCommand(Guid OrderId, int Status) : ICommand;
@@ -269,6 +273,7 @@ internal sealed class UpdateOrderStatusCommandHandler : ICommandHandler<UpdateOr
 ```
 
 #### AddOrderLine Command
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/AddOrderLine/AddOrderLineCommand.cs
 public sealed record AddOrderLineCommand(
@@ -317,6 +322,7 @@ internal sealed class AddOrderLineCommandHandler : ICommandHandler<AddOrderLineC
 ### Estructura de Queries
 
 #### GetOrder Query
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/GetOrder/GetOrderQuery.cs
 public sealed record GetOrderQuery(Guid Id) : IQuery<OrderResponse>;
@@ -351,6 +357,7 @@ public sealed record MoneyResponse(
 ```
 
 #### GetOrder Query Handler
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/GetOrder/GetOrderQueryHandler.cs
 internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderResponse>
@@ -424,6 +431,7 @@ internal sealed class GetOrderQueryHandler : IQueryHandler<GetOrderQuery, OrderR
 ```
 
 #### GetOrders Query (con Paginación)
+
 ```csharp
 // src/Conaprole.Orders.Application/Orders/GetOrders/GetOrdersQuery.cs
 public sealed record GetOrdersQuery(
@@ -453,6 +461,7 @@ public sealed record PagedResult<T>(
 ### Query Optimization Patterns
 
 #### Projection con Dapper
+
 ```csharp
 // Uso de Dapper para queries optimizadas
 internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, PagedResult<OrderSummaryResponse>>
@@ -508,6 +517,7 @@ internal sealed class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, Page
 ## Pipeline Behaviors
 
 ### Validation Behavior
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Behaviors/ValidationBehavior.cs
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
@@ -552,6 +562,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 ```
 
 ### Logging Behavior
+
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Behaviors/LoggingBehavior.cs
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
@@ -594,6 +605,7 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
 ## Integración con Controllers
 
 ### Uso en Controllers
+
 ```csharp
 // src/Conaprole.Orders.Api/Controllers/Orders/OrdersController.cs
 [ApiController]
@@ -656,6 +668,7 @@ public class OrdersController : ControllerBase
 ## Patrones de Resultado
 
 ### Result Pattern
+
 ```csharp
 // src/Conaprole.Orders.Domain/Abstractions/Result.cs
 public class Result
@@ -690,6 +703,7 @@ public class Result<T> : Result
 ## Métricas de Implementación
 
 ### Commands Implementados
+
 - **CreateOrder**: Creación de pedidos con validación completa
 - **UpdateOrderStatus**: Actualización de estado de pedidos
 - **AddOrderLine**: Adición de líneas a pedidos existentes
@@ -698,6 +712,7 @@ public class Result<T> : Result
 - **BulkCreateOrders**: Creación masiva de pedidos
 
 ### Queries Implementados
+
 - **GetOrder**: Obtención de pedido por ID con datos relacionados
 - **GetOrders**: Listado paginado con filtros opcionales
 - **GetOrdersByDistributor**: Pedidos por distribuidor
@@ -705,6 +720,7 @@ public class Result<T> : Result
 - **GetOrdersByDateRange**: Pedidos por rango de fechas
 
 ### Behaviors Configurados
+
 - **ValidationBehavior**: Validación automática de commands
 - **LoggingBehavior**: Logging estructurado de operaciones
 - **TransactionBehavior**: Manejo de transacciones (futuro)

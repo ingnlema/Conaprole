@@ -14,35 +14,41 @@ This is the central documentation hub for the Conaprole Orders system. All techn
 ## Quick Navigation
 
 ### 🚀 Getting Started
+
 - [System Overview](./overview/README.md) - High-level system introduction
 - [Architecture Overview](./architecture/README.md) - Technical architecture guide
 - [Development Setup](./how-to/development-setup.md) - Local development environment
 
 ### 🏗️ Architecture & Design
+
 - [Clean Architecture](./architecture/clean-architecture.md) - Architectural principles
 - [Domain Design](./architecture/domain-design.md) - Domain-driven design patterns
 - [CQRS & Mediator](./architecture/cqrs-mediator.md) - Command/Query separation
 - [Security Architecture](./architecture/security-architecture.md) - Security design
 
 ### 🔐 Security
+
 - [Security Overview](./security/README.md) - Security documentation index
 - [Authentication](./security/authentication.md) - JWT and Keycloak integration
 - [Authorization](./security/authorization.md) - Permissions and roles system
 - [Implementation Guide](./security/implementation-guide.md) - Security implementation
 
 ### 🧪 Testing & Quality
+
 - [Testing Strategy](./architecture/testing-strategy.md) - Overall testing approach
 - [Integration Tests](./testing/integration-tests-setup.md) - Integration testing setup
 - [Quality Architecture](./quality/arquitectura-pruebas.md) - Testing architecture
 - [CI/CD Testing](./quality/automatizacion-pruebas-ci.md) - Automated testing
 
 ### 📖 Reference
+
 - [API Design](./architecture/api-design.md) - API design patterns
 - [Data Layer](./architecture/data-layer.md) - Database and ORM patterns
 - [Error Handling](./architecture/manejo-errores.md) - Error handling strategies
 - [Code Conventions](./architecture/convenciones-codigo.md) - Coding standards
 
 ### 📋 Use Cases & Flows
+
 - [Use Cases Overview](./architecture/casos-de-uso/README.md) - Use case diagrams
 - [Sequence Diagrams](./architecture/diagramas-secuencia/README.md) - Flow diagrams
 

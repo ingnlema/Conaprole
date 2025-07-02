@@ -536,6 +536,7 @@ graph LR
 ## Leyenda de Diagramas
 
 ### Símbolos Utilizados
+
 - 🔐 Autenticación/Seguridad
 - 🛠️ Administración/Gestión
 - 📧 Comunicación/Email
@@ -549,6 +550,7 @@ graph LR
 - 📊 Métricas/Monitoreo
 
 ### Códigos de Color
+
 - **Azul claro**: Componentes de autenticación
 - **Verde claro**: Base de datos y persistencia
 - **Naranja claro**: Keycloak/Identity Provider

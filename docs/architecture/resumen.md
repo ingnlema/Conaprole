@@ -7,18 +7,21 @@ La **API Core de Conaprole Orders** es un sistema robusto diseñado siguiendo pr
 ## Patrones Arquitectónicos Principales
 
 ### 🏗️ Clean Architecture
+
 - **Separación clara de responsabilidades** en 4 capas principales
 - **Inversión de dependencias** respetando el Dependency Inversion Principle (DIP)
 - **Independencia de frameworks** y detalles de infraestructura
 - **Testabilidad** en todos los niveles
 
 ### 🎯 Domain-Driven Design (DDD)
+
 - **Agregados bien definidos**: Order, User, Distributor, Product, PointOfSale
 - **Value Objects** para conceptos de dominio: Money, Address, Quantity
 - **Domain Events** para comunicación entre agregados
 - **Repository Pattern** para abstracción de persistencia
 
 ### ⚡ CQRS con MediatR
+
 - **Separación de Commands y Queries** para operaciones de escritura y lectura
 - **Pipeline Behaviors** para cross-cutting concerns (validación, logging)
 - **Handlers desacoplados** con responsabilidades específicas
@@ -46,6 +49,7 @@ La **API Core de Conaprole Orders** es un sistema robusto diseñado siguiendo pr
 ## Patrones de Seguridad
 
 ### 🔐 Autenticación y Autorización
+
 - **JWT Tokens** validados contra Keycloak
 - **Sistema de permisos granular** basado en roles
 - **Claims Transformation** para enriquecimiento de contexto de usuario

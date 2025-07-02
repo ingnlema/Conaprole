@@ -35,12 +35,14 @@ El diagrama está organizado en los siguientes paquetes:
 ## 📋 Entidades Principales
 
 ### **Aggregate Roots**
+
 - **Order** - Pedido principal con líneas de pedido
 - **Distributor** - Distribuidor con categorías soportadas
 - **PointOfSale** - Punto de venta con asignaciones de distribuidores
 - **User** - Usuario con roles y permisos
 
 ### **Entities**
+
 - **OrderLine** - Línea de pedido individual
 - **Product** - Producto del catálogo
 - **PointOfSaleDistributor** - Relación entre punto de venta y distribuidor
@@ -49,6 +51,7 @@ El diagrama está organizado en los siguientes paquetes:
 - **RolePermission** - Tabla de unión roles-permisos
 
 ### **Value Objects**
+
 - **Money** - Dinero con cantidad y moneda
 - **Address** - Dirección con ciudad, calle y código postal
 - **Quantity** - Cantidad validada
@@ -59,27 +62,32 @@ El diagrama está organizado en los siguientes paquetes:
 - **ExternalProductId** - ID externo de producto
 
 ### **Enumerations**
+
 - **Status** - Estados del pedido (Created, Confirmed, Delivered, Canceled, Rejected)
 - **Category** - Categorías de productos (CONGELADOS, LACTEOS, SUBPRODUCTOS)
 
 ## 🔗 Relaciones Principales
 
 ### **Composiciones (1:N)**
+
 - Order ◆→ OrderLine (Un pedido contiene múltiples líneas)
 - PointOfSale ◆→ PointOfSaleDistributor (Un POS tiene múltiples asignaciones)
 
 ### **Asociaciones (N:1)**
+
 - Order →1 Distributor (Muchos pedidos a un distributor)
 - Order →1 PointOfSale (Muchos pedidos de un POS)
 - OrderLine →1 Product (Muchas líneas referencian un producto)
 - User →0..1 Distributor (Usuario puede tener distribuidor)
 
 ### **Asociaciones Many-to-Many**
+
 - User ↔ Role (Usuarios tienen múltiples roles)
 - Role ↔ Permission (Roles tienen múltiples permisos)
 - PointOfSale ↔ Distributor (A través de PointOfSaleDistributor)
 
 ### **Herencia**
+
 - Order, OrderLine, Product, User, etc. → Entity (Todos heredan de Entity)
 - Order, Distributor, PointOfSale, User → IAggregateRoot (Implementan interfaz)
 
@@ -120,6 +128,7 @@ El diagrama está organizado en los siguientes paquetes:
 ## 🔄 Mantenimiento
 
 Este diagrama debe actualizarse cuando:
+
 - Se agreguen nuevas entidades al dominio
 - Se modifiquen relaciones existentes
 - Se cambien propiedades o métodos importantes

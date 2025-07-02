@@ -19,27 +19,32 @@ Step-by-step tutorials and practical guides for common development and operation
 ## Contents
 
 ### Development Guides
+
 - [Development Environment Setup](./development-setup.md) - Local development configuration
 - [Adding New Features](./adding-features.md) - Feature development workflow
 - [Database Migrations](./database-migrations.md) - Schema change procedures
 - [API Integration](./api-integration.md) - How to consume the API
 
 ### Testing Guides
+
 - [Running Tests Locally](./running-tests.md) - Test execution and debugging
 - [Writing Integration Tests](./writing-integration-tests.md) - Test development patterns
 - [Performance Testing](./performance-testing.md) - Load and performance testing
 
 ### Security Guides
+
 - [Adding New Permissions](./adding-permissions.md) - Permission system extension
 - [User Management](./user-management.md) - User and role administration
 - [Security Testing](./security-testing.md) - Security validation procedures
 
 ### Operational Guides
+
 - [Deployment Procedures](./deployment.md) - Application deployment steps
 - [Monitoring Setup](./monitoring.md) - System monitoring configuration
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
 
 ### Best Practices
+
 - [Code Review Guidelines](./code-review.md) - Review standards and process
 - [Documentation Standards](./documentation.md) - Writing effective documentation
 - [Performance Optimization](./performance.md) - System optimization techniques
@@ -47,6 +52,7 @@ Step-by-step tutorials and practical guides for common development and operation
 ## Guide Templates
 
 Each guide follows a consistent structure:
+
 - **Goal** - What you'll accomplish
 - **Prerequisites** - What you need before starting  
 - **Steps** - Numbered, actionable instructions

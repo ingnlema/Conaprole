@@ -116,35 +116,45 @@ graph TB
 ## Actores del Sistema
 
 ### 👤 Administrador
+
 **Rol principal**: Administración completa del sistema
+
 - Gestión de usuarios, roles y permisos
 - Configuración de productos y precios
 - Administración de puntos de venta y distribuidores
 - Supervisión general del sistema
 
 ### 🚛 Distribuidor
+
 **Rol principal**: Distribución y entrega de productos
+
 - Procesamiento de pedidos asignados
 - Actualización de estados de entrega
 - Gestión de rutas y entregas
 - Comunicación con puntos de venta
 
 ### 🛒 Punto de Venta
+
 **Rol principal**: Realización de pedidos
+
 - Creación y gestión de pedidos
 - Consulta de catálogo y precios
 - Seguimiento de entregas
 - Gestión de inventario local
 
 ### 🔌 Sistema API
+
 **Rol principal**: Integración sistema-a-sistema
+
 - Automatización de procesos
 - Integración con sistemas externos
 - Operaciones en lote
 - Sincronización de datos
 
 ### 👥 Usuario Registrado
+
 **Rol principal**: Acceso básico al sistema
+
 - Autenticación y perfil personal
 - Consultas de información pública
 - Operaciones limitadas según permisos
@@ -210,16 +220,19 @@ sequenceDiagram
 ## Categorías de Productos
 
 ### 🥛 LACTEOS
+
 - Leche y derivados básicos
 - Quesos y productos fermentados
 - Yogurts y postres lácteos
 
 ### 🧊 CONGELADOS
+
 - Helados y productos congelados
 - Comidas preparadas congeladas
 - Productos de larga conservación
 
 ### 🔄 SUBPRODUCTOS
+
 - Derivados industriales
 - Ingredientes para procesamiento
 - Productos especializados

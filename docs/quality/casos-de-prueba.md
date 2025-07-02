@@ -5,6 +5,7 @@
 Este documento detalla los **casos de prueba implementados** en el sistema API Core de Conaprole, organizados por tipo y funcionalidad, junto con una evaluación del **nivel de cobertura** alcanzado por el conjunto de pruebas.
 
 ### 📊 Métricas Generales de Testing
+
 - **Total de Casos de Prueba**: 298 tests implementados
 - **Pruebas Unitarias de Dominio**: 55 tests
 - **Pruebas Unitarias de Aplicación**: 37 tests  
@@ -18,11 +19,13 @@ Este documento detalla los **casos de prueba implementados** en el sistema API C
 ### 1. Pruebas Unitarias de Dominio (55 tests)
 
 #### **🔵 Propósito**
+
 Validan la lógica de negocio pura, invariantes de dominio y comportamientos específicos de las entidades sin dependencias externas.
 
 #### **📁 Organización por Entidades**
 
 ##### **Pedidos (Orders)**
+
 - **Constructor y propiedades**: Validación de creación correcta de pedidos
 - **Líneas de pedido**: Agregar, remover y actualizar líneas
 - **Estados**: Transiciones válidas de estado (Created → Confirmed → Shipped)
@@ -30,22 +33,26 @@ Validan la lógica de negocio pura, invariantes de dominio y comportamientos esp
 - **Invariantes**: Reglas de negocio como fechas de entrega válidas
 
 ##### **Puntos de Venta (PointsOfSale)**
+
 - **Registro**: Validación de datos obligatorios (teléfono único, dirección)
 - **Activación/Desactivación**: Cambios de estado del punto de venta
 - **Asignación de Distribuidores**: Gestión de relaciones con distribuidores
 - **Validaciones**: Reglas de negocio específicas
 
 ##### **Distribuidores (Distributors)**
+
 - **Creación**: Validación de datos del distribuidor
 - **Categorías**: Asignación y remoción de categorías de productos
 - **Estados**: Gestión de activación/desactivación
 
 ##### **Productos (Products)**
+
 - **Creación**: Validación de productos con ID externo único
 - **Categorías**: Clasificación por categorías válidas
 - **Precios**: Validación de precios y monedas
 
 ##### **Usuarios (Users)**
+
 - **Creación**: Registro de usuarios con datos válidos
 - **Roles**: Asignación y gestión de roles de usuario
 - **Eventos de Dominio**: Validación de eventos generados
@@ -57,26 +64,31 @@ Validan la lógica de negocio pura, invariantes de dominio y comportamientos esp
 ### 2. Pruebas Unitarias de Aplicación (37 tests)
 
 #### **🟢 Propósito**
+
 Validan los casos de uso, handlers CQRS y comportamientos transversales de la capa de aplicación.
 
 #### **📁 Organización por Casos de Uso**
 
 ##### **Gestión de Puntos de Venta**
+
 - `CreatePointOfSaleHandler`: Validación de creación con datos correctos
 - Manejo de errores por teléfonos duplicados
 - Validación de formato de datos de entrada
 
 ##### **Gestión de Productos**
+
 - `CreateProductHandler`: Creación de productos con validaciones
 - Prevención de IDs externos duplicados
 - Validación de categorías y precios
 
 ##### **Gestión de Usuarios**
+
 - `ChangePasswordHandler`: Cambio de contraseñas con validaciones de permisos
 - Validación de usuarios existentes
 - Control de acceso basado en roles
 
 ##### **Validaciones**
+
 - Validadores de comandos con FluentValidation
 - Validación de campos obligatorios y formatos
 - Manejo de casos de error específicos
@@ -88,11 +100,13 @@ Validan los casos de uso, handlers CQRS y comportamientos transversales de la ca
 ### 3. Pruebas de Integración (106 tests)
 
 #### **🟡 Propósito**
+
 Validan el funcionamiento completo de casos de uso con dependencias reales (base de datos, servicios externos).
 
 #### **📁 Organización por Módulos Funcionales**
 
 ##### **Gestión de Pedidos (Orders)**
+
 - **Creación Completa**: Flujo completo de creación con datos sembrados
 - **Consultas**: Filtros por fecha, distribuidor, punto de venta, estado
 - **Operaciones Masivas**: Creación masiva de pedidos
@@ -100,22 +114,26 @@ Validan el funcionamiento completo de casos de uso con dependencias reales (base
 - **Integraciones**: Verificación con base de datos real
 
 ##### **Gestión de Puntos de Venta**
+
 - **CRUD Completo**: Crear, consultar, actualizar, eliminar
 - **Filtros y Búsquedas**: Por teléfono, estado, distribuidores asignados
 - **Asignaciones**: Gestión de relaciones con distribuidores
 - **Estados**: Activación y desactivación
 
 ##### **Gestión de Distribuidores**
+
 - **Creación y Consulta**: Operaciones básicas
 - **Categorías**: Asignación de categorías de productos
 - **Relaciones**: Vinculación con puntos de venta
 
 ##### **Gestión de Productos**
+
 - **Catálogo**: Consulta de productos disponibles
 - **Categorías**: Filtros por categoría
 - **Validaciones**: Integridad de datos
 
 ##### **Gestión de Usuarios**
+
 - **Autenticación**: Login y refresh de tokens
 - **Autorización**: Validación de permisos y roles
 - **Gestión Completa**: CRUD de usuarios con roles
@@ -127,32 +145,38 @@ Validan el funcionamiento completo de casos de uso con dependencias reales (base
 ### 4. Pruebas Funcionales - E2E (100 tests)
 
 #### **🔴 Propósito**
+
 Validan la funcionalidad completa desde la perspectiva del usuario final, probando endpoints HTTP end-to-end.
 
 #### **📁 Organización por APIs**
 
-##### **API de Pedidos (/api/Orders)**
+##### **API de Pedidos (/API/Orders)**
+
 - **POST**: Creación de pedidos con validación completa
 - **GET**: Consulta individual y con filtros múltiples
 - **PUT**: Actualización de estados y líneas
 - **DELETE**: Eliminación de líneas de pedido
 
-##### **API de Puntos de Venta (/api/PointsOfSale)**
+##### **API de Puntos de Venta (/API/PointsOfSale)**
+
 - **Registro**: Creación de nuevos puntos de venta
 - **Consultas**: Por teléfono, estado, con paginación
 - **Gestión**: Activación/desactivación
 - **Asignaciones**: Gestión de distribuidores
 
-##### **API de Distribuidores (/api/Distributors)**
+##### **API de Distribuidores (/API/Distributors)**
+
 - **CRUD**: Operaciones completas de gestión
 - **Relaciones**: Consulta de puntos de venta asignados
 - **Categorías**: Gestión de categorías de productos
 
-##### **API de Productos (/api/Products)**
+##### **API de Productos (/API/Products)**
+
 - **Catálogo**: Consulta de productos disponibles
 - **Filtros**: Por categoría y disponibilidad
 
-##### **API de Usuarios (/api/Users)**
+##### **API de Usuarios (/API/Users)**
+
 - **Autenticación**: Login, logout, refresh tokens
 - **Registro**: Creación de nuevos usuarios
 - **Gestión**: Roles, permisos, cambio de contraseñas
@@ -167,6 +191,7 @@ Validan la funcionalidad completa desde la perspectiva del usuario final, proban
 ### 🎯 Objetivos de Cobertura Definidos
 
 Según la arquitectura de pruebas establecida:
+
 - **Dominio**: >95% de cobertura de líneas
 - **Aplicación**: >90% de cobertura de líneas  
 - **Integración**: Casos de uso críticos cubiertos
@@ -177,18 +202,21 @@ Según la arquitectura de pruebas establecida:
 #### **🟢 Áreas Bien Cubiertas**
 
 ##### **Lógica de Dominio**
+
 - **Entidades Core**: Order, PointOfSale, Distributor, Product, User completamente cubiertas
 - **Value Objects**: Money, Quantity, Address, Email con validaciones exhaustivas
 - **Invariantes**: Reglas de negocio críticas validadas sistemáticamente
 - **Eventos de Dominio**: Generación y manejo de eventos cubiertos
 
 ##### **Casos de Uso de Aplicación**
+
 - **CQRS Handlers**: Todos los handlers principales tienen tests
 - **Validaciones**: FluentValidation completamente cubierta
 - **Mappers**: Transformaciones de datos validadas
 - **Comportamientos Transversales**: Logging, validación, autorización
 
 ##### **APIs REST**
+
 - **Endpoints Críticos**: Todos los endpoints de producción cubiertos
 - **Códigos HTTP**: Validación de respuestas exitosas y de error
 - **Serialización**: DTOs de entrada y salida validados
@@ -197,11 +225,13 @@ Según la arquitectura de pruebas establecida:
 #### **🟡 Áreas Parcialmente Cubiertas**
 
 ##### **Infraestructura**
+
 - **Configuraciones**: Cobertura básica de configuraciones de BD
 - **Servicios Externos**: Mocks implementados, integración real limitada
 - **Middleware**: Comportamientos básicos cubiertos
 
 ##### **Casos de Error**
+
 - **Excepciones de Negocio**: Principales escenarios cubiertos
 - **Validaciones de Entrada**: Cobertura amplia pero no exhaustiva
 - **Timeouts y Reintentos**: Cobertura limitada
@@ -209,14 +239,17 @@ Según la arquitectura de pruebas establecida:
 #### **🔴 Áreas con Cobertura Limitada**
 
 ##### **Escenarios de Concurrencia**
+
 - **Acceso Simultáneo**: Tests limitados para operaciones concurrentes
 - **Transacciones**: Validación básica de consistencia transaccional
 
 ##### **Rendimiento**
+
 - **Carga**: No hay tests de rendimiento implementados
 - **Escalabilidad**: Validación limitada bajo carga
 
 ##### **Seguridad**
+
 - **Penetración**: Tests de seguridad básicos
 - **Inyección**: Validación limitada contra ataques
 
@@ -233,7 +266,9 @@ Según la arquitectura de pruebas establecida:
 ### 📐 Patrones Implementados
 
 #### **AAA (Arrange-Act-Assert)**
+
 Estructura consistente en todos los tests:
+
 ```csharp
 [Fact]
 public void Create_Order_Should_Have_Created_Status()
@@ -251,13 +286,17 @@ public void Create_Order_Should_Have_Created_Status()
 ```
 
 #### **Test Data Builders**
+
 Factories especializadas para crear objetos de prueba:
+
 - **OrderTestData**: Datos consistentes para pedidos
 - **PointOfSaleData**: Factories para puntos de venta
 - **ProductData**: Builders para productos de prueba
 
 #### **Object Mother**
+
 Objetos preconstruidos para escenarios comunes:
+
 - **DefaultPointOfSale**: Punto de venta estándar
 - **TestDistributor**: Distribuidor con configuración típica
 - **SampleProduct**: Producto de ejemplo
@@ -312,12 +351,14 @@ Objetos preconstruidos para escenarios comunes:
 ## 📚 Referencias y Enlaces
 
 ### 🔗 Archivos de Código Fuente
+
 - **Tests de Dominio**: `/test/Conaprole.Orders.Domain.UnitTests/`
 - **Tests de Aplicación**: `/test/Conaprole.Orders.Application.UnitTests/`
 - **Tests de Integración**: `/test/Conaprole.Orders.Application.IntegrationTests/`
 - **Tests Funcionales**: `/test/Conaprole.Orders.Api.FunctionalTests/`
 
 ### 📖 Documentación Relacionada
+
 - **Arquitectura de Pruebas**: `/docs/quality/arquitectura-pruebas.md`
 - **Estrategia de Testing**: `/docs/architecture/testing-strategy.md`
 - **Casos de Uso**: `/docs/architecture/casos-de-uso/`
@@ -329,13 +370,16 @@ Objetos preconstruidos para escenarios comunes:
 El sistema cuenta con una **cobertura sólida y bien estructurada** de pruebas que abarca todos los niveles arquitectónicos. Con **298 tests implementados**, se valida tanto la lógica de negocio crítica como la funcionalidad completa end-to-end.
 
 ### ✅ Fortalezas Principales
+
 - **Cobertura Arquitectónica Completa**: Todas las capas validadas
 - **Patrones Consistentes**: Estructura uniforme y mantenible
 - **Casos de Uso Críticos**: Funcionalidad principal completamente cubierta
 - **Integración Continua**: Tests ejecutados automáticamente
 
 ### 🎯 Valor Estratégico
+
 Esta suite de pruebas proporciona una **red de seguridad robusta** que:
+
 - Facilita refactorización segura del código
 - Detecta regresiones antes del despliegue
 - Documenta comportamientos esperados

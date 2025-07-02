@@ -19,6 +19,7 @@ Comprehensive technical reference documentation including API specifications, co
 ## Contents
 
 ### API Reference
+
 - [API Overview](./api-overview.md) - REST API introduction and conventions
 - [Authentication API](./authentication-api.md) - Authentication endpoints
 - [Users API](./users-api.md) - User management endpoints
@@ -27,24 +28,28 @@ Comprehensive technical reference documentation including API specifications, co
 - [Error Codes](./error-codes.md) - Complete error code reference
 
 ### Configuration Reference
+
 - [Application Configuration](./app-config.md) - Configuration options and settings
 - [Environment Variables](./environment-variables.md) - Runtime configuration
 - [Database Schema](./database-schema.md) - Complete database structure
 - [Security Configuration](./security-config.md) - Security settings and options
 
 ### Integration Reference
+
 - [SDK Documentation](./sdk-docs.md) - Client SDK usage and examples
 - [Webhook Reference](./webhooks.md) - Event notifications and callbacks
 - [External API Mapping](./external-apis.md) - Third-party system integrations
 - [Data Import/Export](./data-exchange.md) - Bulk operations and formats
 
 ### System Specifications
+
 - [Performance Benchmarks](./performance-specs.md) - System performance metrics
 - [Capacity Planning](./capacity-planning.md) - Scaling and resource requirements
 - [SLA Reference](./sla-reference.md) - Service level agreements
 - [Compliance Standards](./compliance.md) - Security and regulatory compliance
 
 ### Troubleshooting Reference
+
 - [Common Issues](./common-issues.md) - Frequently encountered problems
 - [Diagnostic Tools](./diagnostic-tools.md) - System debugging utilities
 - [Log Analysis](./log-analysis.md) - Log formats and analysis
@@ -53,6 +58,7 @@ Comprehensive technical reference documentation including API specifications, co
 ## Reference Conventions
 
 ### API Documentation Format
+
 - **Endpoint** - HTTP method and URL pattern
 - **Description** - Purpose and functionality
 - **Parameters** - Request parameters and validation
@@ -61,6 +67,7 @@ Comprehensive technical reference documentation including API specifications, co
 - **Notes** - Important implementation details
 
 ### Configuration Format
+
 - **Setting** - Configuration key or parameter
 - **Type** - Data type and format
 - **Default** - Default value if not specified

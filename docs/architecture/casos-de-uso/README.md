@@ -63,12 +63,14 @@ graph LR
 ## 🔐 Modelo de Seguridad
 
 ### Roles del Sistema
+
 - **Administrator**: Control total del sistema
 - **Distributor**: Gestión de entregas y asignaciones
 - **Registered**: Acceso básico autenticado
 - **API**: Integración entre sistemas
 
 ### Permisos Principales
+
 - `AdminAccess`: Administración completa
 - `UsersWrite/Read`: Gestión de usuarios
 - `OrdersWrite/Read`: Gestión de pedidos
@@ -79,16 +81,19 @@ graph LR
 ## 🔄 Flujos de Trabajo Principales
 
 ### 1. Configuración Inicial del Sistema
+
 ```
 Administrador → Crear Productos → Crear Distribuidores → Asignar Categorías
 ```
 
 ### 2. Registro de Punto de Venta
+
 ```
 PdV → Registrarse → Admin Valida → Admin Asigna Distribuidor → PdV Activo
 ```
 
 ### 3. Proceso de Pedido Completo
+
 ```
 PdV → Crear Pedido → Distribuidor Confirma → Procesa → Entrega → Completado
 ```
@@ -105,31 +110,37 @@ PdV → Crear Pedido → Distribuidor Confirma → Procesa → Entrega → Compl
 ### 🖼️ Visualización de Diagramas
 
 #### Opción 1: GitHub/GitLab (Recomendado)
+
 Los archivos `.md` se renderizan automáticamente con los diagramas Mermaid en GitHub y GitLab.
 
 #### Opción 2: Vista Previa HTML
+
 1. Abrir los archivos `.html` en cualquier navegador web
 2. Los diagramas se renderizan automáticamente con Mermaid.js
 3. Ideal para presentaciones o revisiones offline
 
 #### Opción 3: Exportar Imágenes
+
 1. Abrir archivo `.html` en navegador
 2. Usar herramientas del navegador para exportar a PNG/PDF
 3. Alternativamente, usar herramientas como [Mermaid Live Editor](https://mermaid.live/)
 
 ### Para Desarrollo
+
 1. **Análisis de Requisitos**: Identificar funcionalidades por implementar
 2. **Diseño de APIs**: Definir endpoints basados en casos de uso
 3. **Testing**: Crear casos de prueba para cada caso de uso
 4. **Documentación**: Referencia para documentación técnica
 
 ### Para Negocio
+
 1. **Capacitación**: Entender funcionalidades disponibles
 2. **Procesos**: Mapear flujos de trabajo empresariales
 3. **Roles**: Definir responsabilidades por actor
 4. **Validación**: Verificar que el sistema cubre necesidades
 
 ### Para Mantenimiento
+
 1. **Evolución**: Identificar áreas de mejora
 2. **Nuevas Funcionalidades**: Planificar extensiones del sistema
 3. **Optimización**: Detectar flujos complejos o redundantes
@@ -138,6 +149,7 @@ Los archivos `.md` se renderizan automáticamente con los diagramas Mermaid en G
 ## 🔄 Mantenimiento de Diagramas
 
 ### Cuándo Actualizar
+
 - ✅ Nuevos casos de uso implementados
 - ✅ Cambios en permisos o roles
 - ✅ Modificaciones en flujos de negocio
@@ -145,6 +157,7 @@ Los archivos `.md` se renderizan automáticamente con los diagramas Mermaid en G
 - ✅ Cambios en reglas de autorización
 
 ### Proceso de Actualización
+
 1. **Identificar Cambios**: Analizar modificaciones en código
 2. **Actualizar Diagramas**: Modificar archivos Markdown
 3. **Validar Consistencia**: Verificar coherencia entre diagramas

@@ -100,28 +100,33 @@ sequenceDiagram
 ## 🔍 Puntos Clave del Flujo de Error
 
 ### 1. **Validación Temprana**
+
 - La validación ocurre **antes** de la ejecución del handler
 - **ValidationBehavior** intercepta en el pipeline de MediatR
 - Evita procesamiento innecesario si los datos son inválidos
 
 ### 2. **FluentValidation Detallada**
+
 - Reglas declarativas y reutilizables
 - **Múltiples errores** capturados simultáneamente
 - Mensajes específicos y localizables
 - Validación de objetos complejos y anidados
 
 ### 3. **Manejo Estructurado de Excepciones**
+
 - **ValidationException** personalizada con lista de errores
 - **ExceptionHandlingMiddleware** centraliza el manejo
 - Respuesta consistente en formato **Problem Details (RFC 7807)**
 
 ### 4. **Respuesta Cliente-Amigable**
+
 - **HTTP 400 Bad Request** apropiado
 - **JSON estructurado** con detalles específicos
 - Campo `errors` con lista detallada de problemas
 - Información suficiente para corrección por parte del cliente
 
 ### 5. **No Ejecución del Handler**
+
 - El **Command Handler nunca se ejecuta**
 - **No se accede a repositorios** ni base de datos
 - **No se inician transacciones** innecesarias
@@ -130,6 +135,7 @@ sequenceDiagram
 ## 🛠️ Reglas de Validación Típicas
 
 ### CreateOrderCommand Validator
+
 ```csharp
 public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {

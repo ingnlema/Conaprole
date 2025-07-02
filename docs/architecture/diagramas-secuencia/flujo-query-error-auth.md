@@ -95,26 +95,31 @@ sequenceDiagram
 ## 🔍 Puntos Clave del Flujo de Autorización
 
 ### 1. **Autenticación JWT Exitosa**
+
 - Token válido con firma verificada
 - Extracción correcta del `IdentityId`
 - Usuario identificado en el sistema
 
 ### 2. **Enriquecimiento de Claims**
+
 - **Claims Transformation** obtiene roles del usuario
 - Consulta a base de datos local para roles específicos
 - ClaimsPrincipal enriquecido con información de autorización
 
 ### 3. **Verificación de Permisos Específicos**
+
 - **HasPermission Attribute** requiere permiso específico
 - **Authorization Handler** verifica permisos del usuario
 - Comparación entre permisos requeridos vs. permisos disponibles
 
 ### 4. **Fallo de Autorización**
+
 - Usuario **autenticado** pero **no autorizado**
 - Respuesta **403 Forbidden** (no 401 Unauthorized)
 - **Información mínima** revelada por seguridad
 
 ### 5. **Terminación Temprana del Pipeline**
+
 - **MediatR nunca se ejecuta**
 - **Query Handler no se invoca**
 - **Base de datos no consultada** para los datos solicitados
@@ -122,6 +127,7 @@ sequenceDiagram
 ## 🛡️ Modelo de Permisos
 
 ### Estructura de Permisos
+
 ```
 Usuario "regular@test.com"
 ├── Rol: "Registered"
@@ -133,6 +139,7 @@ Usuario "regular@test.com"
 ```
 
 ### Casos de Permisos Típicos
+
 ```csharp
 [HasPermission("orders:read")]    // ✅ Usuario tiene permiso
 [HasPermission("orders:write")]   // ❌ Usuario no tiene permiso
@@ -150,11 +157,13 @@ Usuario "regular@test.com"
 ## 📚 Escenarios de Autorización
 
 ### ✅ Casos de Éxito
+
 - Usuario Admin accede a cualquier recurso
 - Usuario con permiso específico accede a recurso correspondiente
 - Usuario accede a sus propios datos
 
 ### ❌ Casos de Fallo
+
 - **Usuario regular** intenta acceder a datos administrativos
 - **Usuario sin rol** intenta cualquier operación
 - **Usuario de Distribuidor A** intenta acceder a datos de Distributor B
@@ -163,12 +172,14 @@ Usuario "regular@test.com"
 ## ⚡ Optimizaciones de Seguridad
 
 ### 1. **Caching de Permisos**
+
 ```csharp
 // Los permisos pueden ser cacheados por usuario
 [MemoryCache("user-permissions-{identityId}", Duration = "00:15:00")]
 ```
 
 ### 2. **Minimización de Information Leakage**
+
 ```json
 // ❌ NO hacer: Información detallada
 {
@@ -184,6 +195,7 @@ Usuario "regular@test.com"
 ```
 
 ### 3. **Logging de Seguridad**
+
 ```csharp
 _logger.LogWarning("Authorization failed for user {UserId} attempting to access {Resource} with permission {Permission}",
     user.IdentityId, context.Resource, requiredPermission);
