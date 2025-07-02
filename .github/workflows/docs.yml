@@ -1,16 +1,7 @@
 name: Documentation Validation
 
 on:
-  push:
-    paths:
-      - 'docs/**'
-      - '.markdownlint.json'
-      - 'scripts/validate-docs.sh'
-  pull_request:
-    paths:
-      - 'docs/**'
-      - '.markdownlint.json'
-      - 'scripts/validate-docs.sh'
+  workflow_dispatch:
 
 jobs:
   validate-docs:
