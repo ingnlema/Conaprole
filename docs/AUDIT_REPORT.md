@@ -6,7 +6,8 @@
 
 ## 🎯 Resumen Ejecutivo
 
-Se ha completado exitosamente la auditoría y refactor inicial de la documentación del proyecto Conaprole Orders API, estableciendo una base sólida para mantenimiento y mejora continua.
+Se ha completado exitosamente la auditoría y refactor inicial de la documentación del proyecto  
+Conaprole Orders API, estableciendo una base sólida para mantenimiento y mejora continua.
 
 ### ✅ Logros Principales
 
@@ -170,7 +171,8 @@ make doc-all
 3. **Evolución**: Actualizar templates según feedback del equipo
 4. **Comunidad**: Fomentar contribuciones a documentación
 
-La base está establecida para una documentación de clase mundial. El enfoque quirúrgico y minimal ha preservado el contenido existente mientras añade las capacidades necesarias para el futuro.
+La base está establecida para una documentación de clase mundial. El enfoque quirúrgico y minimal  
+ha preservado el contenido existente mientras añade las capacidades necesarias para el futuro.
 
 ---
 
