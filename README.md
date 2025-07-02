@@ -39,13 +39,13 @@ cd Conaprole
 dotnet restore
 
 # Start infrastructure (PostgreSQL + Keycloak with auto-import)
-docker-compose up -d
+docker compose up -d
 
 # Wait for services to be ready (30 seconds for Keycloak)
 echo "Waiting for services to start..."
 sleep 30
 
-# Run database migrations
+# Run database migrations (EF tools will be restored automatically)
 dotnet ef database update --project src/Conaprole.Orders.Infrastructure
 
 # Start the API
@@ -238,7 +238,7 @@ Tests use **TestContainers** to spin up:
 
 ### 1. Keycloak Container Won't Start
 
-**Symptoms**: `docker-compose up -d` fails on Keycloak service
+**Symptoms**: `docker compose up -d` fails on Keycloak service
 
 **Solutions**:
 ```bash
@@ -246,8 +246,8 @@ Tests use **TestContainers** to spin up:
 ls -la Keycloak/conaprole-realm-export.json
 
 # Restart with fresh data
-docker-compose down -v
-docker-compose up -d
+docker compose down -v
+docker compose up -d
 
 # Check logs
 docker logs Conaprole.Identity
@@ -281,8 +281,8 @@ docker ps | grep postgres
 docker logs Conaprome.Orders.Db
 
 # Reset database
-docker-compose down -v
-docker-compose up -d conaprole.orders-db
+docker compose down -v
+docker compose up -d conaprole.orders-db
 # Wait 10 seconds, then retry migration
 ```
 
@@ -368,13 +368,13 @@ dotnet ef database update --project src/Conaprole.Orders.Infrastructure
 
 ```bash
 # Start infrastructure only
-docker-compose up -d conaprole.orders-db conaprole-idp
+docker compose up -d conaprole.orders-db conaprole-idp
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Reset everything
-docker-compose down -v && docker-compose up -d
+docker compose down -v && docker compose up -d
 
 # Backup database
 docker exec Conaprome.Orders.Db pg_dump -U postgres conaprole.orders > backup.sql
