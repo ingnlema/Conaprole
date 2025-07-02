@@ -1,0 +1,25 @@
+C4Container
+    title Container Diagram - Conaprole Orders API
+
+    Person(user, "Usuario", "Distribuidor/Punto de Venta/Admin")
+    
+    System_Boundary(orders_system, "Conaprole Orders System") {
+        Container(api, "Web API", ".NET 8, ASP.NET Core", "Provee endpoints REST para gestión de pedidos")
+        Container(domain, "Domain Layer", ".NET 8", "Lógica de negocio y entidades de dominio")
+        Container(application, "Application Layer", ".NET 8, MediatR", "Casos de uso y servicios de aplicación")
+        Container(infrastructure, "Infrastructure Layer", ".NET 8, EF Core", "Acceso a datos y servicios externos")
+    }
+    
+    System_Ext(keycloak, "Keycloak", "Autenticación JWT")
+    SystemDb(db, "PostgreSQL", "Base de datos principal")
+    System_Ext(client, "Cliente Web/Mobile", "Aplicación cliente")
+    
+    Rel(user, client, "Usa")
+    Rel(client, api, "Consume", "HTTPS/REST")
+    Rel(api, application, "Llama")
+    Rel(application, domain, "Usa")
+    Rel(application, infrastructure, "Llama")
+    Rel(infrastructure, db, "Lee/Escribe", "Entity Framework")
+    Rel(api, keycloak, "Valida tokens", "JWT")
+    
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")

@@ -1,0 +1,19 @@
+C4Context
+    title System Context Diagram - Conaprole Orders
+
+    Person(user, "Usuario Final", "Distribuidor, Punto de Venta, Administrador")
+    Person(admin, "Administrador", "Gestiona usuarios, productos y configuración")
+    
+    System(orders_api, "Conaprole Orders API", "Sistema de gestión de pedidos y productos")
+    
+    System_Ext(keycloak, "Keycloak", "Sistema de autenticación y autorización")
+    System_Ext(client_apps, "Aplicaciones Cliente", "Web, Mobile, Desktop")
+    SystemDb_Ext(postgresql, "PostgreSQL", "Base de datos principal")
+    
+    Rel(user, client_apps, "Usa")
+    Rel(admin, client_apps, "Administra")
+    Rel(client_apps, orders_api, "Consume API", "HTTPS/REST")
+    Rel(orders_api, keycloak, "Autentica usuarios", "HTTPS/OIDC")
+    Rel(orders_api, postgresql, "Lee/Escribe datos", "SQL")
+    
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="2")
