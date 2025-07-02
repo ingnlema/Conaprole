@@ -1,18 +1,100 @@
-# 🛂 Autorización
+# 🛂 Autorización - Sistema Token-Scoped
 
-## Fuente Única de Verdad: Base de Datos
+> **Propósito**: Documentar el sistema de autorización basado en permisos granulares  
+> **Audiencia**: Desarrolladores, Arquitectos de Seguridad  
+> **Prerrequisitos**: Conocimiento de JWT, ASP.NET Core Authorization
 
-> **🔑 Principio Fundamental**: La **base de datos PostgreSQL** es la única fuente de verdad para autorización. Los tokens JWT se utilizan **únicamente para autenticación** (verificar identidad), **no** para transportar roles o permisos.
+## 🎯 Objetivos
 
-### Arquitectura de Autorización
+Este documento explica cómo funciona el sistema de autorización actual que combina:
+
+- **Autenticación JWT** con Keycloak para identidad
+- **Autorización basada en permisos** consultando la base de datos
+- **Decoradores token-scoped** para endpoints específicos
+
+---
+
+## 🔑 Principio Fundamental
+
+> **🔑 Fuente Única de Verdad**: La **base de datos PostgreSQL** es la única fuente de verdad para autorización.  
+> Los tokens JWT se utilizan **únicamente para autenticación** (verificar identidad).
+
+### Arquitectura Actual
+
 - **Autenticación**: JWT tokens de Keycloak (solo `sub` y `preferred_username`)
-- **Autorización**: Consulta directa a la base de datos PostgreSQL
-- **Sin dependencias**: No usa `realm_access` ni `resource_access` del token
+- **Autorización**: Consulta directa a la base de datos PostgreSQL  
+- **Aplicación**: Decorador `[HasPermission]` en controllers
 - **Tiempo real**: Los cambios de permisos en BD se aplican inmediatamente
 
-## Sistema de Autorización Basado en Permisos
+## 📋 Implementación Actual
 
-La aplicación **Conaprole Orders** implementa un sistema de autorización granular basado en **permisos específicos** en lugar de roles estáticos. Esto permite mayor flexibilidad y control de acceso.
+### Decorador HasPermission
+
+```csharp
+// src/Conaprole.Orders.Infrastructure/Authorization/HasPermissionAttribute.cs
+public sealed class HasPermissionAttribute : AuthorizeAttribute
+{
+    public HasPermissionAttribute(string permission)
+        : base(permission)
+    {
+    }
+}
+```
+
+### Permisos Definidos
+
+```csharp
+// src/Conaprole.Orders.Api/Controllers/Users/Security/Permissions.cs
+internal static class Permissions
+{
+    // Usuarios
+    public const string UsersRead = "users:read";
+    public const string UsersWrite = "users:write";
+    
+    // Distribuidores  
+    public const string DistributorsRead = "distributors:read";
+    public const string DistributorsWrite = "distributors:write";
+    
+    // Puntos de Venta
+    public const string PointsOfSaleRead = "pointsofsale:read";
+    public const string PointsOfSaleWrite = "pointsofsale:write";
+    
+    // Productos
+    public const string ProductsRead = "products:read";
+    public const string ProductsWrite = "products:write";
+    
+    // Órdenes
+    public const string OrdersRead = "orders:read";
+    public const string OrdersWrite = "orders:write";
+    
+    // Administración
+    public const string AdminAccess = "admin:access";
+}
+```
+
+### Uso en Controllers
+
+```csharp
+// src/Conaprole.Orders.Api/Controllers/Orders/OrdersController.cs
+[ApiController]
+[Route("api/Orders")]
+public class OrdersController : ControllerBase
+{
+    [HttpGet("{id}")]
+    [HasPermission(Permissions.OrdersRead)]
+    public async Task<IActionResult> GetOrder(Guid id, CancellationToken cancellationToken)
+    {
+        // Implementación...
+    }
+    
+    [HttpPost]
+    [HasPermission(Permissions.OrdersWrite)]
+    public async Task<IActionResult> CreateOrder(CreateOrderRequest request, CancellationToken cancellationToken)
+    {
+        // Implementación...
+    }
+}
+```
 
 ## Modelo de Dominio
 

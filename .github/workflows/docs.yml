@@ -1,0 +1,67 @@
+name: 📚 Documentation Quality Check
+
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - '.markdownlint.json'
+      - 'scripts/verify-docs.sh'
+      - 'Makefile'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.markdownlint.json'
+      - 'scripts/verify-docs.sh'
+      - 'Makefile'
+
+jobs:
+  documentation-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📂 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 🔧 Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 📥 Install markdownlint
+        run: npm install -g markdownlint-cli2
+
+      - name: 🔍 Lint documentation
+        run: |
+          echo "🔍 Running markdownlint on documentation..."
+          markdownlint-cli2 "docs/**/*.md"
+
+      - name: 🏗️ Build project for snippet validation
+        run: |
+          echo "🏗️ Building project to validate code examples..."
+          dotnet restore Conaprole.Orders.sln
+          dotnet build Conaprole.Orders.sln --configuration Release --no-restore
+
+      - name: ✅ Verify code snippets
+        run: |
+          echo "✅ Verifying code snippets in documentation..."
+          chmod +x scripts/verify-docs.sh
+          ./scripts/verify-docs.sh
+
+      - name: 📊 Documentation statistics
+        if: always()
+        run: |
+          echo "📊 Documentation statistics:"
+          make doc-stats
+
+      - name: 🎉 Success
+        run: |
+          echo "🎉 Documentation quality check completed successfully!"
+          echo "✅ All Markdown files are properly formatted"
+          echo "✅ All code snippets compile successfully"
