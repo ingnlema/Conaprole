@@ -36,6 +36,6 @@
       - KEYCLOAK_ADMIN_PASSWORD=admin
     volumes:
       - ./.containers/identity:/opt/keycloak/data
-      - ./.files/conaprole-realm-export.json:/opt/keycloak/data/import/realm.json
+      - ./Keycloak/conaprole-realm-export.json:/opt/keycloak/data/import/realm.json
     ports:
       - 18080:8080
