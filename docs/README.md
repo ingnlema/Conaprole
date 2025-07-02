@@ -52,6 +52,10 @@ This is the central documentation hub for the Conaprole Orders system. All techn
 - [Use Cases Overview](./architecture/casos-de-uso/README.md) - Use case diagrams
 - [Sequence Diagrams](./architecture/diagramas-secuencia/README.md) - Flow diagrams
 
+### ❓ Help & Support
+
+- [FAQ](./FAQ.md) - Frequently asked questions and troubleshooting
+
 ## Documentation Structure
 
 ```
