@@ -66,3 +66,29 @@ install-tools: ## Install required documentation tools
 	@echo "🔧 Installing documentation tools..."
 	@npm install -g markdownlint-cli @mermaid-js/mermaid-cli
 	@echo "✅ Tools installed successfully"
+
+clean-repo: ## Clean local repository artifacts without touching git index
+	@echo "🧹 Cleaning local repository artifacts..."
+	@echo "📁 Removing build artifacts..."
+	@find . -name "bin" -type d -exec rm -rf {} + 2>/dev/null || true
+	@find . -name "obj" -type d -exec rm -rf {} + 2>/dev/null || true
+	@find . -name "TestResults" -type d -exec rm -rf {} + 2>/dev/null || true
+	@echo "📄 Removing temporary files..."
+	@find . -name "*.tmp" -type f -delete 2>/dev/null || true
+	@find . -name "*.temp" -type f -delete 2>/dev/null || true
+	@find . -name "*~" -type f -delete 2>/dev/null || true
+	@echo "📊 Removing test artifacts..."
+	@find . -name "*.trx" -type f -delete 2>/dev/null || true
+	@find . -name "coverage" -type d -exec rm -rf {} + 2>/dev/null || true
+	@echo "🗂️ Removing IDE artifacts..."
+	@find . -name ".vs" -type d -exec rm -rf {} + 2>/dev/null || true
+	@find . -name "*.user" -type f -delete 2>/dev/null || true
+	@find . -name "*.DotSettings.user" -type f -delete 2>/dev/null || true
+	@echo "📦 Removing dependency caches..."
+	@find . -name "node_modules" -type d -exec rm -rf {} + 2>/dev/null || true
+	@find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+	@echo "🔒 Removing sensitive files..."
+	@find . -name "*.pfx" -type f -delete 2>/dev/null || true
+	@find . -name ".env.local" -type f -delete 2>/dev/null || true
+	@echo "✅ Repository cleanup complete!"
+	@echo "ℹ️  Note: Only local artifacts removed, git index unchanged"

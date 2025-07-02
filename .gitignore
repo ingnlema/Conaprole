@@ -1,47 +1,145 @@
-# Directorios de compilación (bin y obj)
+# ====================
+# .NET BUILD ARTIFACTS
+# ====================
+
+# Build outputs
 **/bin/
 **/obj/
+**/publish/
+**/Publish/
 
-# Archivos de configuración local y de usuario
+# NuGet packages and dependencies
+*.nupkg
+**/packages/
+.nuget/
+
+# ====================
+# IDE & EDITOR CONFIG
+# ====================
+
+# Visual Studio
+.vs/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
+*.DotSettings.user
 
-# Configuraciones de IDEs
-.vs/
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains IDEs
 .idea/
 *.sln.iml
-
-# Archivos del sistema operativo
-.DS_Store
-Thumbs.db
-
-# Archivos de log y temporales
-*.log
-*.tmp
-
-# Logs directory (Serilog)
-logs/
-
-# Docker y datos generados por contenedores
-.containers/
-
-# NuGet y dependencias restauradas
-*.nupkg
-**/packages/
-
-# Cachés y configuraciones de herramientas de análisis
 _ReSharper.Caches/
 
-# Directorio de publicación
-**/publish/
-**/Publish/
+# ====================
+# TEST ARTIFACTS
+# ====================
 
+# Test results and coverage
+TestResults/
+**/*.trx
+coverage/
+*.coverage
+*.coveragexml
 
-*.DotSettings.user
-exports/
+# NCrunch
+*.ncrunch*
+_NCrunch_*
+
+# ====================
+# LOGS & TEMPORARY FILES
+# ====================
+
+# Application logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# ====================
+# DOCKER & CONTAINERS
+# ====================
+
+# Docker compose overrides
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Container data directories
+.containers/
 containers/
 
-# Test results
-TestResults/
+# Export directories (should be generated)
+exports/
+export/
+
+# ====================
+# SYSTEM FILES
+# ====================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ====================
+# SECRETS & ENVIRONMENT
+# ====================
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Certificates and keys
+*.pfx
+*.p12
+*.key
+*.pem
+
+# ====================
+# TOOLS & CACHE
+# ====================
+
+# Node.js (for docs/tooling)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Python (for scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# ====================
+# DEVELOPMENT DUMPS
+# ====================
+
+# Memory dumps
+*.dmp
+*.mdmp
+
+# SQL Server files
+*.mdf
+*.ldf

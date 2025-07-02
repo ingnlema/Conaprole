@@ -33,6 +33,7 @@ Comprehensive technical reference documentation including API specifications, co
 - [Environment Variables](./environment-variables.md) - Runtime configuration
 - [Database Schema](./database-schema.md) - Complete database structure
 - [Security Configuration](./security-config.md) - Security settings and options
+- [Logging Configuration](./logging.md) - Serilog setup, log files, and troubleshooting
 
 ### Integration Reference
 
