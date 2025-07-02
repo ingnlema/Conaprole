@@ -23,11 +23,11 @@ extract_csharp_snippets() {
     local counter=1
     
     # Extraer bloques de código C#
-    awk '
-        /^```csharp/ {in_code=1; next}
-        /^```/ && in_code {in_code=0; counter++; next}
-        in_code {print > output_dir"/"FILENAME"_snippet_"counter".cs"}
-    ' "$file" counter="$counter" output_dir="$output_dir" FILENAME="$(basename "$file" .md)"
+    awk -v output_dir="$output_dir" -v filename="$(basename "$file" .md)" '
+        /^```csharp/ {in_code=1; counter++; next}
+        /^```/ && in_code {in_code=0; next}
+        in_code {print > output_dir"/"filename"_snippet_"counter".cs"}
+    ' "$file"
 }
 
 # Función para compilar snippet

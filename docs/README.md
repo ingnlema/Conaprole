@@ -29,6 +29,7 @@
 
 ### 🎨 Diagramas y Casos de Uso
 
+- [**🏗️ Arquitectura C4**](architecture/c4-architecture.md) - Vistas de contexto, contenedores y componentes
 - [**📊 Casos de Uso**](architecture/casos-de-uso/) - Diagramas por actor del sistema
 - [**🔄 Diagramas de Secuencia**](architecture/diagramas-secuencia/) - Flujos de comando y consulta
 - [**🏛️ Domain Design**](architecture/domain-design.md) - Modelado del dominio
@@ -151,6 +152,8 @@ markdownlint-cli2 "docs/**/*.md"
 # Auto-formatear
 markdownlint-cli2 "docs/**/*.md" --fix
 ```
+
+📋 **Más preguntas**: Ver [FAQ completo](FAQ.md) con troubleshooting y guías detalladas.
 
 ---
 
