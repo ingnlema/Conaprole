@@ -1,5 +1,6 @@
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.Controllers.Orders.Examples;
+using Conaprole.Orders.Api.Controllers.Orders.Dtos.Examples;
 using Conaprole.Orders.Application.Orders.AddOrderLine;
 using Conaprole.Orders.Application.Orders.BulkCreateOrders;
 using Conaprole.Orders.Application.Orders.CreateOrder;
@@ -20,13 +21,21 @@ using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Orders;
 
+/// <summary>
+/// Controller for managing dairy product orders
+/// </summary>
 [ApiController]
 [Route("api/Orders")]
+[ApiExplorerSettings(GroupName = "Orders")]
 public class OrdersController : ControllerBase
 {
 
     private readonly ISender _sender;
     
+    /// <summary>
+    /// Initializes a new instance of the OrdersController
+    /// </summary>
+    /// <param name="sender">MediatR sender for command and query handling</param>
     public OrdersController(ISender sender)
     {
         _sender = sender;
@@ -34,8 +43,13 @@ public class OrdersController : ControllerBase
     
     
     /// <summary>
-    /// Obtiene los detalles de una orden específica por su ID.
+    /// Retrieves a specific order by its unique identifier
     /// </summary>
+    /// <param name="id">The unique identifier of the order</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The order details including all order lines</returns>
+    /// <response code="200">Returns the requested order with all details</response>
+    /// <response code="404">If the order with the specified ID is not found</response>
     [SwaggerOperation(Summary = "Obtener orden por ID", Description = "Devuelve una orden específica con todos los detalles y líneas.")]
     [HttpGet("{id}")]
     [HasPermission(Permissions.OrdersRead)]
@@ -50,13 +64,19 @@ public class OrdersController : ControllerBase
     }
     
     /// <summary>
-    /// Crea una nueva orden.
+    /// Creates a new order with the specified details
     /// </summary>
+    /// <param name="request">Order creation request containing all necessary details</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The unique identifier of the created order</returns>
+    /// <response code="201">Order created successfully. Returns the order ID.</response>
+    /// <response code="400">Invalid request data or business rule violation</response>
     [SwaggerOperation(Summary = "Crear orden", Description = "Crea una nueva orden con dirección, distribuidor, punto de venta y líneas de orden.")]
     [HttpPost]
     [HasPermission(Permissions.OrdersWrite)]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [SwaggerRequestExample(typeof(CreateOrderRequest), typeof(CreateOrderRequestExample))]
     public async Task<IActionResult> CreateOrder(CreateOrderRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateOrderCommand(

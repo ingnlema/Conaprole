@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Conaprole.Orders.Api.Controllers.Orders.Examples;
 using Conaprole.Orders.Api.Extensions;
@@ -32,12 +33,29 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Conaprole Orders API",
-        Version = "v1.1"
+        Version = "v1.1",
+        Description = "API for managing dairy product orders and distribution operations",
+        Contact = new OpenApiContact
+        {
+            Name = "Conaprole Development Team",
+            Email = "dev@conaprole.com"
+        }
     });
+
+    // Include XML comments
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
 
     options.CustomSchemaIds(type => type.FullName); 
 
     options.EnableAnnotations();
+
+    // Group actions by tags
+    options.TagActionsBy(api => new[] { api.GroupName ?? api.ActionDescriptor.RouteValues["controller"] });
 
     // Esquema de seguridad JWT
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
