@@ -50,9 +50,9 @@ Conaprole Orders is a **modern order management API** that handles dairy product
 
 #### 1. Access the System
 ```
-Production URL: https://api.conaprole.com
-Staging URL: https://staging-api.conaprole.com
-Documentation: https://api.conaprole.com/swagger
+Production URL: https://<domain>
+Staging URL: https://staging-<domain>
+Documentation: https://<domain>/swagger
 ```
 
 #### 2. Understanding Your Role
@@ -81,8 +81,8 @@ Documentation: https://api.conaprole.com/swagger
 
 ```bash
 # Clone the repository
-git clone https://github.com/conaprole/orders-api.git
-cd orders-api
+git clone https://github.com/ucudal/Conaprole_BackEnd.git
+cd Conaprole_BackEnd
 
 # Start infrastructure services
 docker-compose up -d postgres keycloak
@@ -275,28 +275,6 @@ POST /api/orders
 GET /api/orders/{orderId}
 ```
 
-### 📋 Use Case 2: Order Fulfillment
-
-#### Business Flow
-1. Distributor views pending orders
-2. Confirms order when ready to fulfill
-3. Updates status during delivery process
-4. Marks order as delivered
-
-#### API Sequence
-```http
-# 1. Get pending orders
-GET /api/orders?status=created&distributorId=dist-uuid
-
-# 2. Confirm order
-PUT /api/orders/{orderId}/confirm
-
-# 3. Update to in-transit
-PUT /api/orders/{orderId}/ship
-
-# 4. Mark as delivered
-PUT /api/orders/{orderId}/deliver
-```
 
 ## Troubleshooting
 
