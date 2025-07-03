@@ -57,31 +57,11 @@ dotnet run --project src/Conaprole.Orders.Api
 - 🔐 **Keycloak Admin**: `http://localhost:18080` (admin/admin)
 - 🗄️ **PostgreSQL**: `localhost:5432` (postgres/postgres)
 
-### 🔑 Default Administrator Credentials
-
-In **Development** and **Staging** environments, an initial administrator user is automatically created:
-
-- **Email**: `admininit@init.com`
-- **Password**: `admin`
-- **Role**: Administrator
-
-### 📋 Using the API with Swagger
-
-1. **Start the application** following the Quick Start steps above
-2. **Open Swagger UI** at `https://localhost:8080/swagger`
-3. **Obtain JWT Token**:
-   ```bash
-   curl -X POST "https://localhost:8080/api/users/login" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "email": "admininit@init.com",
-       "password": "admin"
-     }'
-   ```
-4. **Copy the `accessToken`** from the response
-5. **Click "Authorize"** in Swagger UI
-6. **Paste the token** in the format: `Bearer <your-token-here>`
-7. **Click "Authorize"** to authenticate all requests
+**Default Development Credentials:**
+- 👤 **Initial Admin User**: `admininit@init.com` / `admin`
+  - Automatically created in Development and Staging environments
+  - Has full Administrator role permissions
+  - Use these credentials in Swagger to test authenticated endpoints
 
 ## 🔐 Keycloak Authentication
 

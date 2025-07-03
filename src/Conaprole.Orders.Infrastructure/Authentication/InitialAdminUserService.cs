@@ -1,7 +1,7 @@
-using Conaprole.Orders.Application.Abstractions.Authentication;
-using Conaprole.Orders.Application.Abstractions.Clock;
-using Conaprole.Orders.Domain.Abstractions;
+using Conaprole.Orders.Application.Users.RegisterUser;
+using Conaprole.Orders.Application.Users.AssignRole;
 using Conaprole.Orders.Domain.Users;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -14,28 +14,19 @@ public interface IInitialAdminUserService
 
 internal sealed class InitialAdminUserService : IInitialAdminUserService
 {
+    private readonly ISender _sender;
     private readonly IUserRepository _userRepository;
-    private readonly IRoleRepository _roleRepository;
-    private readonly IAuthenticationService _authenticationService;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly KeycloakOptions _keycloakOptions;
     private readonly ILogger<InitialAdminUserService> _logger;
 
     public InitialAdminUserService(
+        ISender sender,
         IUserRepository userRepository,
-        IRoleRepository roleRepository,
-        IAuthenticationService authenticationService,
-        IUnitOfWork unitOfWork,
-        IDateTimeProvider dateTimeProvider,
         IOptions<KeycloakOptions> keycloakOptions,
         ILogger<InitialAdminUserService> logger)
     {
+        _sender = sender;
         _userRepository = userRepository;
-        _roleRepository = roleRepository;
-        _authenticationService = authenticationService;
-        _unitOfWork = unitOfWork;
-        _dateTimeProvider = dateTimeProvider;
         _keycloakOptions = keycloakOptions.Value;
         _logger = logger;
     }
@@ -59,37 +50,37 @@ internal sealed class InitialAdminUserService : IInitialAdminUserService
                 return;
             }
 
-            // Get Administrator role
-            var adminRole = await _roleRepository.GetByNameAsync("Administrator", cancellationToken);
-            if (adminRole is null)
+            _logger.LogInformation("Attempting to create initial admin user {Email}.", _keycloakOptions.InitialAdminUser);
+
+            // Try to register the user
+            var registerCommand = new RegisterUserCommand(
+                _keycloakOptions.InitialAdminUser,
+                "Admin",
+                "Initial",
+                _keycloakOptions.InitialAdminPassword);
+
+            var registerResult = await _sender.Send(registerCommand, cancellationToken);
+            
+            if (registerResult.IsFailure)
             {
-                _logger.LogError("Administrator role not found. Cannot create initial admin user.");
+                _logger.LogWarning("Failed to register initial admin user: {Error}", registerResult.Error.Name);
                 return;
             }
 
-            // Create user
-            var user = User.Create(
-                new FirstName("Admin"),
-                new LastName("Initial"),
-                new Email(_keycloakOptions.InitialAdminUser),
-                _dateTimeProvider.UtcNow);
+            var userId = registerResult.Value;
+            _logger.LogInformation("Initial admin user registered with ID {UserId}.", userId);
 
             // Assign Administrator role
-            user.AssignRole(adminRole);
+            var assignRoleCommand = new AssignRoleCommand(userId, "Administrator");
+            var assignRoleResult = await _sender.Send(assignRoleCommand, cancellationToken);
 
-            // Register user in Keycloak
-            var identityId = await _authenticationService.RegisterAsync(
-                user,
-                _keycloakOptions.InitialAdminPassword,
-                cancellationToken);
+            if (assignRoleResult.IsFailure)
+            {
+                _logger.LogError("Failed to assign Administrator role to initial admin user: {Error}", assignRoleResult.Error.Name);
+                return;
+            }
 
-            user.SetIdentityId(identityId);
-
-            // Save to database
-            _userRepository.Add(user);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            _logger.LogInformation("Initial admin user {Email} created successfully.", _keycloakOptions.InitialAdminUser);
+            _logger.LogInformation("Initial admin user {Email} created successfully with Administrator role.", _keycloakOptions.InitialAdminUser);
         }
         catch (Exception ex)
         {
