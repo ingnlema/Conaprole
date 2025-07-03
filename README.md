@@ -141,9 +141,9 @@ If auto-import fails, follow these steps:
 | `KEYCLOAK_BASE_URL` | `http://conaprole-idp:8080` | Keycloak base URL |
 | `KEYCLOAK_REALM` | `Conaprole` | Keycloak realm name |
 | `KEYCLOAK_ADMIN_CLIENT_ID` | `conaprole-admin-client` | Admin client ID |
-| `KEYCLOAK_ADMIN_CLIENT_SECRET` | `MdyBcICzOkfdxLeDcbcyhi5Im3EtVOb9` | Admin client secret |
+| `KEYCLOAK_ADMIN_CLIENT_SECRET` | `<secret>` | Admin client secret |
 | `KEYCLOAK_AUTH_CLIENT_ID` | `conaprole-auth-client` | Auth client ID |
-| `KEYCLOAK_AUTH_CLIENT_SECRET` | `EMI6IRqofvQmXHhvCX3MiX9bVdqKN4VS` | Auth client secret |
+| `KEYCLOAK_AUTH_CLIENT_SECRET` | `<secret>` | Auth client secret |
 | `ASPNETCORE_ENVIRONMENT` | `Development` | .NET environment |
 | `ASPNETCORE_URLS` | `https://localhost:7017;http://localhost:5017` | API listening ports |
 
