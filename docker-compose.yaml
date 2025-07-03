@@ -38,6 +38,7 @@
       - KEYCLOAK_ADMIN_PASSWORD=admin
     volumes:
       - keycloak-data:/opt/keycloak/data
+      - ./containers/identity/import:/opt/keycloak/data/import
     ports:
       - "18080:8080"
     healthcheck:

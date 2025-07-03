@@ -76,6 +76,8 @@ docker-compose.override.yaml
 # Container data directories
 .containers/
 containers/
+# Keep Keycloak realm import files
+!containers/identity/import/
 
 # Export directories (should be generated)
 exports/
