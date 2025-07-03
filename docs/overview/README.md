@@ -32,7 +32,7 @@ This section provides a high-level introduction to the Conaprole Orders system f
 ### Getting Started
 
 - [Quick Start Guide](./quick-start.md) - Fast track to understanding the system
-- [Glossary](./glossary.md) - Important terms and definitions
+- [Glossary](../glossary.md) - Important terms and definitions
 
 ## Quick Reference
 
