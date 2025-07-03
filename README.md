@@ -53,7 +53,7 @@ dotnet run --project src/Conaprole.Orders.Api
 ```
 
 **Access Points:**
-- 🌐 **API + Swagger**: `https://localhost:7017/swagger`
+- 🌐 **API + Swagger**: `https://localhost:8080/swagger`
 - 🔐 **Keycloak Admin**: `http://localhost:18080` (admin/admin)
 - 🗄️ **PostgreSQL**: `localhost:5432` (postgres/postgres)
 
