@@ -57,6 +57,12 @@ dotnet run --project src/Conaprole.Orders.Api
 - 🔐 **Keycloak Admin**: `http://localhost:18080` (admin/admin)
 - 🗄️ **PostgreSQL**: `localhost:5432` (postgres/postgres)
 
+**Default Development Credentials:**
+- 👤 **Initial Admin User**: `admininit@init.com` / `admin`
+  - Automatically created in Development and Staging environments
+  - Has full Administrator role permissions
+  - Use these credentials in Swagger to test authenticated endpoints
+
 ## 🔐 Keycloak Authentication
 
 ### Automatic Setup (Recommended)

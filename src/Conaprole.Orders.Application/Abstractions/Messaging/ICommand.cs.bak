@@ -1,4 +1,4 @@
-using Conaprole.Orders.Domain.Abstractions;
+﻿using Conaprole.Orders.Domain.Abstractions;
 using MediatR;
 
 namespace Conaprole.Orders.Application.Abstractions.Messaging;

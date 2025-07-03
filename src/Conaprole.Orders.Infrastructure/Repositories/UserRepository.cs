@@ -20,6 +20,17 @@ internal sealed class UserRepository : Repository<User>, IUserRepository
             .FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
     }
 
+    public async Task<User?> GetByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default)
+    {
+        var emailValueObject = new Email(email);
+        return await DbContext
+            .Set<User>()
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Email == emailValueObject, cancellationToken);
+    }
+
     public override void Add(User user)
     {
         foreach (var role in user.Roles)
