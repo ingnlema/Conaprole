@@ -61,7 +61,7 @@ En DDD, límites explícitos dentro de los cuales un modelo de dominio particula
 ### **Business Rule (Regla de Negocio)**
 Restricción o lógica que define o limita algún aspecto del negocio.
 
-**Ejemplo**: "Solo pedidos en estado Draft pueden ser modificados".
+**Ejemplo**: "Solo pedidos en estado CREATED pueden ser modificados".
 
 ## C
 
@@ -522,16 +522,7 @@ Formato de serialización de datos legible por humanos.
 - **Health Checks**: Verificación de salud
 - **Prometheus**: Métricas (futuro)
 
----
 
-## Mapping to Thesis
-
-Este documento contribuye directamente a las siguientes secciones de la tesis:
-
-- **2.6 Glosario** - Definiciones técnicas completas para el marco teórico
-- **Anexos** - Referencia técnica para consulta durante la lectura
-- **4.0 Diseño e Implementación** - Clarificación de terminología técnica utilizada
-- **5.0 Aseguramiento de la calidad** - Términos relacionados con testing y QA
 
 ## Referencias
 
