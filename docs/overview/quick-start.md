@@ -295,7 +295,7 @@ Solution: Ensure quantities are positive numbers
 #### 🔧 Territory Restrictions
 ```
 Error: 403 Forbidden - Access denied to resource
-Solution: Verify user has access to the requested territory
+Solution: Verify user has access to the resource
 ```
 
 ### Getting Help
