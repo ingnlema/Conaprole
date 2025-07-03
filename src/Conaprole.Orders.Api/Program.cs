@@ -102,9 +102,22 @@ if (applyMigrations || app.Environment.IsDevelopment())
 // Crear usuario administrador inicial solo en Development y Staging
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
-    using var scope = app.Services.CreateScope();
-    var initialAdminUserService = scope.ServiceProvider.GetRequiredService<IInitialAdminUserService>();
-    await initialAdminUserService.CreateInitialAdminUserAsync();
+    Log.Information("Environment is {Environment}. Creating initial admin user...", app.Environment.EnvironmentName);
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var initialAdminUserService = scope.ServiceProvider.GetRequiredService<IInitialAdminUserService>();
+        await initialAdminUserService.CreateInitialAdminUserAsync();
+        Log.Information("Initial admin user creation process completed.");
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Failed to create initial admin user during startup.");
+    }
+}
+else
+{
+    Log.Information("Environment is {Environment}. Skipping initial admin user creation.", app.Environment.EnvironmentName);
 }
 
 app.UseCors();
