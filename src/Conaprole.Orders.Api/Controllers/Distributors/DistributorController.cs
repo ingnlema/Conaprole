@@ -15,13 +15,20 @@ using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Distributors;
 
-
+/// <summary>
+/// Controller for managing distributor operations and assignments
+/// </summary>
 [ApiController]
 [Route("api/distributors")]
+[ApiExplorerSettings(GroupName = "Distributors")]
 public class DistributorController : ControllerBase
 {
     private readonly ISender _sender;
 
+    /// <summary>
+    /// Initializes a new instance of the DistributorController
+    /// </summary>
+    /// <param name="sender">MediatR sender for command and query handling</param>
     public DistributorController(ISender sender)
     {
         _sender = sender;

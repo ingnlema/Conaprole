@@ -1,6 +1,5 @@
 using Conaprole.Orders.Api.Controllers.Orders;
 using Conaprole.Orders.Api.Controllers.Orders.Examples;
-using Conaprole.Orders.Api.Controllers.Orders.Dtos.Examples;
 using Conaprole.Orders.Application.Orders.AddOrderLine;
 using Conaprole.Orders.Application.Orders.BulkCreateOrders;
 using Conaprole.Orders.Application.Orders.CreateOrder;
@@ -214,6 +213,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+    [SwaggerRequestExample(typeof(AddOrderLineRequest), typeof(AddOrderLineRequestExample))]
     [HttpPost("{orderId:guid}/lines")]
     [HasPermission(Permissions.OrdersWrite)]
     public async Task<IActionResult> AddLine(
@@ -275,6 +275,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+    [SwaggerRequestExample(typeof(UpdateOrderLineQuantityRequest), typeof(UpdateOrderLineQuantityRequestExample))]
     [HttpPut("{orderId:guid}/lines/{orderLineId:guid}")]
     [HasPermission(Permissions.OrdersWrite)]
     public async Task<IActionResult> UpdateLineQuantity(

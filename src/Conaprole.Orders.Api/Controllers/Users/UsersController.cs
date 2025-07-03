@@ -18,12 +18,20 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Conaprole.Orders.Api.Controllers.Users;
 
+/// <summary>
+/// Controller for user management and authentication operations
+/// </summary>
 [ApiController]
 [Route("api/users")]
+[ApiExplorerSettings(GroupName = "Users")]
 public class UsersController : ControllerBase
 {
     private readonly ISender _sender;
 
+    /// <summary>
+    /// Initializes a new instance of the UsersController
+    /// </summary>
+    /// <param name="sender">MediatR sender for command and query handling</param>
     public UsersController(ISender sender)
     {
         _sender = sender;

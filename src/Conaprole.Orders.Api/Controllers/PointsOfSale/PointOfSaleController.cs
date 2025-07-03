@@ -16,12 +16,20 @@ using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.PointsOfSale;
 
+/// <summary>
+/// Controller for managing points of sale (POS) operations
+/// </summary>
 [ApiController]
 [Route("api/pos")]
+[ApiExplorerSettings(GroupName = "Points of Sale")]
 public class PointOfSaleController : ControllerBase
 {
     private readonly ISender _sender;
 
+    /// <summary>
+    /// Initializes a new instance of the PointOfSaleController
+    /// </summary>
+    /// <param name="sender">MediatR sender for command and query handling</param>
     public PointOfSaleController(ISender sender)
     {
         _sender = sender;

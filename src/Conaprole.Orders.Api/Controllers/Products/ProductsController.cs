@@ -11,14 +11,20 @@ using Conaprole.Orders.Infrastructure.Authorization;
 
 namespace Conaprole.Orders.Api.Controllers.Products;
 
-
+/// <summary>
+/// Controller for managing dairy products in the catalog
+/// </summary>
 [ApiController]
 [Route("api/Products")]
+[ApiExplorerSettings(GroupName = "Products")]
 public class ProductsController : ControllerBase
 {
-
     private readonly ISender _sender;
     
+    /// <summary>
+    /// Initializes a new instance of the ProductsController
+    /// </summary>
+    /// <param name="sender">MediatR sender for command and query handling</param>
     public ProductsController(ISender sender)
     {
         _sender = sender;
