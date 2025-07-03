@@ -48,7 +48,6 @@ The system operates within the **dairy products distribution** domain, specifica
 - Delivery scheduling coordination
 
 ### Integration Points
-- **External Systems**: Integration with ERP, CRM, and logistics systems
 - **Identity Provider**: Keycloak for authentication and authorization
 - **Database**: PostgreSQL for reliable data persistence
 - **Monitoring**: Application insights and health monitoring
