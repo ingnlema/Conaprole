@@ -27,7 +27,7 @@ internal sealed class UserRepository : Repository<User>, IUserRepository
         return await DbContext
             .Set<User>()
             .Include(u => u.Roles)
-            .FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
+            .FirstOrDefaultAsync(u => EF.Property<string>(u, "Email") == email, cancellationToken);
     }
 
     public override void Add(User user)
