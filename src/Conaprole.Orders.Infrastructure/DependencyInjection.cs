@@ -105,6 +105,8 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         services.AddScoped<IUserContext, UserContext>();
+        
+        services.AddScoped<IInitialAdminUserService, InitialAdminUserService>();
     }
     
     private static void AddAuthorization(IServiceCollection services)
