@@ -9,6 +9,8 @@
     depends_on:
       conaprole.orders-db:
         condition: service_healthy
+      conaprole-idp:
+        condition: service_healthy
     ports:
       - "8080:8080"
   conaprole.orders-db:
@@ -38,3 +40,9 @@
       - ./containers/identity:/opt/keycloak/data
     ports:
       - "18080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
