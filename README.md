@@ -224,9 +224,9 @@ dotnet test --collect:"XPlat Code Coverage"
 
 ### Test Structure
 
-- **Unit Tests** (110 tests): Domain logic and business rules
-- **Integration Tests**: Database and repository layers with TestContainers
-- **Functional Tests**: API endpoints and workflows with TestContainers
+- **Unit Tests** (114 tests): Domain logic and business rules
+- **Integration Tests** (109 tests): Database and repository layers with TestContainers
+- **Functional Tests** (179 tests): API endpoints and workflows with TestContainers
 
 ### Test Environment
 
@@ -466,10 +466,10 @@ git push origin feature/your-feature-name
 
 [![Documentation Validation](https://github.com/ingnlema/Conaprole/workflows/Documentation%20Validation/badge.svg)](https://github.com/ingnlema/Conaprole/actions/workflows/docs.yml)
 
-- **📄 47 documentation files** with automated validation
+- **📄 60 documentation files** with automated validation
 - **🔗 148 verified internal links** 
-- **💻 334 tested code snippets**
-- **📊 52 architectural diagrams**
+- **💻 414 tested code snippets**
+- **📊 70 architectural diagrams**
 - **✅ Automated quality checks** in CI/CD
 
 ## 📞 Support
