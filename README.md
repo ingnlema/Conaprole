@@ -145,7 +145,7 @@ If auto-import fails, follow these steps:
 | `KEYCLOAK_AUTH_CLIENT_ID` | `conaprole-auth-client` | Auth client ID |
 | `KEYCLOAK_AUTH_CLIENT_SECRET` | `<secret>` | Auth client secret |
 | `ASPNETCORE_ENVIRONMENT` | `Development` | .NET environment |
-| `ASPNETCORE_URLS` | `https://localhost:7017;http://localhost:5017` | API listening ports |
+| `ASPNETCORE_URLS` | `http://localhost:8080` | API listening ports |
 
 ### Production
 
