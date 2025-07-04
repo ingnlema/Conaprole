@@ -59,19 +59,14 @@ public class OrderLine : Entity
 ```csharp
 public enum OrderStatus
 {
-    Created = 1,
-    Confirmed = 2,
-    InTransit = 3,
-    Delivered = 4,
-    Cancelled = 5
+    Created = 0,
+    Confirmed = 1,
+    Delivered = 2,
+    Canceled = -2,
+    Rejected = -1
 }
 ```
 
-**State Transitions:**
-- Created → Confirmed (when all products available)
-- Confirmed → InTransit (when shipping begins)
-- InTransit → Delivered (when delivery completed)
-- Created/Confirmed → Cancelled (when cancellation requested)
 
 ### User Aggregate
 
@@ -115,8 +110,8 @@ public class Permission : Entity
 **Standard Roles:**
 - **Administrator**: Full system access
 - **Distributor**: Territory-specific order management
-- **PointOfSale**: Order creation and viewing
-- **SalesManager**: Regional oversight and reporting
+- **API**: Integration APIs
+- **Registered**: Minimum access
 
 ### Product Aggregate
 
@@ -151,23 +146,15 @@ The **Distributor** aggregate represents distribution partners and their territo
 public class Distributor : Entity
 {
     public Guid Id { get; private set; }
+    public string PhoneNumber { get; private set; }
     public string Name { get; private set; }
-    public string ContactEmail { get; private set; }
-    public string ContactPhone { get; private set; }
-    public List<Territory> Territories { get; private set; }
-    public bool IsActive { get; private set; }
+    public string Address { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public ICollection<Category> SupportedCategories { get; private set; } = new List<Category>();
+    public ICollection<PointOfSaleDistributor> PointSales { get; private set; } = new List<PointOfSaleDistributor>();
 }
 ```
 
-#### Territory (Value Object)
-```csharp
-public class Territory : ValueObject
-{
-    public string Region { get; private set; }
-    public string City { get; private set; }
-    public List<string> PostalCodes { get; private set; }
-}
-```
 
 ### PointOfSale Aggregate
 
@@ -224,43 +211,6 @@ public class Quantity : ValueObject
 }
 ```
 
-## Domain Services
-
-### OrderDomainService
-Handles complex business logic that doesn't belong to a single aggregate.
-
-```csharp
-public class OrderDomainService
-{
-    public bool CanConfirmOrder(Order order, List<Product> products)
-    {
-        // Complex validation logic across aggregates
-    }
-    
-    public Money CalculateOrderTotal(Order order, List<Product> products)
-    {
-        // Price calculation with business rules
-    }
-}
-```
-
-### TerritoryService
-Manages territory assignment and validation.
-
-```csharp
-public class TerritoryService
-{
-    public bool IsAddressInTerritory(Address address, List<Territory> territories)
-    {
-        // Territory validation logic
-    }
-    
-    public Distributor FindDistributorForAddress(Address address)
-    {
-        // Distributor assignment logic
-    }
-}
-```
 
 ## Domain Events
 
@@ -318,8 +268,6 @@ graph TB
 ### Order Invariants
 1. **Order total consistency**: Order.Price must equal sum of OrderLine.TotalPrice
 2. **Status progression**: Orders can only move forward in status (no backwards transitions except to Cancelled)
-3. **Territory compliance**: Order delivery address must be within distributor territory
-4. **Active products only**: Order lines can only reference active products
 
 ### User Invariants
 1. **Unique email**: Each user must have a unique email address
@@ -332,9 +280,7 @@ graph TB
 3. **Valid units**: Product units must be from approved unit list
 
 ### Distributor Invariants
-1. **Territory exclusivity**: Each postal code can only belong to one distributor
-2. **Active distributor orders**: Only active distributors can receive new orders
-3. **Contact information**: Distributors must have valid contact information
+1. **Contact information**: Distributors must have valid contact information
 
 ## Domain Rules Implementation
 
