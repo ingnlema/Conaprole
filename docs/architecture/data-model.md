@@ -192,15 +192,14 @@ public class OrderLine : Entity
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Draft : Create Order
-    Draft --> Confirmed : Confirm()
-    Draft --> Canceled : Cancel()
-    Confirmed --> InTransit : StartDelivery()
-    Confirmed --> Canceled : Cancel()
-    InTransit --> Delivered : MarkAsDelivered()
-    InTransit --> Canceled : Cancel()
-    Canceled --> [*]
+    [*] --> Created: Pedido Creado
+    Created --> Confirmed: Confirmar Pedido
+    Created --> Rejected: Rechazar Pedido
+    Confirmed --> Delivered: Marcar como Entregado
+    Confirmed --> Cancelled: Cancelar Pedido
+    Rejected --> [*]
     Delivered --> [*]
+    Cancelled --> [*]
 ```
 
 ### 2. Agregado User
@@ -613,42 +612,7 @@ CREATE TABLE orders_2025 PARTITION OF orders
 FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');
 ```
 
-## 📊 Métricas de Base de Datos
 
-### Estimaciones de Volumen
-
-| Entidad | Registros/Año | Crecimiento | Storage/Registro |
-|---------|---------------|-------------|------------------|
-| **Orders** | ~50,000 | Linear | ~1KB |
-| **OrderLines** | ~200,000 | Linear | ~0.5KB |
-| **Users** | ~500 | Logarithmic | ~1KB |
-| **Products** | ~1,000 | Logarithmic | ~2KB |
-| **Distributors** | ~100 | Constant | ~2KB |
-| **PointsOfSale** | ~300 | Linear | ~2KB |
-
-### Queries Más Frecuentes
-
-```sql
--- 1. Órdenes por distribuidor y fecha (40% del tráfico)
-SELECT o.* FROM orders o 
-WHERE o.distributor_id = $1 
-  AND o.created_on_utc >= $2 
-  AND o.created_on_utc <= $3
-ORDER BY o.created_on_utc DESC;
-
--- 2. Detalles completos de orden (30% del tráfico)
-SELECT o.*, ol.*, p.name as product_name 
-FROM orders o
-JOIN order_lines ol ON o.id = ol.order_id
-JOIN products p ON ol.product_id = p.id
-WHERE o.id = $1;
-
--- 3. Productos por categoría activos (15% del tráfico)
-SELECT p.* FROM products p 
-WHERE p.category = $1 
-  AND p.is_active = true
-ORDER BY p.name;
-```
 
 ## 🛡️ Constraints y Validaciones
 
@@ -704,38 +668,7 @@ FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT;
 3. **Data Migrations**: Scripts para transformación de datos
 4. **Rollback Strategy**: Procedimientos de reversión
 
-### Ejemplo de Migración
 
-```csharp
-public partial class AddCreatedAtToUser : Migration
-{
-    protected override void Up(MigrationBuilder migrationBuilder)
-    {
-        migrationBuilder.AddColumn<DateTime>(
-            name: "created_at",
-            table: "users",
-            type: "timestamp with time zone",
-            nullable: false,
-            defaultValueSql: "now()");
-    }
-
-    protected override void Down(MigrationBuilder migrationBuilder)
-    {
-        migrationBuilder.DropColumn(
-            name: "created_at",
-            table: "users");
-    }
-}
-```
-
-## Mapping to Thesis
-
-Este documento contribuye directamente a las siguientes secciones de la tesis:
-
-- **4.9.1 Diagramas de arquitectura** - Diagramas ER completos del sistema
-- **4.2 Componentes principales** - Especificación detallada del modelo de datos
-- **4.6 Diseño detallado** - Configuraciones y optimizaciones de persistencia
-- **4.7 Implementación** - Detalles técnicos de Entity Framework y PostgreSQL
 
 ## Referencias
 
