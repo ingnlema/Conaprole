@@ -287,70 +287,11 @@ services.AddOptions<AuthenticationOptions>()
 }
 ```
 
-## Health Checks
 
-### ❤️ Verificaciones de Salud
-
-```csharp
-// src/Conaprole.Orders.Infrastructure/HealthChecks/DatabaseHealthCheck.cs
-public class DatabaseHealthCheck : IHealthCheck
-{
-    private readonly ApplicationDbContext _context;
-
-    public DatabaseHealthCheck(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<HealthCheckResult> CheckHealthAsync(
-        HealthCheckContext context, 
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            await _context.Database.CanConnectAsync(cancellationToken);
-            return HealthCheckResult.Healthy("Database connection is healthy");
-        }
-        catch (Exception ex)
-        {
-            return HealthCheckResult.Unhealthy("Database connection failed", ex);
-        }
-    }
-}
-
-// Configuración
-services.AddHealthChecks()
-    .AddDbContext<ApplicationDbContext>()
-    .AddCheck<DatabaseHealthCheck>("database")
-    .AddCheck<KeycloakHealthCheck>("keycloak");
-
-// Endpoint con detalles
-app.MapHealthChecks("/health", new HealthCheckOptions
-{
-    ResponseWriter = async (context, report) =>
-    {
-        context.Response.ContentType = "application/json";
-        var response = new
-        {
-            status = report.Status.ToString(),
-            checks = report.Entries.Select(x => new
-            {
-                name = x.Key,
-                status = x.Value.Status.ToString(),
-                description = x.Value.Description,
-                duration = x.Value.Duration.TotalMilliseconds
-            }),
-            totalDuration = report.TotalDuration.TotalMilliseconds
-        };
-        
-        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
-    }
-});
-```
 
 ## Caching Strategies
 
-### 🗃️ Response Caching
+### 🗃️ Response Caching (Example)
 
 ```csharp
 // Configuración de caching
@@ -366,7 +307,7 @@ public async Task<IActionResult> GetProduct(Guid id)
 }
 ```
 
-### 🔄 Distributed Caching (Futuro)
+### 🔄 Distributed Caching (Example)
 
 ```csharp
 // Configuración para Redis
@@ -386,7 +327,7 @@ public interface ICacheService
 
 ## Background Services
 
-### ⏰ Hosted Services
+### ⏰ Hosted Services (Example)
 
 ```csharp
 // src/Conaprole.Orders.Infrastructure/BackgroundServices/OrderProcessingService.cs
@@ -463,7 +404,7 @@ services.AddVersionedApiExplorer(setup =>
 
 ## Request/Response Compression
 
-### 📦 Compresión HTTP
+### 📦 Compresión HTTP (Example)
 
 ```csharp
 // Configuración de compresión
@@ -490,7 +431,7 @@ app.UseResponseCompression();
 
 ## Security Headers
 
-### 🛡️ Headers de Seguridad
+### 🛡️ Headers de Seguridad (Example)
 
 ```csharp
 // Middleware personalizado para headers de seguridad
@@ -555,7 +496,7 @@ public class TelemetryService
 
 ## Environment-Specific Configuration
 
-### 🌍 Configuración por Ambiente
+### 🌍 Configuración por Ambiente (Example)
 
 ```csharp
 // Program.cs - Configuración condicional
@@ -616,27 +557,5 @@ services.AddRateLimiter(options =>
 app.UseRateLimiter();
 ```
 
-## Conclusión
-
-Los patrones de infraestructura implementados en la API Core de Conaprole proporcionan:
-
-- **Logging estructurado** con Serilog para observabilidad completa
-- **Manejo centralizado de excepciones** con respuestas consistentes
-- **Configuración tipada** con validación automática
-- **Health checks** para monitoreo de dependencias
-- **Security headers** para protección contra vulnerabilidades
-- **Compresión HTTP** para optimización de performance
-- **Background services** para tareas asíncronas
-- **Configuración por ambiente** para flexibilidad de despliegue
-
-Esta infraestructura robusta asegura que la aplicación sea:
-
-- **Observable**: Logs estructurados y health checks
-- **Resiliente**: Manejo de errores y reintentos
-- **Segura**: Headers de seguridad y validaciones
-- **Performante**: Caching y compresión
-- **Mantenible**: Configuración clara y extensible
-
----
 
 *Fin de la documentación arquitectónica. Ver [Resumen](./resumen.md) para una visión general completa.*
