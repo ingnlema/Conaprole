@@ -700,31 +700,6 @@ public class Result<T> : Result
 }
 ```
 
-## Métricas de Implementación
-
-### Commands Implementados
-
-- **CreateOrder**: Creación de pedidos con validación completa
-- **UpdateOrderStatus**: Actualización de estado de pedidos
-- **AddOrderLine**: Adición de líneas a pedidos existentes
-- **RemoveOrderLine**: Eliminación de líneas de pedido
-- **UpdateOrderLineQuantity**: Actualización de cantidades
-- **BulkCreateOrders**: Creación masiva de pedidos
-
-### Queries Implementados
-
-- **GetOrder**: Obtención de pedido por ID con datos relacionados
-- **GetOrders**: Listado paginado con filtros opcionales
-- **GetOrdersByDistributor**: Pedidos por distribuidor
-- **GetOrdersByStatus**: Pedidos por estado
-- **GetOrdersByDateRange**: Pedidos por rango de fechas
-
-### Behaviors Configurados
-
-- **ValidationBehavior**: Validación automática de commands
-- **LoggingBehavior**: Logging estructurado de operaciones
-- **TransactionBehavior**: Manejo de transacciones (futuro)
-- **CachingBehavior**: Cacheo de queries (futuro)
 
 ## Conclusión
 
