@@ -106,15 +106,15 @@ graph TB
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Pending: Pedido Creado
-    Pending --> Confirmed: UC7 - Confirmar Pedido
-    Confirmed --> InTransit: Pedido en Tránsito
-    InTransit --> Delivered: UC8 - Marcar como Entregado
-    Delivered --> [*]
-    
-    Pending --> Cancelled: Cancelar Pedido
+    [*] --> Created: Pedido Creado
+    Created --> Confirmed: UC7 - Confirmar Pedido
+    Created --> Rejected: Rechazar Pedido
+    Confirmed --> Delivered: UC8 - Marcar como Entregado
     Confirmed --> Cancelled: Cancelar Pedido
+    Rejected --> [*]
+    Delivered --> [*]
     Cancelled --> [*]
+
 ```
 
 ## Categorías de Productos
@@ -136,7 +136,7 @@ stateDiagram-v2
 1. Un distribuidor solo puede ver pedidos de sus PdV asignados
 2. Un distribuidor solo puede manejar productos de sus categorías autorizadas
 3. Los cambios de estado de pedidos siguen un flujo específico
-4. Un distribuidor no puede cancelar pedidos ya confirmados sin autorización
+
 
 ---
 
