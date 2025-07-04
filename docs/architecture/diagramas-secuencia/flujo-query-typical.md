@@ -82,17 +82,6 @@ sequenceDiagram
 
     Note over C,DB: ✅ QUERY EJECUTADA EXITOSAMENTE
 
-    classDef success fill:#d4edda,stroke:#155724
-    classDef process fill:#d1ecf1,stroke:#0c5460
-    classDef auth fill:#e2e3e5,stroke:#383d41
-    classDef data fill:#fff3cd,stroke:#856404
-    classDef dto fill:#f8d7da,stroke:#721c24
-
-    class C,API success
-    class MW,M,LB,QH process
-    class AUTH auth
-    class SCF,DB data
-    class DTO dto
 ```
 
 ## 🔍 Puntos Clave del Flujo
