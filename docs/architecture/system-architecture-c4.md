@@ -214,31 +214,49 @@ graph LR
 
 ```mermaid
 flowchart TD
-    CLIENT[Client Request] --> MIDDLEWARE[Authentication Middleware]
-    MIDDLEWARE --> AUTHZ[Authorization Handler]
-    AUTHZ --> CONTROLLER[Controller]
-    CONTROLLER --> MEDIATOR[MediatR]
-    MEDIATOR --> HANDLER[Command/Query Handler]
-    HANDLER --> DOMAIN[Domain Services]
-    HANDLER --> REPO[Repository]
-    REPO --> EF[Entity Framework]
-    EF --> DB[(PostgreSQL)]
-    
-    DOMAIN --> EVENTS[Domain Events]
-    EVENTS --> HANDLERS[Event Handlers]
-    
-    HANDLER --> RESPONSE[Response DTO]
-    RESPONSE --> CONTROLLER
+    subgraph Request
+        CLIENT[Client Request] --> MIDDLEWARE[Authentication Middleware]
+        MIDDLEWARE --> AUTHZ[Authorization Handler]
+        AUTHZ --> CONTROLLER[Controller]
+        CONTROLLER --> MEDIATOR[MediatR]
+    end
+
+    subgraph Command Flow
+        MEDIATOR --> CMD_HANDLER[Command Handler]
+        CMD_HANDLER --> DOMAIN[Domain Services]
+        CMD_HANDLER --> REPO[Repository]
+        REPO --> EF[Entity Framework]
+        EF --> DB[(PostgreSQL)]
+
+        DOMAIN --> EVENTS[Domain Events]
+        EVENTS --> EVENT_HANDLERS[Event Handlers]
+
+        CMD_HANDLER --> CMD_RESPONSE[Response DTO]
+        CMD_RESPONSE --> CONTROLLER
+    end
+
+    subgraph Query Flow
+        MEDIATOR --> QRY_HANDLER[Query Handler]
+        QRY_HANDLER --> DAPPER[Dapper SQL Access]
+        DAPPER --> DB
+
+        QRY_HANDLER --> QRY_RESPONSE[Response DTO]
+        QRY_RESPONSE --> CONTROLLER
+    end
+
     CONTROLLER --> CLIENT
+
+    %% Visual styles for clarity
+    classDef command fill:#e3f2fd,stroke:#2196f3
+    classDef query fill:#f3e5f5,stroke:#9c27b0
+    classDef shared fill:#e0f7fa,stroke:#006064
+
+    class CMD_HANDLER,DOMAIN,REPO,EF,EVENTS,EVENT_HANDLERS,CMD_RESPONSE command
+    class QRY_HANDLER,DAPPER,QRY_RESPONSE query
+    class CLIENT,MIDDLEWARE,AUTHZ,CONTROLLER,MEDIATOR,DB shared
+
 ```
 
-## Next Steps
 
-1. **Review Architecture** - Validate diagrams with current implementation
-2. **Update Documentation** - Keep diagrams synchronized with code changes
-3. **Add Detail Diagrams** - Create component-level diagrams for complex areas
-4. **Integration Patterns** - Document external system integration patterns
-
----
 
 *Last verified: 2025-01-02 - Commit: [architecture diagrams added]*
