@@ -349,25 +349,6 @@ Feature: API de Pedidos
 
 ## 🚀 Estrategia de Ejecución
 
-### Fases de Testing
-
-```mermaid
-gantt
-    title Plan de Ejecución de Pruebas
-    dateFormat  YYYY-MM-DD
-    section Unit Tests
-    Domain Tests           :done, domain, 2025-01-01, 2025-01-03
-    Application Tests      :done, app, 2025-01-02, 2025-01-04
-    section Integration
-    Repository Tests       :active, repo, 2025-01-03, 2025-01-06
-    Service Tests          :service, 2025-01-05, 2025-01-07
-    section E2E
-    API Tests              :api, 2025-01-06, 2025-01-09
-    Security Tests         :security, 2025-01-08, 2025-01-10
-    section Performance
-    Load Tests             :load, 2025-01-09, 2025-01-11
-    Stress Tests           :stress, 2025-01-10, 2025-01-12
-```
 
 ### Criterios de Entry/Exit
 
@@ -587,14 +568,6 @@ jobs:
 - **Nightly**: Full suite + Performance tests
 - **Weekly**: Full suite + Security scan
 
-## Mapping to Thesis
-
-Este documento contribuye directamente a las siguientes secciones de la tesis:
-
-- **6.0 Plan de pruebas** - Plan completo con casos de prueba detallados
-- **7.0 Casos de prueba y resultados** - Casos específicos con criterios de aceptación
-- **5.1 Estrategia de testing** - Metodología y cobertura de testing
-- **8.0 Automatización de pruebas** - Integración con CI/CD y automatización
 
 ## Referencias
 
