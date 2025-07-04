@@ -209,18 +209,6 @@ sequenceDiagram
 - **Endpoints de autenticación**: Login, registro y refresh token funcionando
 - **User context**: Acceso al usuario autenticado en toda la aplicación
 
-### ⚠️ Parcialmente Implementado
-
-- **Autorización de endpoints**: Infraestructura lista, permisos comentados en muchos controladores
-- **Ejemplo de endpoint protegido activo**: `/api/users/me` con `[HasPermission(Permissions.UsersRead)]`
-- **Endpoints preparados**: Productos, distribuidores, puntos de venta, órdenes tienen permisos definidos pero comentados
-
-### 🎯 Para Activar Completamente
-
-1. **Descomentar atributos `[HasPermission]`** en controladores existentes
-2. **Verificar tests de autorización** para endpoints protegidos
-3. **Configurar roles por defecto** en el registro de usuarios según el tipo de cuenta
-4. **Implementar UI para gestión de roles** y permisos
 
 ### 🔄 Próximas Funcionalidades Sugeridas
 
