@@ -6,17 +6,17 @@ Este documento detalla los **casos de prueba implementados** en el sistema API C
 
 ### 📊 Métricas Generales de Testing
 
-- **Total de Casos de Prueba**: 298 tests implementados
-- **Pruebas Unitarias de Dominio**: 55 tests
+- **Total de Casos de Prueba**: 398 tests implementados
+- **Pruebas Unitarias de Dominio**: 73 tests
 - **Pruebas Unitarias de Aplicación**: 37 tests  
-- **Pruebas de Integración**: 106 tests
-- **Pruebas Funcionales (E2E)**: 100 tests
+- **Pruebas de Integración**: 109 tests
+- **Pruebas Funcionales (E2E)**: 179 tests
 
 ---
 
 ## 🔍 Clasificación de Casos de Prueba
 
-### 1. Pruebas Unitarias de Dominio (55 tests)
+### 1. Pruebas Unitarias de Dominio
 
 #### **🔵 Propósito**
 
@@ -28,7 +28,7 @@ Validan la lógica de negocio pura, invariantes de dominio y comportamientos esp
 
 - **Constructor y propiedades**: Validación de creación correcta de pedidos
 - **Líneas de pedido**: Agregar, remover y actualizar líneas
-- **Estados**: Transiciones válidas de estado (Created → Confirmed → Shipped)
+- **Estados**: Transiciones válidas de estado (Created → Confirmed → Delivered)
 - **Cálculos**: Validación de totales y subtotales automáticos
 - **Invariantes**: Reglas de negocio como fechas de entrega válidas
 
@@ -61,7 +61,7 @@ Validan la lógica de negocio pura, invariantes de dominio y comportamientos esp
 
 ---
 
-### 2. Pruebas Unitarias de Aplicación (37 tests)
+### 2. Pruebas Unitarias de Aplicación 
 
 #### **🟢 Propósito**
 
@@ -97,7 +97,7 @@ Validan los casos de uso, handlers CQRS y comportamientos transversales de la ca
 
 ---
 
-### 3. Pruebas de Integración (106 tests)
+### 3. Pruebas de Integración 
 
 #### **🟡 Propósito**
 
@@ -367,7 +367,7 @@ Objetos preconstruidos para escenarios comunes:
 
 ## 📝 Conclusión
 
-El sistema cuenta con una **cobertura sólida y bien estructurada** de pruebas que abarca todos los niveles arquitectónicos. Con **298 tests implementados**, se valida tanto la lógica de negocio crítica como la funcionalidad completa end-to-end.
+El sistema cuenta con una **cobertura sólida y bien estructurada** de pruebas que abarca todos los niveles arquitectónicos. Con **397 tests implementados**, se valida tanto la lógica de negocio crítica como la funcionalidad completa end-to-end.
 
 ### ✅ Fortalezas Principales
 
