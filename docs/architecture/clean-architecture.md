@@ -45,6 +45,9 @@ src/
 │   ├── Abstractions/                  # Interfaces y contratos
 │   ├── Orders/                        # Casos de uso de Orders
 │   ├── Users/                         # Casos de uso de Users
+│   ├── Distributors/                  # Casos de uso de Distributor
+│   ├── Products/                      # Casos de uso de Product
+│   ├── PointsOfSale/                  # Casos de uso de PointOfSale
 │   └── Exceptions/                    # Excepciones de aplicación
 ├── Conaprole.Orders.Infrastructure/   # 🟡 Capa de Infraestructura
 │   ├── Data/                         # Entity Framework
@@ -76,14 +79,21 @@ src/
 // src/Conaprole.Orders.Domain/Orders/Order.cs
 public class Order : Entity, IAggregateRoot
 {
-    private readonly List<OrderLine> _orderLines = new();
-    public IReadOnlyCollection<OrderLine> OrderLines => _orderLines.AsReadOnly();
-    
-    public Guid DistributorId { get; private set; }
-    public Guid PointOfSaleId { get; private set; }
-    public Address DeliveryAddress { get; private set; }
-    public Status Status { get; private set; }
-    public Money Price { get; private set; }
+        private readonly List<OrderLine> _orderLines = new();
+        public IReadOnlyCollection<OrderLine> OrderLines => _orderLines.AsReadOnly();
+        public Guid DistributorId { get; private set; }
+        public Distributor Distributor { get; private set; }
+        public Guid PointOfSaleId { get; private set; }
+        public PointOfSale PointOfSale { get; private set; }
+        public Address DeliveryAddress { get; private set; }
+        public Status Status { get; private set; }
+        public DateTime CreatedOnUtc { get; private set; }
+        public DateTime? ConfirmedOnUtc { get; private set; }
+        public DateTime? RejectedOnUtc { get; private set; }
+        public DateTime? DeliveryOnUtc { get; private set; }
+        public DateTime? CanceledOnUtc { get; private set; }
+        public DateTime? DeliveredOnUtc { get; private set; }
+        public Money Price { get; private set; }
 }
 ```
 
@@ -167,23 +177,80 @@ internal sealed class CreateOrderCommandHandler : ICommandHandler<CreateOrderCom
 
 ```csharp
 // src/Conaprole.Orders.Application/Abstractions/Behaviors/ValidationBehavior.cs
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class ValidationBehavior<TRequest, TResponse>
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IBaseCommand
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
+
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
     {
-        // Validación automática antes de ejecutar el handler
+        _validators = validators;
+    }
+
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
+    {
+        if (!_validators.Any())
+        {
+            return await next();
+        }
+
+        var context = new ValidationContext<TRequest>(request);
+
         var validationErrors = _validators
             .Select(validator => validator.Validate(context))
             .Where(validationResult => validationResult.Errors.Any())
-            .SelectMany(validationResult => validationResult.Errors);
-            
+            .SelectMany(validationResult => validationResult.Errors)
+            .Select(validationFailure => new ValidationError(
+                validationFailure.PropertyName,
+                validationFailure.ErrorMessage))
+            .ToList();
+
         if (validationErrors.Any())
-            throw new ValidationException(validationErrors);
-            
+        {
+            throw new Exceptions.ValidationException(validationErrors);
+        }
+
         return await next();
     }
 }
+
+//use example
+public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
+{
+    public CreateOrderCommandValidator()
+    {
+        RuleFor(c => c.PointOfSalePhoneNumber)
+            .NotEmpty().WithMessage("Phone number is required.")
+            .MaximumLength(20);
+        RuleFor(c => c.DistributorPhoneNumber)
+            .NotEmpty().WithMessage("Distributor phone number is required.")
+            .MaximumLength(20);
+        RuleFor(c => c.City).NotEmpty();
+        RuleFor(c => c.Street).NotEmpty();
+        RuleFor(c => c.ZipCode).NotEmpty();
+        RuleFor(c => c.CurrencyCode).NotEmpty();
+
+        RuleFor(c => c.OrderLines)
+            .NotEmpty().WithMessage("At least one order line is required.");
+
+        RuleForEach(c => c.OrderLines).SetValidator(new CreateOrderLineCommandValidator());
+    }
+}
+
+public class CreateOrderLineCommandValidator : AbstractValidator<CreateOrderLineCommand>
+{
+    public CreateOrderLineCommandValidator()
+    {
+        RuleFor(ol => ol.ExternalProductId).NotEmpty();
+        RuleFor(ol => ol.Quantity).GreaterThan(0);
+    }
+}
+
+
 ```
 
 ### Configuración de Servicios
