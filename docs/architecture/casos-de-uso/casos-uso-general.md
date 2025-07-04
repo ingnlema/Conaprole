@@ -167,19 +167,13 @@ graph TB
 sequenceDiagram
     actor Admin as Administrador
     participant SYS as Sistema
-    actor PdV as Punto de Venta
-    actor Dist as Distribuidor
     
-    Admin->>SYS: Crear Producto
+    Admin->>SYS: Crea Productos
     Admin->>SYS: Crear Distribuidor
     Admin->>SYS: Asignar Categorías a Distribuidor
-    
-    PdV->>SYS: Registrarse como PdV
-    SYS->>Admin: Notificar Nuevo PdV
-    
+    Admin->>SYS: Registrar  PdV
     Admin->>SYS: Asignar Distribuidor a PdV
-    SYS->>Dist: Notificar Nueva Asignación
-    SYS->>PdV: Confirmar Configuración
+    SYS->>Admin: Confirmar Configuración
 ```
 
 ### 2. Flujo de Pedido Completo
@@ -197,25 +191,10 @@ sequenceDiagram
     Dist->>SYS: Confirmar Pedido
     SYS->>PdV: Pedido Confirmado
     
-    Dist->>SYS: Actualizar a "En Tránsito"
-    SYS->>PdV: Notificar Estado
     
     Dist->>SYS: Marcar como Entregado
     SYS->>PdV: Pedido Completado
 ```
-
-## Matriz de Permisos por Actor
-
-| Funcionalidad | Admin | Distribuidor | Punto de Venta | API | Usuario |
-|---------------|-------|--------------|----------------|-----|---------|
-| Gestión Usuarios | ✅ | ❌ | ❌ | ✅ | ❌ |
-| Gestión Productos | ✅ | 👁️ | 👁️ | 👁️ | 👁️ |
-| Crear Pedidos | ✅ | ❌ | ✅ | ✅ | ❌ |
-| Procesar Pedidos | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Gestión PdV | ✅ | ❌ | 👁️ | 👁️ | ❌ |
-| Gestión Distribuidores | ✅ | 👁️ | 👁️ | 👁️ | ❌ |
-
-**Leyenda**: ✅ = Control total, 👁️ = Solo lectura, ❌ = Sin acceso
 
 ## Categorías de Productos
 
