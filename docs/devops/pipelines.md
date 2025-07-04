@@ -35,8 +35,9 @@ flowchart TD
     TRIGGER -->|Pull Request| PR_PIPELINE[PR Validation Pipeline]
     TRIGGER -->|Manual| DOCS_PIPELINE[Documentation Pipeline]
     
-    MAIN_PIPELINE --> BUILD[Build & Test]
-    BUILD --> SECURITY[Security Scan]
+    MAIN_PIPELINE --> BUILD[Build]
+    BUILD --> TEST[Test]
+    TEST --> SECURITY[Security Scan]
     SECURITY --> PACKAGE[Docker Build]
     PACKAGE --> PUSH_ACR[Push to ACR]
     PUSH_ACR --> DEPLOY[Deploy to Azure]
@@ -51,6 +52,7 @@ flowchart TD
     
     DEPLOY --> HEALTH[Health Check]
     HEALTH --> NOTIFY[Notifications]
+
 ```
 
 ## 📋 Pipelines Principales
@@ -287,7 +289,7 @@ spec:
 | `Keycloak__Audience` | Audience para JWT | `conaprole-api` | No |
 | `Serilog__MinimumLevel__Default` | Nivel de logging | `Information` | No |
 
-## 📊 Métricas y Monitoreo
+## 📊 Métricas y Monitoreo (Ejemplos)
 
 ### Health Checks
 
@@ -317,7 +319,7 @@ public class Startup
 }
 ```
 
-### Application Insights Integration
+### Application Insights Integration (Ejemplo)
 
 ```csharp
 services.AddApplicationInsightsTelemetry(options =>
@@ -328,7 +330,7 @@ services.AddApplicationInsightsTelemetry(options =>
 services.AddSingleton<ITelemetryInitializer, CustomTelemetryInitializer>();
 ```
 
-### Custom Metrics
+### Custom Metrics (Ejemplo)
 
 ```csharp
 public class OrderMetrics
@@ -354,7 +356,7 @@ public class OrderMetrics
 }
 ```
 
-## 🔒 Security Pipeline
+## 🔒 Security Pipeline (Ejemplo)
 
 ### Code Security Scanning
 
@@ -372,7 +374,7 @@ public class OrderMetrics
   uses: github/codeql-action/analyze@v2
 ```
 
-### Dependency Scanning
+### Dependency Scanning (Ejemplo)
 
 ```yaml
 - name: Run dependency check
@@ -383,7 +385,7 @@ public class OrderMetrics
     format: 'ALL'
 ```
 
-### Container Security
+### Container Security (Ejemplo)
 
 ```yaml
 - name: Run Trivy vulnerability scanner
@@ -400,43 +402,31 @@ public class OrderMetrics
 
 | Componente | Configuración | URL/Endpoint |
 |------------|---------------|--------------|
-| **API** | Docker Compose local | `http://localhost:5000` |
+| **API** | Docker Compose local | `http://localhost:8080` |
 | **Database** | PostgreSQL container | `localhost:5432` |
-| **Keycloak** | Container local | `http://localhost:8080` |
+| **Keycloak** | Container local | `http://localhost:18080` |
 | **Logs** | File + Console | `./logs/` |
 
 ### Staging Environment
 
 | Componente | Configuración | URL/Endpoint |
 |------------|---------------|--------------|
-| **API** | Azure Container Apps | `https://staging-api.conaprole.com` |
+| **API** | Azure Container Apps | `https://staging-<domain>.com` |
 | **Database** | Azure Database for PostgreSQL | Managed service |
-| **Keycloak** | Azure Container Instance | `https://staging-auth.conaprole.com` |
+| **Keycloak** | Azure Container Instance | `https://staging-<domain>.com` |
 | **Logs** | Application Insights | Azure portal |
 
 ### Production Environment
 
 | Componente | Configuración | URL/Endpoint |
 |------------|---------------|--------------|
-| **API** | Azure Container Apps (HA) | `https://api.conaprole.com` |
+| **API** | Azure Container Apps (HA) | `https://<domain>.com` |
 | **Database** | Azure Database for PostgreSQL (HA) | Managed service |
-| **Keycloak** | Azure Container Apps | `https://auth.conaprole.com` |
+| **Keycloak** | Azure Container Apps | `https://<domain>.com` |
 | **Logs** | Application Insights + Archive | Azure + Storage |
 
-## 📈 Pipeline Performance
 
-### Build Times
-
-| Stage | Duration | Optimización |
-|-------|----------|--------------|
-| **Restore** | ~30s | Cache de NuGet packages |
-| **Build** | ~45s | Parallel build |
-| **Tests** | ~2-3min | Test categorization |
-| **Docker Build** | ~2-4min | Layer caching |
-| **Push** | ~1-2min | Registry optimization |
-| **Deploy** | ~2-3min | Blue-green deployment |
-
-### Optimization Strategies
+### Optimization Strategies (Examples)
 
 1. **NuGet Package Caching**
 ```yaml
@@ -464,7 +454,7 @@ public class OrderMetrics
 </PropertyGroup>
 ```
 
-## 🚨 Monitoring y Alertas
+## 🚨 Monitoring y Alertas (Examples)
 
 ### Azure Monitor Alerts
 
@@ -493,14 +483,14 @@ public class OrderMetrics
 }
 ```
 
-### Notification Channels
+### Notification Channels (Examples)
 
 1. **Slack Integration** - Alertas inmediatas
 2. **Email Notifications** - Resumen diario
 3. **PagerDuty** - Incidentes críticos
 4. **Teams Webhook** - Updates de deployment
 
-## 🔄 Rollback Strategy
+## 🔄 Rollback Strategy (Example)
 
 ### Automated Rollback
 
@@ -526,23 +516,6 @@ public class OrderMetrics
       --revision $(az containerapp revision list --name ${{ env.CONTAINER_APP_NAME }} -g ${{ env.RESOURCE_GROUP }} --query '[1].name' -o tsv)
 ```
 
-### Manual Rollback Procedures
-
-1. **Identify Last Known Good Version**
-2. **Rollback Container App Revision**
-3. **Verify Health Checks**
-4. **Database Migration Rollback** (if needed)
-5. **Update Status Page**
-6. **Post-incident Review**
-
-## Mapping to Thesis
-
-Este documento contribuye directamente a las siguientes secciones de la tesis:
-
-- **3.6.7 Herramientas de desarrollo** - Pipeline de CI/CD y herramientas DevOps
-- **3.6.8 Metodología de deployment** - Estrategias de deployment y automatización
-- **5.0 Aseguramiento de la calidad** - Procesos automatizados de calidad
-- **8.0 Automatización de pruebas** - Testing automatizado en pipelines
 
 ## Referencias
 
