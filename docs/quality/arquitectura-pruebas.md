@@ -403,26 +403,6 @@ La suite completa de pruebas proporciona confianza para despliegues automáticos
 - **Consistencia**: Ejecución idéntica de pruebas en cada build
 - **Escalabilidad**: Capacidad de manejar incremento en la complejidad del sistema
 
-## 6. Métricas y Objetivos de Calidad
-
-### 6.1 Objetivos de Cobertura
-
-- **Pruebas Unitarias de Dominio**: >95% de cobertura de líneas
-- **Pruebas Unitarias de Aplicación**: >90% de cobertura de líneas
-- **Pruebas de Integración**: Cobertura de casos de uso críticos
-- **Pruebas Funcionales**: Cobertura de endpoints principales y flujos de usuario
-
-### 6.2 Métricas de Rendimiento
-
-- **Tiempo de Ejecución Total**: <15 minutos para suite completa
-- **Tiempo de Feedback**: <5 minutos para pruebas críticas
-- **Paralelización**: Ejecución simultánea para optimizar tiempos
-
-### 6.3 Indicadores de Calidad
-
-- **Tasa de Falsos Positivos**: <2% de pruebas que fallan sin razón válida
-- **Mantenibilidad**: Tiempo promedio para actualizar pruebas ante cambios
-- **Coverage Trend**: Tendencia ascendente o estable en cobertura de código
 
 ## Conclusión
 
