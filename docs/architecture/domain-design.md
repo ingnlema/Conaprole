@@ -316,7 +316,7 @@ internal sealed class OrderRepository : Repository<Order>, IOrderRepository
 }
 ```
 
-## Domain Services
+## Domain Services (Example)
 
 ### Business Logic Compleja
 
@@ -342,7 +342,7 @@ public class OrderDomainService
 }
 ```
 
-## Specification Pattern
+## Specification Pattern (Example)
 
 ### Especificaciones de Dominio
 
