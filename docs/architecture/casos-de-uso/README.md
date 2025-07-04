@@ -50,15 +50,6 @@ graph LR
 - **🏪 Gestión de Puntos de Venta**: Registro, configuración, asignaciones
 - **🚛 Gestión de Distribuidores**: Red de distribución, categorías
 
-## 📊 Estadísticas de Casos de Uso
-
-| Actor | Casos de Uso | Principales Funciones |
-|-------|-------------|-----------------------|
-| Administrador | 21 | Gestión completa del sistema |
-| Distribuidor | 15 | Procesamiento y entrega |
-| Punto de Venta | 20 | Pedidos y consultas |
-| API | 8 | Integración sistema-a-sistema |
-| Usuario Registrado | 5 | Acceso básico |
 
 ## 🔐 Modelo de Seguridad
 
@@ -89,13 +80,13 @@ Administrador → Crear Productos → Crear Distribuidores → Asignar Categorí
 ### 2. Registro de Punto de Venta
 
 ```
-PdV → Registrarse → Admin Valida → Admin Asigna Distribuidor → PdV Activo
+Admin → Registra → Admin Asigna Distribuidor → PdV Activo
 ```
 
 ### 3. Proceso de Pedido Completo
 
 ```
-PdV → Crear Pedido → Distribuidor Confirma → Procesa → Entrega → Completado
+PdV (API Client) → Crear Pedido → Distribuidor Confirma → Procesa → Entrega → Completado
 ```
 
 ## 🛠️ Tecnologías Utilizadas
