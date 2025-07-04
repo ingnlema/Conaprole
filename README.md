@@ -46,7 +46,7 @@ echo "Waiting for services to start..."
 sleep 30
 
 # Run database migrations (EF tools will be restored automatically)
-dotnet ef database update --project src/Conaprole.Orders.Infrastructure
+dotnet ef database update --project src/Conaprole.Orders.Infrastructure --startup-project src/Conaprole.Orders.Api
 
 # Start the API
 dotnet run --project src/Conaprole.Orders.Api
