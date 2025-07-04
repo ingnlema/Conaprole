@@ -475,59 +475,71 @@ public class MockAuthenticationService : IAuthenticationService
 }
 ```
 
-## Configuración de Testing
 
-### 🧪 Test Application Factory
+# 🧪 Configuración de Testing - Conaprole API
+
+## Arquitectura de Entorno de Pruebas
+
+La suite de tests funcionales de la API Core levanta un **entorno completo y realista** basado en contenedores para simular el comportamiento de producción:
+
+- **PostgreSQL**: se utiliza un contenedor Docker con `postgres:15-alpine` mediante `Testcontainers` para persistencia real.
+- **Keycloak**: se levanta un contenedor de `keycloak:21.1.1`, importando un realm (`.files/conaprole-realm-export.json`) con configuraciones específicas de autenticación.
+- **WebApplicationFactory**: se extiende para reemplazar los servicios de base de datos, autenticación y configuración de JWT con dependencias reales en test.
+
+## ⚙️ Inyección de Dependencias
 
 ```csharp
-// test/Conaprole.Orders.Api.FunctionalTests/Infrastructure/FunctionalTestWebApplicationFactory.cs
-public class FunctionalTestWebApplicationFactory : WebApplicationFactory<Program>
-{
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.ConfigureTestServices(services =>
-        {
-            // Replace database with in-memory
-            services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
-            services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseInMemoryDatabase($"TestDb-{Guid.NewGuid()}");
-            });
+services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
+services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(_dbContainer.GetConnectionString())
+           .UseSnakeCaseNamingConvention());
 
-            // Mock external services
-            services.AddScoped<IAuthenticationService, MockAuthenticationService>();
-            
-            // Disable authentication for testing
-            services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
-            {
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        context.Token = "test-token";
-                        return Task.CompletedTask;
-                    }
-                };
-            });
-        });
-    }
-
-    public ApplicationDbContext GetDbContext()
-    {
-        var scope = Services.CreateScope();
-        return scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    }
-}
+services.RemoveAll(typeof(ISqlConnectionFactory));
+services.AddSingleton<ISqlConnectionFactory>(_ =>
+    new SqlConnectionFactory(_dbContainer.GetConnectionString()));
 ```
+
+## 🔐 Configuración de Keycloak
+
+```csharp
+services.Configure<KeycloakOptions>(o =>
+{
+    o.AdminUrl = $"{keycloakAddress}admin/realms/Conaprole/";
+    o.TokenUrl = $"{keycloakAddress}realms/Conaprole/protocol/openid-connect/token";
+});
+
+services.Configure<AuthenticationOptions>(o =>
+{
+    o.Issuer = $"{keycloakAddress}realms/Conaprole/";
+    o.MetadataUrl = $"{keycloakAddress}realms/Conaprole/.well-known/openid-configuration";
+});
+```
+
+## 🧼 Inicialización y Limpieza
+
+Cada test se ejecuta sobre una base limpia. Para esto:
+
+- Se elimina el contenido de todas las tablas relevantes (`orders`, `users`, `role_user`, etc.).
+- Se registra un usuario de prueba vía `POST /api/users/register`.
+- Si el usuario ya existe en Keycloak pero no en la DB, se hace una creación manual con el `identity_id` real extraído del JWT.
+- Se asignan roles específicos para garantizar permisos completos durante los tests.
+
+## 🔑 Acceso y Autorización
+
+- Se generan tokens JWT reales contra el contenedor de Keycloak.
+- Se autentica cada cliente HTTP con un token válido en el header.
+- También se implementa la lógica para crear y autenticar un usuario **Administrador** de forma programática.
+
+---
 
 ## Métricas de Testing
 
 ### 📊 Cobertura de Tests
 
 - **Domain Unit Tests**: 95%+ de cobertura
-- **Application Unit Tests**: 90%+ de cobertura  
-- **Integration Tests**: Casos de uso críticos
-- **Functional Tests**: Endpoints principales
+- **Application Unit Tests**: 95%+ de cobertura  
+- **Integration Tests**: 95%+ de cobertura 
+- **Functional Tests**: 95%+ de cobertura 
 
 ### 🎯 Tipos de Tests por Capa
 
