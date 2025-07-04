@@ -133,9 +133,6 @@ sequenceDiagram
     PdV->>SYS: UC13 - Consultar Catálogo
     SYS->>PdV: Lista de Productos
     
-    PdV->>SYS: UC16 - Consultar Distribuidores
-    SYS->>PdV: Distribuidores Asignados
-    
     PdV->>SYS: UC5 - Crear Pedido
     SYS->>SYS: Validar Productos y Distribuidor
     SYS->>PdV: Pedido Creado (ID)
@@ -150,27 +147,25 @@ sequenceDiagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Created: UC5 - Crear Pedido
-    Created --> Pending: Pedido Enviado
-    Pending --> Confirmed: Distribuidor Confirma
-    Confirmed --> InTransit: En Transporte
-    InTransit --> Delivered: Entregado
+    [*] --> Created: Pedido Creado
+    Created --> Confirmed: Confirmar Pedido
+    Created --> Rejected: Rechazar Pedido
+    Confirmed --> Delivered: Marcar como Entregado
+    Confirmed --> Cancelled: Cancelar Pedido
+    Rejected --> [*]
     Delivered --> [*]
-    
-    Created --> Cancelled: PdV Cancela
-    Pending --> Cancelled: Distribuidor Cancela
     Cancelled --> [*]
 ```
 
 ## Reglas de Negocio para Punto de Venta
 
-1. **Registro**: Debe proporcionar teléfono único y dirección válida
+1. **Registro**: Debe proporcionar teléfono único y dirección
 2. **Pedidos**: Solo puede crear pedidos con distribuidores asignados
 3. **Productos**: Solo puede pedir productos de categorías cubiertas por sus distribuidores
 4. **Modificaciones**: Solo puede modificar pedidos en estado "Created" o "Pending"
 5. **Cancelación**: Puede cancelar pedidos antes de ser confirmados
 6. **Historial**: Acceso completo a su historial de pedidos
-7. **Facturación**: Los precios se calculan automáticamente según el catálogo
+7. **Precios**: Los precios se calculan automáticamente según el catálogo
 
 ## Datos Requeridos para Pedidos
 
