@@ -92,9 +92,9 @@ La documentación arquitectónica está organizada en los siguientes documentos 
 
 - **4 capas arquitectónicas** bien definidas
 - **5 agregados principales** en el dominio
-- **20+ casos de uso** implementados como commands/queries
+- **30+ casos de uso** implementados como commands/queries
 - **8 controladores** REST organizados por dominio
-- **100+ tests** distribuidos en 4 proyectos de testing
+- **400 tests** distribuidos en 4 proyectos de testing
 - **Cobertura de seguridad** completa con autenticación y autorización
 
 ## Conclusión
