@@ -517,33 +517,6 @@ services.AddStackExchangeRedisCache(options =>
 });
 ```
 
-## 📊 Métricas del Stack
-
-### Dependencias por Capa
-
-| Capa | NuGet Packages | External Dependencies | LOC Aproximadas |
-|------|----------------|----------------------|-----------------|
-| **Domain** | 0 | Ninguna | ~1,500 |
-| **Application** | 5 | MediatR, FluentValidation | ~2,800 |
-| **Infrastructure** | 4 | EF Core, PostgreSQL, JWT | ~2,200 |
-| **API** | 6 | Swagger, Serilog, Bogus | ~1,200 |
-
-### Bundle Size Analysis
-
-- **API Assembly**: ~2.5 MB
-- **Application Assembly**: ~1.8 MB
-- **Infrastructure Assembly**: ~2.1 MB
-- **Domain Assembly**: ~800 KB
-- **Total Runtime Dependencies**: ~45 MB
-
-## Mapping to Thesis
-
-Este documento contribuye directamente a las siguientes secciones de la tesis:
-
-- **4.3 Tecnologías utilizadas** - Stack completo de tecnologías y justificaciones
-- **4.4 Frameworks y librerías** - Dependencias detalladas y configuraciones
-- **4.5 Convenciones de desarrollo** - Estándares de código y organización
-- **3.6.7 Herramientas de desarrollo** - Tools y configuraciones del entorno
 
 ## Referencias Técnicas
 
