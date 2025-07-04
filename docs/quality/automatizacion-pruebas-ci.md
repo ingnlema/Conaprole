@@ -43,7 +43,7 @@ La estrategia de automatización sigue el patrón de **pirámide de pruebas** co
 #### **🔹 Pruebas de Integración (TestContainers)**
 
 - **Cobertura**: Interacción entre componentes reales
-- **Ejecución**: 2-3 minutos
+- **Ejecución**: 5-10 minutos
 - **Automatización**: 100% automatizada
 - **Infraestructura**: PostgreSQL + Keycloak en contenedores
 
@@ -57,34 +57,10 @@ La estrategia de automatización sigue el patrón de **pirámide de pruebas** co
 #### **🔹 Pruebas Funcionales/API (End-to-End)**
 
 - **Cobertura**: Flujos completos de usuario
-- **Ejecución**: 5-10 minutos
+- **Ejecución**: 10-15 minutos
 - **Automatización**: 100% automatizada
 - **Alcance**: Validación de contratos de API completos
 
-### 1.2 Cobertura Automatizada por Tipo
-
-| Tipo de Prueba | Cantidad | Tiempo Ejecución | Cobertura | Automatización |
-|---|---|---|---|---|
-| **Unitarias Dominio** | 73 | < 30s | Lógica de negocio | 100% |
-| **Unitarias Aplicación** | 37 | < 30s | Casos de uso | 100% |
-| **Integración** | ~20 | 2-3min | Componentes reales | 100% |
-| **Funcionales** | ~15 | 5-10min | Flujos completos | 100% |
-| **TOTAL** | ~145 | < 15min | Sistema completo | 100% |
-
-### 1.3 Criterios de Ejecución
-
-#### **Por Trigger de Desarrollo**
-
-- **Cada commit**: Pruebas unitarias (Domain + Application)
-- **Pull Request**: Suite completa de pruebas
-- **Merge a main**: Validación completa + deployment checks
-- **Release**: Pruebas de regresión completas
-
-#### **Por Criticidad del Componente**
-
-- **Crítico**: Todas las pruebas (unitarias + integración + funcionales)
-- **Importante**: Unitarias + integración
-- **Estándar**: Unitarias obligatorias
 
 ---
 
@@ -112,7 +88,7 @@ graph LR
 
 - Ejecución selectiva de pruebas
 - TestContainers con Docker Desktop
-- Feedback inmediato (< 1 minuto para unitarias)
+- Feedback inmediato (<3 minuto para unitarias)
 
 **🟡 Pull Request (CI)**
 
@@ -149,7 +125,7 @@ stages:
 - **Pull Request**: Suite completa
 - **Push a main**: Despliegue a staging + pruebas
 - **Tags**: Despliegue a producción
-- **Scheduled**: Pruebas de regresión nocturnas
+
 
 ### 2.3 Validaciones que Bloquean
 
@@ -258,164 +234,6 @@ TESTCONTAINERS_WAIT_TIMEOUT=300
 
 ---
 
-## 4. Beneficios Alcanzados
-
-### 4.1 Métricas de Rendimiento
-
-#### **Tiempo de Feedback**
-
-| Contexto | Tiempo Anterior | Tiempo Actual | Mejora |
-|---|---|---|---|
-| **Desarrollo Local** | ~15 minutos | ~1 minuto | 93% |
-| **Pull Request** | ~45 minutos | ~8 minutos | 82% |
-| **Despliegue Completo** | ~2 horas | ~15 minutos | 87% |
-
-#### **Eficiencia de Ejecución**
-
-- **Pruebas Unitarias**: 110 tests en < 1 minuto
-- **Pruebas de Integración**: Setup completo en < 3 minutos
-- **Suite Completa**: ~145 tests en < 15 minutos
-- **Paralelización**: 4x mejora en throughput
-
-### 4.2 Confiabilidad en Despliegues
-
-#### **Detección Temprana de Problemas**
-
-- **95%** de bugs detectados antes de QA manual
-- **87%** de regresiones capturadas en PR
-- **0** deployments fallidos por problemas de calidad en últimos 6 meses
-
-#### **Estabilidad del Sistema**
-
-- **99.5%** uptime en producción
-- **< 2 minutos** tiempo promedio de rollback
-- **100%** de tests críticos pasando antes de release
-
-### 4.3 Impacto en Productividad del Equipo
-
-#### **Velocidad de Desarrollo**
-
-- **40%** reducción en tiempo de debugging
-- **60%** menos tiempo en resolución de bugs
-- **3x** mayor confianza para refactoring
-
-#### **Calidad del Código**
-
-- **Cobertura promedio**: 85%+ en código crítico
-- **Deuda técnica**: Reducida en 50% gracias a refactoring seguro
-- **Documentación viva**: Tests actúan como especificación
-
-#### **Satisfacción del Equipo**
-
-- **Menor estrés** en deployments (automatización completa)
-- **Mayor foco** en features nuevas vs debugging
-- **Feedback inmediato** aumenta motivación
-
-### 4.4 Valor de Negocio
-
-#### **Time to Market**
-
-- **Releases más frecuentes**: De quincenal a semanal
-- **Hotfixes más rápidos**: < 2 horas vs días anteriormente
-- **Menor riesgo**: Validación automática reduce incidentes
-
-#### **Costos Operacionales**
-
-- **Reducción de QA manual**: 70% menos horas
-- **Menor tiempo de resolución**: Ahorros significativos
-- **Infraestructura optimizada**: Uso eficiente de recursos CI/CD
-
----
-
-## 5. Arquitectura Técnica de Optimización
-
-### 5.1 Distribución de Carga
-
-#### **Matrix Strategy para CI**
-
-```yaml
-strategy:
-  matrix:
-    test-category: [unit-domain, unit-application, integration, functional]
-    os: [ubuntu-latest]
-  parallel: true
-```
-
-#### **Resource Allocation**
-
-- **Unit Tests**: 1 CPU, 512MB RAM
-- **Integration Tests**: 2 CPU, 2GB RAM (TestContainers)
-- **Functional Tests**: 2 CPU, 4GB RAM (full application)
-
-### 5.2 Caché y Artefactos
-
-#### **Estrategia de Caché**
-
-```yaml
-# Dependencias .NET
-- uses: actions/cache@v3
-  with:
-    path: ~/.nuget/packages
-    key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-
-# Docker layers para TestContainers  
-- name: Cache Docker layers
-  uses: actions/cache@v3
-  with:
-    path: /tmp/.buildx-cache
-    key: ${{ runner.os }}-buildx-${{ github.sha }}
-```
-
-### 5.3 Monitoreo y Métricas
-
-#### **Métricas Automáticas Recolectadas**
-
-- Tiempo de ejecución por suite de pruebas
-- Cobertura de código por módulo
-- Tasa de éxito/fallo por categoría de test
-- Uso de recursos durante ejecución
-
-#### **Alertas Configuradas**
-
-- Degradación de performance > 50%
-- Caída de cobertura > 5%
-- Aumento de tiempo de CI > 25%
-- Fallos consecutivos en main branch
-
----
-
-## 6. Roadmap y Mejoras Futuras
-
-### 6.1 Optimizaciones Planificadas
-
-#### **Corto Plazo (1-3 meses)**
-
-- [ ] Implementación de test sharding automático
-- [ ] Optimización de imágenes Docker para TestContainers
-- [ ] Métricas detalladas de performance por test
-
-#### **Mediano Plazo (3-6 meses)**  
-
-- [ ] Tests de carga automatizados en CI
-- [ ] Integración con herramientas de APM
-- [ ] Tests de seguridad automatizados
-
-#### **Largo Plazo (6+ meses)**
-
-- [ ] AI-powered test generation
-- [ ] Predictive testing basado en cambios de código
-- [ ] Auto-healing de tests flaky
-
-### 6.2 KPIs Objetivo
-
-| Métrica | Actual | Objetivo 6 meses |
-|---|---|---|
-| **Tiempo Suite Completa** | 15 min | 8 min |
-| **Cobertura Promedio** | 85% | 90% |
-| **Tests Flaky Rate** | < 2% | < 1% |
-| **False Positive Rate** | < 1% | < 0.5% |
-
----
 
 ## Conclusión
 
