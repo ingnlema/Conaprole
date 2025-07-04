@@ -7,9 +7,9 @@ This document provides comprehensive API reference documentation for the Conapro
 ## Base Information
 
 ### API Base URL
-- **Production**: `https://api.conaprole.com`
-- **Staging**: `https://staging-api.conaprole.com`
-- **Development**: `http://localhost:5000`
+- **Production**: `https://<domain>.com`
+- **Staging**: `https://staging-<domain>.com`
+- **Development**: `http://localhost:8080`
 
 ### API Version
 - **Current Version**: v1
@@ -179,12 +179,6 @@ PUT /api/orders/{orderId}/status
   "status": "confirmed"
 }
 ```
-
-**Allowed Status Transitions:**
-- `created` → `confirmed`
-- `confirmed` → `in_transit`
-- `in_transit` → `delivered`
-- `created|confirmed` → `cancelled`
 
 ### Products API
 
@@ -361,8 +355,7 @@ All API responses follow a consistent format:
 #### Quantity Object
 ```json
 {
-  "value": 50,
-  "unit": "liter"
+  "value": 50
 }
 ```
 
@@ -406,14 +399,13 @@ All API responses follow a consistent format:
 
 ## Rate Limiting
 
-### Rate Limits by Role
+### Rate Limits by Role (Suggested)
 
 | Role | Limit | Window |
 |------|-------|--------|
-| `admin` | 1000 requests | per hour |
-| `sales_manager` | 500 requests | per hour |
-| `distributor` | 200 requests | per hour |
-| `point_of_sale` | 100 requests | per hour |
+| `API` | 100 requests | per min |
+| `Administrator` | 5000 requests | per hour |
+| `Distributor` | 1000 requests | per hour |
 | Anonymous | 50 requests | per hour |
 
 ### Rate Limit Headers
@@ -482,23 +474,6 @@ GET /health
 }
 ```
 
-### Staging Environment
-Use the staging environment for integration testing:
-- **Base URL**: `https://staging-api.conaprole.com`
-- **Test Data**: Pre-populated with sample data
-- **Reset Schedule**: Daily at 02:00 UTC
-
-## Support
-
-### Getting Help
-1. **Interactive Docs**: Use Swagger UI for real-time API testing
-2. **Status Page**: Monitor system status at `/health`
-3. **Error Tracing**: Include `traceId` from error responses when reporting issues
-
-### Contact Information
-- **Technical Support**: development-team@conaprole.com
-- **Business Questions**: business-analysis@conaprole.com
-- **Security Issues**: security@conaprole.com
 
 ---
 
