@@ -86,15 +86,6 @@ sequenceDiagram
         Note over C: RESPUESTA DE ERROR<br/>{<br/>  "status": 400,<br/>  "type": "ValidationFailure",<br/>  "title": "Validation error",<br/>  "detail": "One or more validation errors has occurred",<br/>  "errors": [<br/>    {<br/>      "propertyName": "Email",<br/>      "errorMessage": "Invalid email format"<br/>    },<br/>    {<br/>      "propertyName": "OrderLines[0].Quantity",<br/>      "errorMessage": "Quantity must be greater than 0"<br/>    },<br/>    {<br/>      "propertyName": "City",<br/>      "errorMessage": "City is required"<br/>    }<br/>  ]<br/>}
     end
 
-    classDef error fill:#f8d7da,stroke:#721c24
-    classDef process fill:#d1ecf1,stroke:#0c5460
-    classDef validation fill:#fff3cd,stroke:#856404
-    classDef exception fill:#e2e3e5,stroke:#383d41
-
-    class C error
-    class API,MW,M,LB process
-    class VB,V validation
-    class CH exception
 ```
 
 ## 🔍 Puntos Clave del Flujo de Error
@@ -175,12 +166,3 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 - ✅ **Maintainability** - validaciones centralizadas
 - ✅ **Testability** - rules fáciles de probar unitariamente
 
-## 🔄 Comparación con Flujo Exitoso
-
-| Aspecto | Flujo Exitoso | Flujo con Error |
-|---------|---------------|-----------------|
-| **Pipeline** | Completo hasta Handler | Interrumpido en Validation |
-| **Database** | Acceso y transacciones | Sin acceso |
-| **Response** | 201 Created | 400 Bad Request |
-| **Performance** | Completo procesamiento | Mínimo overhead |
-| **Logging** | Request + Success | Request + Validation Error |
