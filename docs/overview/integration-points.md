@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document describes the integration architecture and external connection points for the Conaprole Orders system, including APIs, protocols, data exchange formats, and integration patterns used to connect with internal and external systems.
+This document outlines potential integration points and architectural considerations for the future development of the Conaprole Orders system. It explores possible APIs, protocols, data exchange formats, and integration patterns that could be used to connect with internal and external systems. The described elements are conceptual and intended to guide future discussions and planning, rather than reflect existing implementations.
 
 ## Integration Architecture Overview
 
