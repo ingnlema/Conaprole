@@ -90,15 +90,6 @@ sequenceDiagram
 
     Note over C,DB: ✅ COMANDO EJECUTADO EXITOSAMENTE
 
-    classDef success fill:#d4edda,stroke:#155724
-    classDef process fill:#d1ecf1,stroke:#0c5460
-    classDef domain fill:#fff3cd,stroke:#856404
-    classDef data fill:#f8d7da,stroke:#721c24
-
-    class C,API success
-    class MW,M,VB,LB,CH process
-    class DE,R domain
-    class UOW,DB data
 ```
 
 ## 🔍 Puntos Clave del Flujo
