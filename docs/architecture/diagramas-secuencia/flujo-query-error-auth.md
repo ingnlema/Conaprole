@@ -29,67 +29,38 @@ sequenceDiagram
     Note over C,DB: FLUJO DE QUERY CON ERROR DE AUTORIZACIÓN
 
     C->>+API: GET /api/orders/sensitive-data (JWT Header)
-    Note over C: JWT Token:<br/>• Usuario: regular@test.com<br/>• Rol: Registered<br/>• Permisos limitados
-    
+    Note over C: JWT Token: usuario 'regular@test.com' con rol 'Registered' y permisos limitados
+
     API->>+MW: Execute Pipeline
     MW->>+AUTH: Validate Authentication & Authorization
-    
-    Note over AUTH: JWT AUTHENTICATION
-    AUTH->>AUTH: Extract JWT from Authorization Header
-    AUTH->>+KC: Validate JWT Token
-    KC->>KC: Verify Signature & Expiration
-    KC-->>-AUTH: ✅ Token Valid, IdentityId: user123
-    
-    AUTH->>+CT: Transform Claims
-    Note over CT: Claims Transformation Service
-    
+
+    Note over AUTH: JWT Authentication
+    AUTH->>AUTH: Extrae JWT del Header
+    AUTH->>+KC: Valida el token
+    KC-->>-AUTH: Token válido, IdentityId: user123
+
+    AUTH->>+CT: Claims Transformation
     CT->>+AS: GetRolesForUserAsync(user123)
-    AS->>+DB: SELECT roles FROM user_roles WHERE user_id = ?
-    DB-->>-AS: [{ name: "Registered", id: 1 }]
-    AS-->>-CT: UserRolesResponse
-    
-    CT->>CT: Enrich ClaimsPrincipal with Roles
-    CT-->>-AUTH: Claims with roles["Registered"]
-    
-    Note over AUTH: PERMISSION AUTHORIZATION
-    AUTH->>AUTH: Check [HasPermission("orders:admin")] Attribute
+    AS->>+DB: Consulta roles del usuario
+    DB-->>-AS: [ "Registered" ]
+    AS-->>-CT: Roles asignados
+    CT-->>-AUTH: Claims enriquecidos
+
+    AUTH->>AUTH: Verifica atributo [HasPermission("orders:admin")]
     AUTH->>+AH: HandleRequirementAsync("orders:admin")
-    
     AH->>+AS: GetPermissionsForUserAsync(user123)
-    AS->>+DB: SELECT p.name FROM permissions p<br/>JOIN role_permissions rp ON p.id = rp.permission_id<br/>JOIN user_roles ur ON rp.role_id = ur.role_id<br/>WHERE ur.user_id = ?
-    DB-->>-AS: ["orders:read", "users:read"]
-    AS-->>-AH: HashSet<string>{"orders:read", "users:read"}
-    
-    AH->>AH: Check if "orders:admin" in permissions
-    AH->>AH: ❌ Permission NOT Found
-    
-    AH-->>-AUTH: AuthorizationResult.Fail("Insufficient permissions")
-    
-    AUTH->>AUTH: ❌ Authorization Failed
-    AUTH->>AUTH: Create 403 Forbidden Response
-    
-    AUTH-->>-MW: 403 Forbidden Response
-    MW-->>-API: 403 Forbidden Response
-    API-->>-C: 403 Forbidden + Error Details
+    AS->>+DB: Consulta permisos desde tabla de roles
+    DB-->>-AS: [ "orders:read", "users:read" ]
+    AS-->>-AH: Permisos devueltos
+    AH->>AH: No se encuentra permiso "orders:admin"
+    AH-->>-AUTH: AuthorizationResult.Fail
 
-    Note over C,M: ❌ ACCESO DENEGADO - MEDIATOR NUNCA EJECUTADO
+    AUTH->>MW: 403 Forbidden Response
+    MW-->>API: Response estandarizada
+    API-->>C: 403 Forbidden + detalle
 
-    rect rgb(255, 235, 238)
-        Note over C: RESPUESTA DE ERROR<br/>{<br/>  "status": 403,<br/>  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.3",<br/>  "title": "Forbidden",<br/>  "detail": "You do not have permission to access this resource",<br/>  "instance": "/api/orders/sensitive-data"<br/>}
-    end
+    Note over C,M: ACCESO DENEGADO – HANDLER NO EJECUTADO
 
-    classDef error fill:#f8d7da,stroke:#721c24
-    classDef security fill:#e2e3e5,stroke:#383d41
-    classDef process fill:#d1ecf1,stroke:#0c5460
-    classDef external fill:#fff3cd,stroke:#856404
-    classDef data fill:#f0f9ff,stroke:#0c4a6e
-
-    class C error
-    class AUTH,CT,AH security
-    class MW,API process
-    class KC external
-    class AS,DB data
-    class M error
 ```
 
 ## 🔍 Puntos Clave del Flujo de Autorización
